@@ -1,0 +1,342 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		/* Цветовая система */
+		--brand: #0B1220;
+		--brand-light: #1e293b;
+		--accent: #2563eb;
+		--accent-light: #3b82f6;
+		
+		/* Семантические цвета */
+		--success: #10b981;
+		--success-light: #d1fae5;
+		--warning: #f59e0b;
+		--warning-light: #fef3c7;
+		--error: #ef4444;
+		--error-light: #fee2e2;
+		
+		/* Нейтральные тона */
+		--ink: #111827;
+		--text: #1f2937;
+		--text-muted: #6b7280;
+		--text-light: #9ca3af;
+		--line: rgba(0,0,0,0.08);
+		--border: #e5e7eb;
+		--surface: #f9fafb;
+		--surface-hover: #f3f4f6;
+		
+		/* Пространства */
+		--radius: 1rem;
+		--radius-lg: 1.5rem;
+		--radius-xl: 2rem;
+		
+		/* Тени */
+		--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+		--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+		--shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+	}
+
+	html, body { 
+		@apply text-[15px] leading-relaxed;
+		color: var(--text);
+		font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+		font-feature-settings: "rlig" 1, "calt" 1;
+	}
+
+	/* Плавний скролл и оптимизации */
+	html { 
+		scroll-behavior: smooth; 
+		-webkit-text-size-adjust: 100%;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-rendering: optimizeLegibility;
+	}
+
+	/* Safari оптимизации */
+	@supports (-webkit-touch-callout: none) {
+		button, input, textarea, select { 
+			-webkit-text-size-adjust: 100%; 
+			-webkit-appearance: none;
+		}
+	}
+
+	/* Заголовки - улучшенная типографика */
+	h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 { 
+		@apply font-bold leading-tight tracking-[-0.025em];
+		color: var(--ink);
+		font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+	}
+	
+	h1, .h1 { 
+		@apply text-4xl sm:text-5xl lg:text-6xl;
+		font-weight: 800;
+	}
+	h2, .h2 { 
+		@apply text-3xl sm:text-4xl lg:text-5xl;
+		font-weight: 700;
+	}
+	h3, .h3 { 
+		@apply text-2xl sm:text-3xl;
+		font-weight: 600;
+	}
+	h4, .h4 { 
+		@apply text-xl sm:text-2xl;
+		font-weight: 600;
+	}
+	h5, .h5 { 
+		@apply text-lg sm:text-xl;
+		font-weight: 600;
+	}
+	h6, .h6 { 
+		@apply text-base sm:text-lg;
+		font-weight: 600;
+	}
+
+	/* Typography плагин - улучшенные стили */
+	.prose { 
+		@apply text-[15px] leading-relaxed;
+		color: var(--text);
+		max-width: none;
+	}
+	
+	.prose :where(h1,h2,h3,h4,h5,h6) { 
+		@apply tracking-[-0.025em] font-semibold;
+		color: var(--ink);
+	}
+	
+	.prose :where(p) {
+		color: var(--text);
+		line-height: 1.7;
+	}
+	
+	.prose :where(a) {
+		color: var(--accent);
+		text-decoration: none;
+		font-weight: 500;
+	}
+	
+	.prose :where(a):hover {
+		color: var(--accent-light);
+		text-decoration: underline;
+	}
+}
+
+@layer components {
+	/* Кнопки - базовые стили */
+	.btn-base {
+		@apply inline-flex items-center justify-center font-medium;
+		@apply transition-all duration-200 ease-out;
+		@apply hover:scale-[1.02] active:scale-[0.98];
+		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+		@apply disabled:opacity-50 disabled:pointer-events-none;
+	}
+
+	/* Текстовые утилиты */
+	.text-muted {
+		color: var(--text-muted);
+	}
+	
+	.text-light {
+		color: var(--text-light);
+	}
+
+	/* Тени - системные */
+	.shadow-card {
+		box-shadow: var(--shadow-md);
+	}
+
+	.shadow-soft {
+		box-shadow: var(--shadow-lg);
+	}
+	
+	.shadow-float {
+		box-shadow: var(--shadow-xl);
+	}
+
+	/* Инпуты - улучшенные */
+	.input {
+		@apply h-11 px-4 rounded-xl border bg-white;
+		@apply placeholder:text-slate-400;
+		@apply transition-all duration-200 ease-out;
+		@apply focus:ring-2 focus:ring-offset-1;
+		border-color: var(--border);
+		color: var(--text);
+	}
+	
+	.input:focus {
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px var(--accent-light), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	}
+	
+	.input:hover:not(:focus) {
+		border-color: var(--text-muted);
+	}
+	
+	/* Формы - специальные стили */
+	.input-error {
+		@apply border-red-300 focus:border-red-500 focus:ring-red-500/20;
+	}
+	
+	.input-success {
+		@apply border-green-300 focus:border-green-500 focus:ring-green-500/20;
+	}
+
+	/* Карточки - современные */
+	.card {
+		@apply rounded-2xl border bg-white;
+		border-color: var(--border);
+		box-shadow: var(--shadow-md);
+		@apply transition-all duration-200 ease-out;
+	}
+	
+	.card:hover {
+		box-shadow: var(--shadow-lg);
+		transform: translateY(-1px);
+	}
+	
+	.card-flat {
+		@apply rounded-2xl border bg-white;
+		border-color: var(--border);
+		box-shadow: var(--shadow-sm);
+	}
+
+	/* Кнопки - варианты */
+	.btn-primary {
+		@apply btn-base rounded-full px-6 h-11 font-semibold shadow-md hover:shadow-lg;
+		background-color: rgb(234 179 8); /* yellow-500 */
+		color: rgb(15 23 42); /* slate-900 */
+		transition: all 200ms ease-out;
+	}
+	
+	.btn-primary:hover {
+		background-color: rgb(250 204 21); /* yellow-400 */
+	}
+	
+	.btn-outline {
+		@apply btn-base rounded-full px-6 h-11 border bg-white font-semibold shadow-md hover:shadow-lg;
+		border-color: rgb(226 232 240); /* slate-200 */
+		color: rgb(15 23 42); /* slate-900 */
+		transition: all 200ms ease-out;
+	}
+	
+	.btn-outline:hover {
+		background-color: rgb(248 250 252); /* slate-50 */
+		border-color: rgb(148 163 184); /* slate-400 */
+	}
+	
+	.btn-ghost {
+		@apply btn-base rounded-full px-6 h-11 bg-transparent font-semibold;
+		color: rgb(15 23 42); /* slate-900 */
+		transition: all 200ms ease-out;
+	}
+	
+	.btn-ghost:hover {
+		background-color: rgb(248 250 252); /* slate-50 */
+	}
+}
+
+@layer utilities {
+	/* Line clamping - расширенные */
+	.line-clamp-1 {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 1;
+	}
+	
+	.line-clamp-2 {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+	}
+	
+	.line-clamp-3 {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+	}
+	
+	.line-clamp-4 {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 4;
+	}
+
+	/* Анимации */
+	.animate-fade-in {
+		animation: fadeIn 0.5s ease-out;
+	}
+	
+	.animate-slide-up {
+		animation: slideUp 0.5s ease-out;
+	}
+	
+	.animate-scale-in {
+		animation: scaleIn 0.3s ease-out;
+	}
+
+	/* Интерактивность */
+	.hover-lift {
+		@apply transition-transform duration-200 ease-out;
+	}
+	
+	.hover-lift:hover {
+		transform: translateY(-2px);
+	}
+	
+	.click-scale {
+		@apply transition-transform duration-150 ease-out;
+	}
+	
+	.click-scale:active {
+		transform: scale(0.98);
+	}
+
+	/* Фокус */
+	.focus-ring {
+		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+	}
+	
+	.focus-ring-accent {
+		@apply focus-ring focus-visible:ring-blue-500;
+	}
+}
+
+/* Кейфреймы */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
