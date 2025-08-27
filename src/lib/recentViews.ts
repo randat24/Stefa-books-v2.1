@@ -1,6 +1,7 @@
 "use client";
 
 import type { Book } from "@/lib/types";
+import { logger } from "@/lib/logger";
 
 const STORAGE_KEY = "stefa_recent_views";
 const MAX_RECENT_VIEWS = 10;
@@ -43,7 +44,7 @@ export function addToRecentViews(bookId: string): void {
       detail: { bookId, recentViews: limited }
     }));
   } catch (error) {
-    console.error("Failed to update recent views:", error);
+    logger.storage("Failed to update recent views", error);
   }
 }
 
@@ -57,7 +58,7 @@ export function clearRecentViews(): void {
       detail: { recentViews: [] }
     }));
   } catch (error) {
-    console.error("Failed to clear recent views:", error);
+    logger.storage("Failed to clear recent views", error);
   }
 }
 
@@ -74,6 +75,6 @@ export function removeFromRecentViews(bookId: string): void {
       detail: { bookId, recentViews: updated }
     }));
   } catch (error) {
-    console.error("Failed to remove from recent views:", error);
+    logger.storage("Failed to remove from recent views", error);
   }
 }

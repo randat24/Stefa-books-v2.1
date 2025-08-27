@@ -7,6 +7,7 @@ import { BookCard } from '@/components/BookCard';
 import { Badge } from '@/components/ui/Badge';
 import { FilterPopup } from '@/components/filters/FilterPopup';
 import type { Book } from '@/lib/types';
+import { logger } from '@/lib/logger';
 
 interface SearchFilters {
   categories: string[];
@@ -72,7 +73,7 @@ export function SimpleSearch({ books, onSearchResults }: SimpleSearchProps) {
       setDisplayedBooks(results);
       onSearchResults?.(results);
 
-      console.log(`Found ${results.length} results in ${searchTime.toFixed(1)}ms for query: "${searchQuery}"`);
+      logger.search(`Found ${results.length} results in ${searchTime.toFixed(1)}ms`, { query: searchQuery, resultsCount: results.length, searchTime });
       
     } finally {
       setIsSearching(false);

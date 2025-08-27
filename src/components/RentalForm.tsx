@@ -2,6 +2,7 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Info, CreditCard, Building2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 type FormData = {
   name: string;
@@ -36,11 +37,28 @@ export default function RentalForm({ bookId }: { bookId?: string }) {
     setValue("phone", v, { shouldDirty: true, shouldValidate: true });
   };
 
-  const onSubmit = async () => {
-    // TODO: replace with your backend / Supabase function
-    // await fetch('/api/rent', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) })
-    setSent(true);
-    reset();
+  const onSubmit = async (data: FormData) => {
+    try {
+      const response = await fetch('/api/rent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        logger.info('Rental form submitted successfully', { rentalId: result.rentalId });
+        setSent(true);
+        reset();
+      } else {
+        logger.error('Rental form submission failed', { error: result.error });
+        alert(`Помилка: ${result.error}`);
+      }
+    } catch (error) {
+      logger.error('Rental form submission error', error);
+      alert('Помилка відправки форми. Спробуйте ще раз.');
+    }
   };
 
   if (sent) return (

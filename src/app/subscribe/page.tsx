@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Building2, CheckCircle, Copy, Check } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 type PlanType = 'mini' | 'maxi' | 'premium';
 type PaymentMethod = 'card' | 'online';
@@ -122,23 +123,40 @@ function SubscribeContent() {
       setCopiedField(fieldName);
       setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      logger.error('Failed to copy text to clipboard', err);
     }
   };
 
   const onSubmit = async (data: SubscribeFormData) => {
-    const submitData = {
-      ...data,
-      paymentMethod,
-      selectedPlan: selectedPlan ? {
-        name: selectedPlan.name,
-        price: selectedPlan.price,
-        period: selectedPlan.period
-      } : null
-    };
-    console.log('Form data:', submitData);
-    // Здесь будет логика отправки формы
-    alert('Дякуємо за заявку! Ми зв\'яжемося з вами найближчим часом.');
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          social: data.social,
+          plan: data.plan || selectedPlan?.name?.toLowerCase(),
+          paymentMethod,
+          message: data.message,
+          privacyConsent: data.privacyConsent
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        logger.info('Subscription form submitted successfully', { submissionId: result.submissionId, plan: data.plan });
+        alert(`Дякуємо за заявку! ID: ${result.submissionId}. Ми зв'яжемося з вами найближчим часом.`);
+      } else {
+        logger.error('Subscription form submission failed', { error: result.error });
+        alert(`Помилка: ${result.error}`);
+      }
+    } catch (error) {
+      logger.error('Subscription form submission error', error);
+      alert('Помилка відправки форми. Спробуйте ще раз.');
+    }
   };
 
   return (

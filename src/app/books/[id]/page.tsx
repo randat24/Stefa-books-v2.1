@@ -3,7 +3,7 @@ import Image from "next/image";
 import { BOOKS } from "@/lib/mock";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { BookCard } from "@/components/BookCard";
 import { BookViewTracker } from "@/components/BookViewTracker";
 import { Star, BookOpen, Calendar, Users, Award } from "lucide-react";

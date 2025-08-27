@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Info, CreditCard, Building2 } from "lucide-react"; 
+import { CheckCircle, Info, CreditCard, Building2 } from "lucide-react";
+import { logger } from "@/lib/logger"; 
 
 type FormData = {
   name: string;
@@ -103,19 +104,37 @@ function SubscribeFormHomeContent() {
         screenshot: screenshotUrl,
       };
       
-      // TODO: заменить на реальный бекенд (Supabase/API route)
-      console.log('Form data:', submitData);
-      // await fetch('/api/subscribe', { 
-      //   method: 'POST', 
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(submitData) 
-      // });
+      // Submit to API
+      const response = await fetch('/api/subscribe', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: submitData.name,
+          email: submitData.email,
+          phone: submitData.phone,
+          social: submitData.social,
+          plan: submitData.plan,
+          paymentMethod: submitData.payment,
+          message: submitData.note,
+          screenshot: screenshotUrl,
+          privacyConsent: submitData.privacyConsent
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        logger.info('Home subscription form submitted successfully', { submissionId: result.submissionId, plan: submitData.plan });
+        setSent(true);
+        if (fileRef.current) fileRef.current.value = "";
+      } else {
+        throw new Error(result.error || 'Server error');
+      }
       
-      setSent(true);
-      if (fileRef.current) fileRef.current.value = "";
     } catch (error) {
-      console.error('Помилка при відправці форми:', error);
-      // TODO: показать уведомление об ошибке
+      logger.error('Home subscription form error', error);
+      alert(`Помилка відправки форми: ${error instanceof Error ? error.message : 'Невідома помилка'}`);
+      throw error;
     } finally {
       setIsSubmitting(false);
     }

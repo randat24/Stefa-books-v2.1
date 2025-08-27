@@ -4,20 +4,7 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { BookOpen, Bookmark, Share2, X, Star, Heart } from 'lucide-react';
 import { cn } from '@/lib/cn';
-
-type Book = {
-  id: string;
-  title: string;
-  author: string;
-  code: string;        // напр. "NF-002"
-  category: string;    // напр. "Нон-фікшн"
-  pages: number;       // 280
-  cover: string;       // url
-  status?: 'В тренді' | 'Бестселер' | 'Нове' | string;
-  short?: string;      // описание книги
-  rating?: { value: number; count: number };
-  available?: boolean;
-};
+import type { Book } from '@/lib/types';
 
 /** Рейтинг с одной звездочкой */
 function Rating({ value = 0, count = 0 }: { value: number; count?: number }) {
