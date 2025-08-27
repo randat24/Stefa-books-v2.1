@@ -17,11 +17,11 @@ export default function Hero() {
 								Книжкова оренда у Миколаєві
 							</Badge>
 
-							<h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl text-slate-900">
+							<h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-slate-900" style={{letterSpacing: '-0.025em', textWrap: 'balance', lineHeight: '1.1'}}>
 								Читай легко. Оформлюй підписку та забирай книги зручно.
 							</h1>
 
-							<p className="max-w-[42ch] text-slate-600 text-base sm:text-lg leading-relaxed">
+							<p className="max-w-[46ch] text-slate-600 text-base sm:text-lg leading-relaxed" style={{textWrap: 'pretty', lineHeight: '1.65'}}>
 								Вітаємо у книгарні за підпискою. Обирай план, шукай улюблені книжки і залишай заявку на оренду.
 								Ми підготуємо і передамо у зручному місці.
 							</p>

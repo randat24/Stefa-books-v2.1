@@ -41,10 +41,13 @@
 	}
 
 	html, body { 
-		@apply text-[15px] leading-relaxed;
+		@apply text-base leading-relaxed;
 		color: var(--text);
-		font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-		font-feature-settings: "rlig" 1, "calt" 1;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+		font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "pnum" 1, "tnum" 0, "onum" 1, "lnum" 0, "dlig" 0;
+		font-variant-numeric: oldstyle-nums proportional-nums;
+		font-optical-sizing: auto;
+		letter-spacing: -0.011em;
 	}
 
 	/* Плавний скролл и оптимизации */
@@ -64,24 +67,33 @@
 		}
 	}
 
-	/* Заголовки - улучшенная типографика */
+	/* Заголовки - улучшенная типографика для книжного магазина */
 	h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 { 
-		@apply font-bold leading-tight tracking-[-0.025em];
+		@apply font-bold leading-tight;
 		color: var(--ink);
-		font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+		font-feature-settings: "kern" 1, "liga" 1, "dlig" 1, "hlig" 0;
+		font-variant-numeric: lining-nums;
+		letter-spacing: -0.025em;
+		text-wrap: balance;
 	}
 	
 	h1, .h1 { 
-		@apply text-4xl sm:text-5xl lg:text-6xl;
+		@apply text-4xl sm:text-5xl lg:text-6xl xl:text-7xl;
 		font-weight: 800;
+		letter-spacing: -0.035em;
+		line-height: 1.1;
 	}
 	h2, .h2 { 
-		@apply text-3xl sm:text-4xl lg:text-5xl;
+		@apply text-3xl sm:text-4xl lg:text-5xl xl:text-6xl;
 		font-weight: 700;
+		letter-spacing: -0.030em;
+		line-height: 1.15;
 	}
 	h3, .h3 { 
-		@apply text-2xl sm:text-3xl;
+		@apply text-2xl sm:text-3xl lg:text-4xl;
 		font-weight: 600;
+		letter-spacing: -0.025em;
+		line-height: 1.2;
 	}
 	h4, .h4 { 
 		@apply text-xl sm:text-2xl;
@@ -98,9 +110,11 @@
 
 	/* Typography плагин - улучшенные стили */
 	.prose { 
-		@apply text-[15px] leading-relaxed;
+		@apply text-base leading-relaxed;
 		color: var(--text);
 		max-width: none;
+		font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "onum" 1, "pnum" 1;
+		letter-spacing: -0.008em;
 	}
 	
 	.prose :where(h1,h2,h3,h4,h5,h6) { 
@@ -110,7 +124,12 @@
 	
 	.prose :where(p) {
 		color: var(--text);
-		line-height: 1.7;
+		line-height: 1.65;
+		text-wrap: pretty;
+		hyphens: auto;
+		-webkit-hyphens: auto;
+		-moz-hyphens: auto;
+		-ms-hyphens: auto;
 	}
 	
 	.prose :where(a) {
