@@ -16,15 +16,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/books/page.js"
     ],
-    "/subscribe/page": [
+    "/books/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/subscribe/page.js"
-    ],
-    "/privacy/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/privacy/page.js"
+      "static/chunks/app/books/[id]/page.js"
     ]
   }
 }

@@ -1,0 +1,42 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[678],{1148:function(e,t,n){Promise.resolve().then(n.bind(n,4698)),Promise.resolve().then(n.bind(n,2710)),Promise.resolve().then(n.bind(n,9571)),Promise.resolve().then(n.t.bind(n,380,23))},2710:function(e,t,n){"use strict";n.d(t,{BookViewTracker:function(){return u}});var r=n(9562),i=n(4765);function u(e){let{bookId:t}=e;return(0,r.useEffect)(()=>{(0,i.fs)(t)},[t]),null}},9571:function(e,t,n){"use strict";n.d(t,{FavoriteButton:function(){return a}});var r=n(3371),i=n(7764),u=n(2123);let o=()=>{try{let e=localStorage.getItem("stefa_favs");return e?new Set(JSON.parse(e)):new Set}catch(e){return new Set}},s=(0,u.Ue)((e,t)=>({ids:o(),toggle:n=>{let r=new Set(t().ids);r.has(n)?r.delete(n):r.add(n),e({ids:r}),localStorage.setItem("stefa_favs",JSON.stringify(Array.from(r)))},has:e=>t().ids.has(e)}));var c=n(5742);function a(e){let{id:t,className:n}=e,u=s(e=>e.has(t)),o=s(e=>e.toggle);return(0,r.jsxs)("button",{"aria-pressed":u,"aria-label":u?"В обраному":"Додати в обране",onClick:()=>o(t),className:(0,c.cn)("px-3 py-2 rounded-full border border-[--line] bg-white hover:bg-black/[.03] inline-flex items-center gap-2 transition",n),title:u?"В обраному":"Додати в обране",children:[(0,r.jsx)(i.Z,{className:(0,c.cn)("size-4",u&&"fill-red-500 stroke-red-500")}),(0,r.jsx)("span",{className:"text-sm text-[--ink]",children:u?"В обраному":"В обране"})]})}},4765:function(e,t,n){"use strict";n.d(t,{fs:function(){return u},pw:function(){return o},yD:function(){return i}});let r="stefa_recent_views";function i(){try{let e=localStorage.getItem(r);if(!e)return[];let t=JSON.parse(e);return Array.isArray(t)?t:[]}catch(e){return[]}}function u(e){try{let t=i().filter(t=>t!==e),n=[e,...t].slice(0,10);localStorage.setItem(r,JSON.stringify(n)),window.dispatchEvent(new CustomEvent("recentViewsUpdated",{detail:{bookId:e,recentViews:n}}))}catch(e){console.error("Failed to update recent views:",e)}}function o(){try{localStorage.removeItem(r),window.dispatchEvent(new CustomEvent("recentViewsUpdated",{detail:{recentViews:[]}}))}catch(e){console.error("Failed to clear recent views:",e)}}},4844:function(e,t,n){"use strict";n.d(t,{Z:function(){return r}});/**
+ * @license lucide-react v0.441.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,n(7586).Z)("BookOpen",[["path",{d:"M12 7v14",key:"1akyts"}],["path",{d:"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z",key:"ruj8y"}]])},5108:function(e,t,n){"use strict";n.d(t,{Z:function(){return r}});/**
+ * @license lucide-react v0.441.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,n(7586).Z)("Bookmark",[["path",{d:"m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z",key:"1fy3hk"}]])},7764:function(e,t,n){"use strict";n.d(t,{Z:function(){return r}});/**
+ * @license lucide-react v0.441.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,n(7586).Z)("Heart",[["path",{d:"M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",key:"c3ymky"}]])},8725:function(e,t,n){"use strict";n.d(t,{Z:function(){return r}});/**
+ * @license lucide-react v0.441.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,n(7586).Z)("Share2",[["circle",{cx:"18",cy:"5",r:"3",key:"gq8acd"}],["circle",{cx:"6",cy:"12",r:"3",key:"w7nqdw"}],["circle",{cx:"18",cy:"19",r:"3",key:"1xt0gg"}],["line",{x1:"8.59",x2:"15.42",y1:"13.51",y2:"17.49",key:"47mynk"}],["line",{x1:"15.41",x2:"8.59",y1:"6.51",y2:"10.49",key:"1n3mei"}]])},6798:function(e,t,n){"use strict";n.d(t,{Z:function(){return r}});/**
+ * @license lucide-react v0.441.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,n(7586).Z)("Star",[["polygon",{points:"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2",key:"8f66p6"}]])},3358:function(e,t,n){"use strict";/**
+ * @license React
+ * use-sync-external-store-shim.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */var r=n(9562),i="function"==typeof Object.is?Object.is:function(e,t){return e===t&&(0!==e||1/e==1/t)||e!=e&&t!=t},u=r.useState,o=r.useEffect,s=r.useLayoutEffect,c=r.useDebugValue;function a(e){var t=e.getSnapshot;e=e.value;try{var n=t();return!i(e,n)}catch(e){return!0}}var l="undefined"==typeof window||void 0===window.document||void 0===window.document.createElement?function(e,t){return t()}:function(e,t){var n=t(),r=u({inst:{value:n,getSnapshot:t}}),i=r[0].inst,l=r[1];return s(function(){i.value=n,i.getSnapshot=t,a(i)&&l({inst:i})},[e,n,t]),o(function(){return a(i)&&l({inst:i}),e(function(){a(i)&&l({inst:i})})},[e]),c(n),n};t.useSyncExternalStore=void 0!==r.useSyncExternalStore?r.useSyncExternalStore:l},7812:function(e,t,n){"use strict";/**
+ * @license React
+ * use-sync-external-store-shim/with-selector.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */var r=n(9562),i=n(9669),u="function"==typeof Object.is?Object.is:function(e,t){return e===t&&(0!==e||1/e==1/t)||e!=e&&t!=t},o=i.useSyncExternalStore,s=r.useRef,c=r.useEffect,a=r.useMemo,l=r.useDebugValue;t.useSyncExternalStoreWithSelector=function(e,t,n,r,i){var f=s(null);if(null===f.current){var d={hasValue:!1,value:null};f.current=d}else d=f.current;var y=o(e,(f=a(function(){function e(e){if(!c){if(c=!0,o=e,e=r(e),void 0!==i&&d.hasValue){var t=d.value;if(i(t,e))return s=t}return s=e}if(t=s,u(o,e))return t;var n=r(e);return void 0!==i&&i(t,n)?t:(o=e,s=n)}var o,s,c=!1,a=void 0===n?null:n;return[function(){return e(t())},null===a?void 0:function(){return e(a())}]},[t,n,r,i]))[0],f[1]);return c(function(){d.hasValue=!0,d.value=y},[y]),l(y),y}},9669:function(e,t,n){"use strict";e.exports=n(3358)},7906:function(e,t,n){"use strict";e.exports=n(7812)},7877:function(e,t,n){"use strict";t.Z=function(){for(var e,t,n=0,r="",i=arguments.length;n<i;n++)(e=arguments[n])&&(t=function e(t){var n,r,i="";if("string"==typeof t||"number"==typeof t)i+=t;else if("object"==typeof t){if(Array.isArray(t)){var u=t.length;for(n=0;n<u;n++)t[n]&&(r=e(t[n]))&&(i&&(i+=" "),i+=r)}else for(r in t)t[r]&&(i&&(i+=" "),i+=r)}return i}(e))&&(r&&(r+=" "),r+=t);return r}},2123:function(e,t,n){"use strict";n.d(t,{Ue:function(){return d}});let r=e=>{let t;let n=new Set,r=(e,r)=>{let i="function"==typeof e?e(t):e;if(!Object.is(i,t)){let e=t;t=(null!=r?r:"object"!=typeof i||null===i)?i:Object.assign({},t,i),n.forEach(n=>n(t,e))}},i=()=>t,u={setState:r,getState:i,getInitialState:()=>o,subscribe:e=>(n.add(e),()=>n.delete(e)),destroy:()=>{console.warn("[DEPRECATED] The `destroy` method will be unsupported in a future version. Instead use unsubscribe function returned by subscribe. Everything will be garbage-collected if store is garbage-collected."),n.clear()}},o=t=e(r,i,u);return u},i=e=>e?r(e):r;var u=n(9562),o=n(7906);let{useDebugValue:s}=u,{useSyncExternalStoreWithSelector:c}=o,a=!1,l=e=>e,f=e=>{"function"!=typeof e&&console.warn("[DEPRECATED] Passing a vanilla store will be unsupported in a future version. Instead use `import { useStore } from 'zustand'`.");let t="function"==typeof e?i(e):e,n=(e,n)=>(function(e,t=l,n){n&&!a&&(console.warn("[DEPRECATED] Use `createWithEqualityFn` instead of `create` or use `useStoreWithEqualityFn` instead of `useStore`. They can be imported from 'zustand/traditional'. https://github.com/pmndrs/zustand/discussions/1937"),a=!0);let r=c(e.subscribe,e.getState,e.getServerState||e.getInitialState,t,n);return s(r),r})(t,e,n);return Object.assign(n,t),n},d=e=>e?f(e):f}},function(e){e.O(0,[809,456,698,439,866,744],function(){return e(e.s=1148)}),_N_E=e.O()}]);
