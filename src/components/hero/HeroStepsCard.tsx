@@ -20,7 +20,7 @@ const steps: Step[] = [
     icon: Wallet, 
     title: 'Обери план', 
     text: 'Mini або Maxi - залежно від кількості книг', 
-    href: "#plans", 
+    href: "/subscribe", 
     color: 'yellow' 
   },
   { 

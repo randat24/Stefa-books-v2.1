@@ -3,6 +3,16 @@
 import { Mail, Phone, MapPin, Clock, MessageCircle } from 'lucide-react'
 
 export default function Contacts() {
+  // авто-префікс + маска для UA
+  const onPhoneInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let v = e.currentTarget.value.replace(/\s+/g, "");
+    if (!v.startsWith("+380")) v = "+380";
+    // Разрешаем только + и цифры, ограничим до +380 + 9 цифр
+    v = "+" + v.replace(/[^\d]/g, "");
+    if (!v.startsWith("+380")) v = "+380";
+    v = v.slice(0, 13);
+    e.currentTarget.value = v;
+  };
   return (
 		<section className="bg-gradient-to-br from-slate-50 to-slate-100 py-20">
       <div className="container max-w-6xl mx-auto px-4">
@@ -41,7 +51,7 @@ export default function Contacts() {
 									</div>
 									<div>
 										<h4 className="font-semibold text-slate-900">Email</h4>
-										<p className="text-slate-600">hello@stefa-books.com.ua</p>
+										<p className="text-slate-600">info@stefa.books</p>
 										<p className="text-sm text-slate-500">Відповідаємо протягом 24 годин</p>
 									</div>
 								</div>
@@ -143,8 +153,11 @@ export default function Contacts() {
 									type="tel"
 									id="phone"
 									name="phone"
+									inputMode="tel"
+									onChange={onPhoneInput}
+									defaultValue="+380"
 									className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-									placeholder="+380 (99) 123-45-67"
+									placeholder="+380 XX XXX XX XX"
 								/>
             </div>
 

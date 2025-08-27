@@ -3,13 +3,11 @@ import { useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { BOOKS } from "@/lib/mock";
 import { BookCard } from "@/components/BookCard";
-import RentalForm from "@/components/RentalForm";
 import { useStore } from "@/lib/store";
 import type { Filters } from "@/lib/store";
 
 function BooksPageContent() {
   const params = useSearchParams();
-  const rentId = params.get("rent") || undefined;
   const urlCat = params.get("category") as string | null;
   const { filters, setQ, setCategory, toggleAvailable } = useStore();
 
@@ -50,14 +48,8 @@ function BooksPageContent() {
 
         <div className="text-sm text-[--muted]">Знайдено: <b>{list.length}</b></div>
 
-        <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-            {list.map(b => <BookCard key={b.id} book={b} />)}
-          </div>
-          <aside className="card p-5 h-max sticky top-24" id="rent-form">
-            <h2 className="text-xl font-semibold mb-3">Заявка на оренду</h2>
-            <RentalForm bookId={rentId} />
-          </aside>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {list.map(b => <BookCard key={b.id} book={b} />)}
         </div>
       </div>
     </>

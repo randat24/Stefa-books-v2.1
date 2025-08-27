@@ -148,7 +148,7 @@ export default function TermsPage() {
                     <p><span className="font-medium">Email:</span> info@stefa.books</p>
                     <p><span className="font-medium">Телефон:</span> +38 (050) 123-45-67</p>
                     <p><span className="font-medium">Адреса:</span> м. Миколаїв, вул. Маріупольська 13/2, Україна</p>
-                    <p><span className="font-medium">ФОП:</span> Власенко Стефанія Валентинівна</p>
+                    <p><span className="font-medium">ФОП:</span> Федорова Анастасія Віталіївна</p>
                     <p><span className="font-medium">РНОКПП:</span> 1234567890</p>
                   </div>
                 </div>

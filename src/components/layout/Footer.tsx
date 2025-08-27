@@ -74,15 +74,6 @@ export function Footer() {
               </li>
               <li>
                 <a 
-                  href="/plans" 
-                  className="text-sm transition-colors hover:text-[var(--accent)]"
-                  style={{ color: 'var(--text-muted)' }}
-                >
-                  Тарифи та підписки
-                </a>
-              </li>
-              <li>
-                <a 
                   href="/subscribe" 
                   className="text-sm transition-colors hover:text-[var(--accent)]"
                   style={{ color: 'var(--text-muted)' }}

@@ -64,7 +64,7 @@ export default function Hero() {
 								</div>
 								<div className="flex items-center" style={{gap: 'var(--space-2)'}}>
 									<div className="size-2 rounded-full bg-yellow-500" />
-									Скасування будь-коли
+									Легктй обмін книг
 								</div>
 							</div>
 						</div>

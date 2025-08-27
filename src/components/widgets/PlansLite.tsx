@@ -7,12 +7,8 @@ type PlanKey = 'mini' | 'maxi';
 
 export default function PlansLite() {
   const setPlanAndGo = useCallback((plan: PlanKey) => {
-    const el = document.getElementById('form');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.location.href = '/subscribe#form';
-    }
+    // Переходим на страницу подписки с выбранным планом
+    window.location.href = `/subscribe?plan=${plan}`;
   }, []);
 
   return (
@@ -83,13 +79,13 @@ export default function PlansLite() {
           </div>
         </div>
 
-        {/* Link to all plans */}
+        {/* Link to subscription */}
         <div className="mt-8">
           <a 
-            href="/plans" 
+            href="/subscribe" 
             className="inline-flex items-center text-slate-600 hover:text-slate-900 transition-colors"
           >
-            Переглянути всі тарифи →
+            Оформити підписку →
           </a>
         </div>
       </div>

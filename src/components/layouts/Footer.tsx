@@ -8,17 +8,17 @@ export function Footer() {
         <div className="grid gap-8 lg:gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Про компанію */}
           <section className="space-y-4 md:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-slate-100 grid place-items-center">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-full bg-slate-100 grid place-items-center">
                 <Image 
                   src="/logo.svg" 
                   alt="Stefa.books logo" 
-                  width={28} 
-                  height={28}
+                  width={36} 
+                  height={36}
                   className="text-slate-700"
                 />
               </div>
-              <h3 className="text-xl font-bold" style={{ color: 'var(--ink)' }}>
+              <h3 className="text-2xl font-bold" style={{ color: 'var(--ink)' }}>
                 Stefa.books
               </h3>
             </div>
@@ -28,7 +28,7 @@ export function Footer() {
             </p>
             <div className="space-y-3 text-sm">
               <div className="space-y-1">
-                <p className="font-medium" style={{ color: 'var(--ink)' }}>ФОП Власенко Стефанія</p>
+                <p className="font-medium" style={{ color: 'var(--ink)' }}>Федорова Анастасія</p>
                 <p className="text-muted">РНОКПП: 1234567890</p>
               </div>
               <div className="inline-flex items-center gap-2 text-muted">
@@ -58,15 +58,6 @@ export function Footer() {
                   style={{ color: 'var(--text-muted)' }}
                 >
                   Каталог книг
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="/plans" 
-                  className="text-sm transition-colors hover:text-[var(--accent)]"
-                  style={{ color: 'var(--text-muted)' }}
-                >
-                  Тарифи та підписки
                 </a>
               </li>
               <li>

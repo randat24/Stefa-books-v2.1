@@ -78,7 +78,7 @@ export function Catalog({ books }: { books: Book[] }) {
         </div>
         
         {/* Категорії */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 max-w-4xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-3 mb-8 max-w-4xl mx-auto">
           {CATEGORIES.map((category, index) => {
             const IconComponent = [Sparkles, BookOpen, Castle, Wand2][index];
             
@@ -86,28 +86,20 @@ export function Catalog({ books }: { books: Book[] }) {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(selectedCategory === category ? '' : category)}
-                className={`group relative p-4 rounded-xl border transition-all duration-200 ${
+                className={`inline-flex items-center gap-2 px-4 py-3 rounded-full border transition-all duration-200 ${
                   selectedCategory === category
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-lg scale-105'
-                    : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:shadow-md hover:scale-[1.02]'
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-lg'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:shadow-md'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`transition-transform duration-200 ${
-                    selectedCategory === category ? '' : 'group-hover:scale-110'
-                  }`}>
-                    <IconComponent className={`w-6 h-6 ${
-                      selectedCategory === category ? 'text-white' : 'text-slate-600'
-                    }`} />
-                  </div>
-                  <div className="flex-1 text-left">
-                    <div className={`font-semibold text-sm ${
-                      selectedCategory === category ? 'text-white' : 'text-slate-900'
-                    }`}>
-                      {category}
-                    </div>
-                  </div>
-                </div>
+                <IconComponent className={`w-5 h-5 ${
+                  selectedCategory === category ? 'text-white' : 'text-slate-600'
+                }`} />
+                <span className={`font-medium text-sm whitespace-nowrap ${
+                  selectedCategory === category ? 'text-white' : 'text-slate-900'
+                }`}>
+                  {category}
+                </span>
               </button>
             );
           })}
@@ -116,13 +108,7 @@ export function Catalog({ books }: { books: Book[] }) {
 
       {/* Результати */}
       {items.length > 0 ? (
-        <div
-          className="
-            grid grid-cols-1 gap-8
-            sm:grid-cols-2
-            lg:grid-cols-3
-            xl:grid-cols-4
-          "
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
         >
           {items.map((b) => (
             <BookCard key={b.id} book={b} />

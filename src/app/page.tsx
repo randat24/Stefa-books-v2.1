@@ -10,6 +10,9 @@ import FAQ from "@/components/sections/FAQ";
 import FinalCTA from "@/components/sections/FinalCTA";
 import ContactLocation from "@/components/sections/ContactLocation";
 import { Catalog } from "@/components/sections/Catalog";
+import { BookRecommendations } from "@/components/sections/BookRecommendations";
+import { MonthlyBestsellers } from "@/components/sections/MonthlyBestsellers";
+import { RecentViews } from "@/components/sections/RecentViews";
 import { BOOKS } from "@/lib/mock";
 
 export default function HomePage() {
@@ -21,6 +24,9 @@ export default function HomePage() {
 			{/* Steps */}
 			<Steps />
 			
+			{/* Recent Views */}
+			<RecentViews maxItems={5} />
+
 			{/* Каталог книг */}
 			<Catalog books={BOOKS} />
 
@@ -29,6 +35,10 @@ export default function HomePage() {
 
 			{/* Categories */}
 			<Categories />
+
+
+			{/* Monthly Bestsellers */}
+			<MonthlyBestsellers />
 
 			{/* Subscribe Form */}
 			<SubscribeFormHome />

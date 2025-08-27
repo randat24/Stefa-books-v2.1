@@ -26,12 +26,9 @@ export function Header() {
           <Link href="/books" className="px-3 py-2 text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">
             Каталог
           </Link>
-          <Link href="/plans" className="px-3 py-2 text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">
-            Тарифи
-          </Link>
-          <a href="#subscribe" className="ml-2 px-4 py-2 text-base font-medium bg-yellow-500 text-slate-900 hover:bg-yellow-400 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2">
+          <Link href="/subscribe" className="ml-2 px-4 py-2 text-base font-medium bg-yellow-500 text-slate-900 hover:bg-yellow-400 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2">
             Підписка
-          </a>
+          </Link>
         </nav>
       </div>
     </header>

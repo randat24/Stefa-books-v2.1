@@ -3,22 +3,24 @@ import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Info } from "lucide-react"; 
+import { CheckCircle, Info, CreditCard, Building2 } from "lucide-react"; 
 
 type FormData = {
   name: string;
   phone: string;
-  handle?: string;
   email: string;
+  social?: string;
   plan: "mini" | "maxi";
   payment: "Онлайн оплата" | "Переказ на карту" | "Готівка при отриманні";
   note?: string;
   screenshot?: File;
+  privacyConsent: boolean;
 };
 
 function SubscribeFormHomeContent() {
   const [sent, setSent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'online' | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const searchParams = useSearchParams();
 
@@ -30,6 +32,7 @@ function SubscribeFormHomeContent() {
       plan: "mini",
       payment: "Онлайн оплата",
       phone: "+380",
+      privacyConsent: false,
     }
   });
 
@@ -123,7 +126,7 @@ function SubscribeFormHomeContent() {
       <section className="py-16 px-6" id="subscribe">
         <div className="mx-auto max-w-2xl">
           <div className="rounded-3xl bg-white border border-slate-200 shadow-xl p-8 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center">
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
             <h3 className="text-2xl font-bold text-slate-900 mb-2">Заявку надіслано!</h3>
@@ -142,7 +145,7 @@ function SubscribeFormHomeContent() {
                 asChild
                 className="bg-yellow-500 hover:bg-yellow-600 text-slate-900 border-0"
               >
-                <a href="/#plans">Обрати інший план</a>
+                <a href="/subscribe">Обрати інший план</a>
               </Button>
             </div>
           </div>
@@ -155,13 +158,13 @@ function SubscribeFormHomeContent() {
     <section className="py-16 px-6" id="subscribe">
       <div className="mx-auto max-w-2xl">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-4">
+          <h2 className="text-4xl font-semibold tracking-tight text-slate-900 mb-2">
             Оформити підписку
           </h2>
           <p className="text-lg text-slate-600">
             Заповніть форму і ми зв'яжемося з вами найближчим часом
           </p>
-          <div className="mt-4 inline-flex items-center gap-4 text-sm">
+          <div className="mt-4 inline-flex items-center gap-4 text-base">
             <span className="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700">
               Mini — 300 ₴/міс
             </span>
@@ -171,87 +174,102 @@ function SubscribeFormHomeContent() {
           </div>
         </div>
 
-        <div className="rounded-3xl bg-white border border-slate-200 shadow-xl p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Имя */}
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
-                Ім'я та прізвище *
-              </label>
-              <input
-                {...register("name")}
-                id="name"
-                type="text"
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-                placeholder="Іван Петренко"
-              />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-              )}
+        <div className="rounded-3xl bg-white border border-slate-200 shadow-xl p-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Основные поля в компактном виде */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="name" className="block text-base font-semibold text-slate-700 mb-2">
+                  Ім'я та прізвище *
+                </label>
+                <input
+                  {...register("name")}
+                  id="name"
+                  type="text"
+                  className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                  placeholder="Іван Петренко"
+                />
+                {errors.name && (
+                  <p className="mt-1 text-base text-red-600">{errors.name.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-base font-semibold text-slate-700 mb-2">
+                  Телефон *
+                </label>
+                <input
+                  {...register("phone")}
+                  id="phone"
+                  type="tel"
+                  inputMode="tel"
+                  onChange={onPhoneInput}
+                  onBlur={() => trigger("phone")}
+                  className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                  placeholder="+380 XX XXX XX XX"
+                />
+                {errors.phone && (
+                  <p className="mt-1 text-base text-red-600">{errors.phone.message}</p>
+                )}
+              </div>
             </div>
 
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                Email *
-              </label>
-              <input
-                {...register("email")}
-                id="email"
-                type="email"
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-                placeholder="you@email.com"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-              )}
-            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="email" className="block text-base font-semibold text-slate-700 mb-2">
+                  Email *
+                </label>
+                <input
+                  {...register("email")}
+                  id="email"
+                  type="email"
+                  className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                  placeholder="you@email.com"
+                />
+                {errors.email && (
+                  <p className="mt-1 text-base text-red-600">{errors.email.message}</p>
+                )}
+              </div>
 
-            {/* Телефон */}
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">
-                Телефон *
-              </label>
-              <input
-                {...register("phone")}
-                id="phone"
-                type="tel"
-                inputMode="tel"
-                onChange={onPhoneInput}
-                onBlur={() => trigger("phone")}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-                placeholder="+380 XX XXX XX XX"
-              />
-              {errors.phone && (
-                <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
-              )}
+              <div>
+                <label htmlFor="social" className="block text-base font-semibold text-slate-700 mb-2">
+                  Телеграм/Інстаграм
+                </label>
+                <input
+                  {...register("social")}
+                  id="social"
+                  type="text"
+                  className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                  placeholder="@username або t.me/username"
+                />
+              </div>
             </div>
 
             {/* План подписки */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-4">
+              <label className="block text-base font-semibold text-slate-700 mb-2">
                 План підписки *
               </label>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div
-                  className={`relative rounded-xl border-2 p-4 cursor-pointer transition-all ${
+                  className={`relative rounded-lg border-2 p-3 cursor-pointer transition-all ${
                     watch("plan") === 'mini'
                       ? 'border-green-500 bg-green-50'
                       : 'border-slate-200 hover:border-slate-300'
                   }`}
                   onClick={() => setValue('plan', 'mini')}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                       watch("plan") === 'mini' ? 'border-green-500 bg-green-500' : 'border-slate-300'
                     }`}>
-                      {watch("plan") === 'mini' && <div className="w-2 h-2 bg-white rounded-full" />}
+                      {watch("plan") === 'mini' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                     </div>
                     <div>
-                      <p className={`font-semibold ${watch("plan") === 'mini' ? 'text-green-900' : 'text-slate-700'}`}>
+                      <p className={`font-semibold text-base ${watch("plan") === 'mini' ? 'text-green-900' : 'text-slate-700'}`}>
                         Mini
                       </p>
-                      <p className={`text-sm ${watch("plan") === 'mini' ? 'text-green-700' : 'text-slate-500'}`}>
+                      <p className={`text-xs ${watch("plan") === 'mini' ? 'text-green-700' : 'text-slate-500'}`}>
                         300 ₴/міс
                       </p>
                     </div>
@@ -259,24 +277,24 @@ function SubscribeFormHomeContent() {
                 </div>
 
                 <div
-                  className={`relative rounded-xl border-2 p-4 cursor-pointer transition-all ${
+                  className={`relative rounded-lg border-2 p-3 cursor-pointer transition-all ${
                     watch("plan") === 'maxi'
                       ? 'border-yellow-500 bg-yellow-50'
                       : 'border-slate-200 hover:border-slate-300'
                   }`}
                   onClick={() => setValue('plan', 'maxi')}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                       watch("plan") === 'maxi' ? 'border-yellow-500 bg-yellow-500' : 'border-slate-300'
                     }`}>
-                      {watch("plan") === 'maxi' && <div className="w-2 h-2 bg-white rounded-full" />}
+                      {watch("plan") === 'maxi' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                     </div>
                     <div>
-                      <p className={`font-semibold ${watch("plan") === 'maxi' ? 'text-yellow-900' : 'text-slate-700'}`}>
+                      <p className={`font-semibold text-base ${watch("plan") === 'maxi' ? 'text-yellow-900' : 'text-slate-700'}`}>
                         Maxi
                       </p>
-                      <p className={`text-sm ${watch("plan") === 'maxi' ? 'text-yellow-700' : 'text-slate-500'}`}>
+                      <p className={`text-xs ${watch("plan") === 'maxi' ? 'text-yellow-700' : 'text-slate-500'}`}>
                         500 ₴/міс
                       </p>
                     </div>
@@ -288,27 +306,78 @@ function SubscribeFormHomeContent() {
 
             {/* Способ оплаты */}
             <div>
-              <label htmlFor="payment" className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-base font-semibold text-slate-700 mb-2">
                 Спосіб оплати *
               </label>
-              <select
-                {...register("payment")}
-                id="payment"
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-              >
-                <option>Онлайн оплата</option>
-                <option>Переказ на карту</option>
-                <option>Готівка при отриманні</option>
-              </select>
-              {errors.payment && (
-                <p className="mt-1 text-sm text-red-600">{errors.payment.message}</p>
-              )}
+              <div className="grid md:grid-cols-2 gap-3">
+                <div
+                  className={`relative rounded-lg border-2 p-3 cursor-pointer transition-all ${
+                    paymentMethod === 'card'
+                      ? 'border-blue-500 bg-blue-50'
+                      : paymentMethod === null
+                      ? 'border-slate-200 hover:border-slate-300'
+                      : 'border-slate-200 opacity-60'
+                  }`}
+                  onClick={() => {
+                    setPaymentMethod('card');
+                    setValue('payment', 'Переказ на карту');
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      paymentMethod === 'card' ? 'border-blue-500 bg-blue-500' : 'border-slate-300'
+                    }`}>
+                      {paymentMethod === 'card' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                    </div>
+                    <Building2 className={`h-5 w-5 ${paymentMethod === 'card' ? 'text-blue-600' : 'text-slate-400'}`} />
+                    <div>
+                      <p className={`font-semibold text-base ${paymentMethod === 'card' ? 'text-blue-900' : 'text-slate-700'}`}>
+                        Переказ на карту Monobank
+                      </p>
+                      <p className={`text-xs ${paymentMethod === 'card' ? 'text-blue-700' : 'text-slate-500'}`}>
+                        Отримаєте реквізити для оплати
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className={`relative rounded-lg border-2 p-3 cursor-pointer transition-all ${
+                    paymentMethod === 'online'
+                      ? 'border-green-500 bg-green-50'
+                      : paymentMethod === null
+                      ? 'border-slate-200 hover:border-slate-300'
+                      : 'border-slate-200 opacity-60'
+                  }`}
+                  onClick={() => {
+                    setPaymentMethod('online');
+                    setValue('payment', 'Онлайн оплата');
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      paymentMethod === 'online' ? 'border-green-500 bg-green-500' : 'border-slate-300'
+                    }`}>
+                      {paymentMethod === 'online' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                    </div>
+                    <CreditCard className={`h-5 w-5 ${paymentMethod === 'online' ? 'text-green-600' : 'text-slate-400'}`} />
+                    <div>
+                      <p className={`font-semibold text-base ${paymentMethod === 'online' ? 'text-green-900' : 'text-slate-700'}`}>
+                        Онлайн оплата
+                      </p>
+                      <p className={`text-xs ${paymentMethod === 'online' ? 'text-green-700' : 'text-slate-500'}`}>
+                        Картою через інтернет
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Информация для перевода */}
-            {payment === "Переказ на карту" && (
+            {paymentMethod === 'card' && (
               <div className="rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-6">
-                <h3 className="text-lg font-semibold text-blue-900 mb-4">
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">
                   Інформація для переказу
                 </h3>
                 
@@ -316,20 +385,20 @@ function SubscribeFormHomeContent() {
                   {/* Номер карты */}
                   <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-blue-200">
                     <div>
-                      <p className="text-sm font-medium text-slate-600 mb-1">Номер карти:</p>
+                      <p className="text-base font-semibold text-slate-600 mb-1">Номер карти:</p>
                       <p className="text-xl font-bold text-blue-600 tracking-wider">4441 1144 4444 4444</p>
                     </div>
                   </div>
 
                   {/* Получатель */}
                   <div className="p-4 bg-white rounded-xl border border-blue-200">
-                    <p className="text-sm font-medium text-slate-600 mb-1">Отримувач:</p>
+                    <p className="text-base font-semibold text-slate-600 mb-1">Отримувач:</p>
                     <p className="text-lg font-semibold text-slate-900">СТЕФА КНИГИ</p>
                   </div>
 
                   {/* Банк */}
                   <div className="p-4 bg-white rounded-xl border border-blue-200">
-                    <p className="text-sm font-medium text-slate-600 mb-1">Банк:</p>
+                    <p className="text-base font-semibold text-slate-600 mb-1">Банк:</p>
                     <p className="text-lg font-semibold text-slate-900">Монобанк</p>
                   </div>
                 </div>
@@ -338,7 +407,7 @@ function SubscribeFormHomeContent() {
                 <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
                   <div className="flex items-start gap-2">
                     <Info className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-yellow-800">
+                    <div className="text-base text-yellow-800">
                       <p className="font-semibold mb-2">Важливо:</p>
                       <ul className="space-y-1 list-disc list-inside">
                         <li>Зробіть переказ на вказану карту</li>
@@ -352,48 +421,66 @@ function SubscribeFormHomeContent() {
             )}
 
             {/* Скриншот для перевода на карту */}
-            {payment === "Переказ на карту" && (
+            {paymentMethod === 'card' && (
               <div>
-                <label htmlFor="screenshot" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="screenshot" className="block text-base font-semibold text-slate-700 mb-2">
                   Скріншот оплати *
                 </label>
                 <input
                   {...register("screenshot", {
-                    required: payment === "Переказ на карту" ? "Скріншот оплати обов'язковий" : false
+                    required: paymentMethod === 'card' ? "Скріншот оплати обов'язковий" : false
                   })}
                   id="screenshot"
                   type="file"
                   accept="image/*"
-                  className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-base file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
                 />
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-base text-slate-500">
                   Завантажте скріншот підтвердження переказу (JPG, PNG до 10MB)
                 </p>
                 {errors.screenshot && (
-                  <p className="mt-1 text-sm text-red-600">{errors.screenshot.message}</p>
+                  <p className="mt-1 text-base text-red-600">{errors.screenshot.message}</p>
                 )}
               </div>
             )}
 
             {/* Комментарий */}
             <div>
-              <label htmlFor="note" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="note" className="block text-base font-semibold text-slate-700 mb-2">
                 Додаткова інформація
               </label>
               <textarea
                 {...register("note")}
                 id="note"
-                rows={4}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                rows={3}
+                className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent"
                 placeholder="Ваші побажання або питання..."
               />
+            </div>
+
+            {/* Согласие на обработку данных */}
+            <div className="flex items-start gap-3">
+              <input
+                {...register('privacyConsent', {
+                  required: 'Необхідно підтвердити згоду на обробку даних'
+                })}
+                id="privacyConsent"
+                type="checkbox"
+                className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+              />
+              <label htmlFor="privacyConsent" className="text-base text-slate-600">
+                Я погоджуюся з обробкою моїх персональних даних відповідно до політики конфіденційності
+                {errors.privacyConsent && (
+                  <span className="block text-xs text-red-600 mt-1">{errors.privacyConsent.message}</span>
+                )}
+              </label>
             </div>
 
             {/* Кнопка отправки */}
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-slate-400 text-slate-900 py-4 px-6 rounded-2xl text-lg font-semibold transition-colors"
+              className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-slate-400 text-slate-900 py-3 px-6 rounded-xl text-base font-semibold transition-colors"
             >
               {isSubmitting ? 'Відправляємо...' : 'Оформити підписку'}
             </Button>

@@ -243,7 +243,7 @@ function BookDialog({
               </header>
 
               {book.short && (
-                <p className="max-w-prose text-pretty text-sm sm:text-base leading-relaxed text-slate-700">
+                <p className="max-w-lg text-pretty text-sm sm:text-base leading-relaxed text-slate-700 mr-8">
                   {book.short}
                 </p>
               )}
@@ -294,14 +294,14 @@ export function BookCard({ book }: { book: Book }) {
     <>
       <article
         className={cn(
-          'group relative flex flex-col overflow-hidden rounded-3xl bg-white',
+          'group relative flex flex-col overflow-hidden rounded-xl bg-white',
           'transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 hover:border hover:border-slate-200'
         )}
       >
         {/* Обложка */}
         <button
           onClick={() => setOpen(true)}
-          className="relative aspect-[3/4] w-full overflow-hidden rounded-t-3xl"
+          className="relative aspect-[3/4] w-full overflow-hidden rounded-t-xl"
           aria-label={`Переглянути ${book.title}`}
         >
           <Image

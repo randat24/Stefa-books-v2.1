@@ -103,7 +103,7 @@ src/
 - **Business Model**: Monthly subscriptions (Mini 300₴, Maxi 500₴, Premium 2500₴/6mo)  
 - **Fulfillment**: Self-pickup only from partnering café at вул. Маріупольська 13/2, Миколаїв
 - **Payment Methods**: Monobank card transfer or online payment
-- **Legal Entity**: ФОП Власенко Стефанія Валентинівна (РНОКПП: 1234567890)
+- **Legal Entity**: Федорова Анастасія Віталіївна (РНОКПП: 1234567890)
 
 **Google Maps**: ContactLocation section includes embedded map for pickup address.
 
@@ -119,9 +119,30 @@ src/
 
 **Form Handling**: Complex subscription form with Ukrainian phone validation, file uploads, and conditional payment method display.
 
-**Cache Management & Style Issues**: 
+**Cache Management & Style Issues Prevention**: 
 
-When styles break or site behaves strangely, follow this escalating procedure:
+### Root Causes of Style Failures
+
+**1. Next.js Version Conflicts**
+- Problem: Global Next.js version conflicts with project version
+- Solution: Use project-local Next.js (avoid global installs)
+- Detection: Check `node_modules/.bin/next` version vs `package.json`
+
+**2. CSS Generation Pipeline Breaks**
+- Problem: Tailwind CSS not compiling or .next/static/css files missing
+- Detection: Check if `_next/static/css/app/layout.css` returns 404
+- Root cause: Next.js webpack can't generate CSS bundles
+
+**3. Environment Variable Issues**
+- Problem: Missing .env.local or environment variables causing build failures
+- Critical variables: CLOUDINARY_* for image uploads
+- Solution: Always have .env.local with required variables
+
+**4. Cache Corruption**
+- Problem: Stale .next, .swc, or node_modules cache
+- Symptoms: Styles work then suddenly stop, build manifest errors
+
+### Escalating Troubleshooting Procedure
 
 ```bash
 # Level 1: Quick cache clear
@@ -135,13 +156,39 @@ rm -rf .next .swc node_modules && pnpm install && pnpm dev
 
 # Level 4: Check if Tailwind compiles manually
 pnpm tailwindcss -i src/app/globals.css -o test-output.css
+
+# Level 5: Verify static files exist
+ls -la .next/static/css/app/
+curl -I http://localhost:3000/_next/static/css/app/layout.css
 ```
 
-**Common symptoms requiring cache clear:**
-- CSS not loading (404 errors for static/css files)
-- Styles suddenly disappear
-- Components not rendering properly
-- Build manifest conflicts
-- Hydration errors
+### Early Warning System
 
-**Prevention:** Always use consistent package manager (pnpm preferred) and clear cache when switching between build/dev modes.
+**Check these indicators before styles break:**
+
+```bash
+# 1. Verify CSS generation on each build
+test -f .next/static/css/app/layout.css && echo "✅ CSS generated" || echo "❌ CSS missing"
+
+# 2. Check Next.js version consistency  
+npx next --version && grep '"next"' package.json
+
+# 3. Monitor build manifest
+cat .next/app-build-manifest.json | grep -q "static/css" && echo "✅ CSS in manifest" || echo "❌ No CSS in manifest"
+```
+
+**Common Symptoms:**
+- CSS not loading (404 errors for static/css files)
+- Styles suddenly disappear during development
+- Components rendering without styling
+- Build manifest missing CSS entries
+- Hydration errors with styling mismatches
+- Server restarts breaking CSS pipeline
+
+**Prevention Rules:**
+1. Always use pnpm (consistent package manager)
+2. Never install Next.js globally if project has local version
+3. Clear cache when switching between build/dev modes
+4. Keep .env.local file with all required variables
+5. Verify CSS generation after major dependency changes
+6. Use Next.js 14.2.4 (stable version) instead of newer unstable versions
