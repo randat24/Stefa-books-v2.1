@@ -16,7 +16,7 @@ export default function PrivacyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Загальні положення</h2>
               <p className="text-slate-700 leading-relaxed mb-4">
-                Ця Політика конфіденційності (далі — "Політика") визначає порядок збору, використання, зберігання, обробки та захисту персональних даних користувачів веб-сайту stefa-books.com.ua (далі — "Сайт"), який належить та адмініструється ФОП/ТОВ (надалі — "Адміністратор", "Ми").
+                Ця Політика конфіденційності (далі — "Політика") визначає порядок збору, використання, зберігання, обробки та захисту персональних даних користувачів веб-сайту stefa-books.com.ua (далі — "Сайт"), який належить та адмініструється ФОП Власенко Стефанія Валентинівна, РНОКПП 1234567890, що здійснює діяльність за адресою: м. Миколаїв, вул. Маріупольська 13/2, Україна (надалі — "Адміністратор", "Ми").
               </p>
               <p className="text-slate-700 leading-relaxed mb-4">
                 Ми поважаємо ваше право на конфіденційність та дотримуємося вимог:
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
                   <ul className="list-disc list-inside text-slate-700 ml-4 space-y-1">
                     <li>Номер телефону</li>
                     <li>Адреса електронної пошти</li>
-                    <li>Поштова адреса доставки</li>
+                    <li>Адреса для самовивозу</li>
                   </ul>
                 </div>
 
@@ -126,7 +126,7 @@ export default function PrivacyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Розкриття інформації третім особам</h2>
               <p className="text-slate-700 leading-relaxed mb-4">
-                Ми не передаємо ваші дані третім особам, окрім випадків:
+                Ми можемо передавати ваші персональні дані третім особам лише у наступних випадках:
               </p>
               <ul className="list-disc list-inside text-slate-700 space-y-2">
                 <li>за вашою згодою;</li>
@@ -169,7 +169,7 @@ export default function PrivacyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Міжнародна передача даних</h2>
               <p className="text-slate-700 leading-relaxed">
-                Якщо ваші дані передаються за межі України (наприклад, на сервери у ЄС чи США), ми гарантуємо їх захист відповідно до міжнародних стандартів і укладаємо договори з постачальниками послуг (Data Processing Agreements).
+                У випадку передачі персональних даних за межі України (зокрема, при використанні сервісів Supabase, Vercel, Cloudinary), ми забезпечуємо адекватний рівень захисту таких даних шляхом укладання договорів про обробку персональних даних (Data Processing Agreements) та застосування технічних і організаційних заходів захисту.
               </p>
             </section>
 
@@ -193,6 +193,27 @@ export default function PrivacyPage() {
             </section>
 
             <section className="mb-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Процедура розгляду скарг</h2>
+              <div className="space-y-4 text-slate-700 leading-relaxed">
+                <p>У випадку виникнення скарг щодо обробки персональних даних ви можете:</p>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li>Звернутися до нас за контактами, вказаними нижче</li>
+                  <li>Подати скаргу до Уповноваженого Верховної Ради України з прав людини</li>
+                  <li>Звернутися до суду в порядку, встановленому законодавством України</li>
+                </ul>
+                <p>Ми розглядаємо всі скарги протягом 30 календарних днів з моменту їх отримання.</p>
+              </div>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Юрисдикція та вирішення спорів</h2>
+              <div className="space-y-4 text-slate-700 leading-relaxed">
+                <p>Ця Політика регулюється законодавством України. Всі спори, що можуть виникнути у зв'язку з обробкою персональних даних, вирішуються у порядку, встановленому чинним законодавством України.</p>
+                <p>Місцем вирішення спорів є компетентні суди України відповідно до правил підсудності.</p>
+              </div>
+            </section>
+
+            <section className="mb-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Контакти</h2>
               <p className="text-slate-700 leading-relaxed mb-4">
                 Якщо у вас виникли питання щодо захисту даних — звертайтеся:
@@ -201,9 +222,10 @@ export default function PrivacyPage() {
                 <div className="space-y-3">
                   <p className="font-semibold text-slate-900">Stefa.books</p>
                   <div className="space-y-2 text-slate-700">
-                    <p><span className="font-medium">Email:</span> support@stefa-books.com.ua</p>
-                    <p><span className="font-medium">Телефон:</span> +38 (063) 856-64-14</p>
-                    <p><span className="font-medium">Адреса:</span> м. Миколаїв, Україна</p>
+                    <p><span className="font-medium">Email:</span> info@stefa.books</p>
+                    <p><span className="font-medium">Телефон:</span> +38 (050) 123-45-67</p>
+                    <p><span className="font-medium">Адреса:</span> м. Миколаїв, вул. Маріупольська 13/2, Україна</p>
+                    <p><span className="font-medium">РНОКПП:</span> 1234567890</p>
                   </div>
                 </div>
               </div>

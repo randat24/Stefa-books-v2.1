@@ -26,7 +26,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Предмет Угоди</h2>
               <div className="space-y-4">
                 <p className="text-slate-700 leading-relaxed">
-                  <strong></strong> Stefa.books надає Користувачам можливість:
+                  Stefa.books надає Користувачам можливість:
                 </p>
                 <ul className="list-disc list-inside text-slate-700 ml-4 space-y-2">
                   <li>оформлювати підписку;</li>
@@ -35,7 +35,7 @@ export default function TermsPage() {
                   <li>переглядати каталог книг онлайн.</li>
                 </ul>
                 <p className="text-slate-700 leading-relaxed">
-                  <strong></strong> Книги надаються виключно у тимчасове користування (оренду) і залишаються власністю Stefa.books.
+                  Книги надаються виключно у тимчасове користування (оренду) і залишаються власністю Stefa.books.
                 </p>
               </div>
             </section>
@@ -46,7 +46,7 @@ export default function TermsPage() {
                 <p> Для доступу до книг необхідно оформити підписку (Mini, Maxi або інший тариф).</p>
                 <p> Оплата здійснюється шляхом переказу на банківську карту (ПриватБанк, Monobank) або іншими способами, доступними на Сайті.</p>
                 <p> Підписка активується після підтвердження оплати.</p>
-                <p> Повернення коштів можливе лише у випадках, передбачених законодавством України.</p>
+                <p> Повернення коштів здійснюється згідно з Законом України "Про захист прав споживачів" протягом 14 днів з моменту оплати за умови відсутності користування послугами.</p>
               </div>
             </section>
 
@@ -88,7 +88,7 @@ export default function TermsPage() {
               <div className="space-y-4 text-slate-700 leading-relaxed">
                 <p> Stefa.books не несе відповідальності за роботу сторонніх сервісів (кафе, поштових служб, платіжних систем).</p>
                 <p> Користувач несе відповідальність за збереження отриманих книг.</p>
-                <p> У разі втрати чи значного пошкодження книги користувач компенсує її вартість у розмірі, визначеному Адміністратором.</p>
+                <p> У разі втрати чи значного пошкодження книги користувач компенсує її вартість у розмірі ринкової вартості книги на момент пошкодження/втрати, але не більше 500 грн за одну книгу.</p>
               </div>
             </section>
 
@@ -109,14 +109,47 @@ export default function TermsPage() {
             </section>
 
             <section className="mb-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Форс-мажорні обставини</h2>
+              <div className="space-y-4 text-slate-700 leading-relaxed">
+                <p>Сторони звільняються від відповідальності за повне або часткове невиконання своїх зобов'язань, якщо це стало наслідком обставин непереборної сили (форс-мажорних обставин), що виникли після укладення цієї Угоди.</p>
+                <p>До форс-мажорних обставин належать: стихійні лиха, війна, терористичні акти, громадянські заворушення, дії влади, що унеможливлюють виконання зобов'язань за цим договором.</p>
+                <p>При настанні форс-мажорних обставин Сторона, яка не може виконати свої зобов'язання, зобов'язана негайно повідомити іншу Сторону.</p>
+              </div>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Процедура розгляду скарг</h2>
+              <div className="space-y-4 text-slate-700 leading-relaxed">
+                <p>У випадку виникнення скарг або претензій Користувач може:</p>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li>Звернутися до нас письмово за контактами, вказаними нижче</li>
+                  <li>Подати скаргу до органів захисту прав споживачів</li>
+                  <li>Звернутися до суду в порядку, встановленому законодавством</li>
+                </ul>
+                <p>Ми розглядаємо скарги протягом 10 робочих днів з моменту їх отримання та надаємо письмову відповідь.</p>
+              </div>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Юрисдикція та вирішення спорів</h2>
+              <div className="space-y-4 text-slate-700 leading-relaxed">
+                <p>Ці Умови регулюються та тлумачяться відповідно до законодавства України.</p>
+                <p>Усі спори та розбіжності, що можуть виникнути між Сторонами, вирішуються шляхом переговорів. У разі недосягнення згоди спори вирішуються у судовому порядку за місцем реєстрації Адміністратора відповідно до чинного законодавства України.</p>
+                <p>Недійсність окремих положень цих Умов не тягне за собою недійсність Умов у цілому.</p>
+              </div>
+            </section>
+
+            <section className="mb-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Контакти</h2>
               <div className="bg-slate-50 rounded-2xl p-6">
                 <div className="space-y-3">
                   <p className="font-semibold text-slate-900">Stefa.books</p>
                   <div className="space-y-2 text-slate-700">
-                    <p><span className="font-medium">Email:</span> support@stefa-books.com.ua</p>
-                    <p><span className="font-medium">Телефон:</span> +38 (063) 856-64-14</p>
-                    <p><span className="font-medium">Адреса:</span> м. Миколаїв, Україна</p>
+                    <p><span className="font-medium">Email:</span> info@stefa.books</p>
+                    <p><span className="font-medium">Телефон:</span> +38 (050) 123-45-67</p>
+                    <p><span className="font-medium">Адреса:</span> м. Миколаїв, вул. Маріупольська 13/2, Україна</p>
+                    <p><span className="font-medium">ФОП:</span> Власенко Стефанія Валентинівна</p>
+                    <p><span className="font-medium">РНОКПП:</span> 1234567890</p>
                   </div>
                 </div>
               </div>
