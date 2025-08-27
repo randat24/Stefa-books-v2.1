@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,7 @@ type SubscribeFormData = {
   message?: string;
 };
 
-export default function SubscribePage() {
+function SubscribeContent() {
   const searchParams = useSearchParams();
   const [selectedPlan, setSelectedPlan] = useState<{
     name: string;
@@ -362,5 +362,13 @@ export default function SubscribePage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function SubscribePage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <SubscribeContent />
+    </Suspense>
   );
 }

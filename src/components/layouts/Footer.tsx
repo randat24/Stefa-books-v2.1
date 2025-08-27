@@ -26,26 +26,14 @@ export function Footer() {
               Книжкова підписка у Миколаєві. Читай більше — плати менше. 
               Відкривай нові світи разом з нами!
             </p>
-            <div className="flex flex-col gap-2">
-              <a 
-                href="mailto:info@stefa.books" 
-                className="inline-flex items-center gap-2 text-sm hover:text-[var(--accent)] transition-colors"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                <Mail size={16} />
-                info@stefa.books
-              </a>
-              <a 
-                href="tel:+380501234567" 
-                className="inline-flex items-center gap-2 text-sm hover:text-[var(--accent)] transition-colors"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                <Phone size={16} />
-                +38 (050) 123-45-67
-              </a>
-              <div className="inline-flex items-center gap-2 text-sm text-muted">
-                <MapPin size={16} />
-                Миколаїв, Україна
+            <div className="space-y-3 text-sm">
+              <div className="space-y-1">
+                <p className="font-medium" style={{ color: 'var(--ink)' }}>ФОП Власенко Стефанія</p>
+                <p className="text-muted">РНОКПП: 1234567890</p>
+              </div>
+              <div className="inline-flex items-center gap-2 text-muted">
+                <MapPin size={14} />
+                вул. Маріупольська 13/2, Миколаїв
               </div>
             </div>
           </section>
@@ -65,7 +53,7 @@ export function Footer() {
               </li>
               <li>
                 <a 
-                  href="/catalog" 
+                  href="/books" 
                   className="text-sm transition-colors hover:text-[var(--accent)]"
                   style={{ color: 'var(--text-muted)' }}
                 >
@@ -98,39 +86,49 @@ export function Footer() {
             <h4 className="font-semibold" style={{ color: 'var(--ink)' }}>Послуги</h4>
             <ul className="space-y-2">
               <li className="inline-flex items-center gap-2 text-sm text-muted">
-                <Truck size={14} />
-                Доставка додому
+                <MapPin size={14} />
+                Самовивіз з кафе
               </li>
               <li className="inline-flex items-center gap-2 text-sm text-muted">
-                <MapPin size={14} />
-                Самовивіз
+                <BookOpen size={14} />
+                Оренда книг за підпискою
               </li>
               <li className="inline-flex items-center gap-2 text-sm text-muted">
                 <Users size={14} />
                 Корпоративні підписки
               </li>
-              <li className="inline-flex items-center gap-2 text-sm text-muted">
-                <BookOpen size={14} />
-                Консультації з вибору
-              </li>
             </ul>
           </nav>
 
-          {/* Підписка на новини */}
+          {/* Контакти */}
           <section className="space-y-4">
-            <h4 className="font-semibold" style={{ color: 'var(--ink)' }}>Новини</h4>
-            <p className="text-sm text-muted">
-              Підпишіться на розсилку, щоб дізнаватися про нові книги першими
-            </p>
-            <div className="space-y-2">
-              <input 
-                type="email" 
-                placeholder="Ваш email"
-                className="input w-full text-sm h-10 px-3"
-              />
-              <button className="inline-flex items-center justify-center rounded-full font-semibold w-full h-10 px-4 text-sm bg-yellow-500 text-slate-900 hover:bg-yellow-400 transition-colors shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2">
-                Підписатися
-              </button>
+            <h4 className="font-semibold" style={{ color: 'var(--ink)' }}>Контакти</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-muted">
+                Адреса кафе:
+              </p>
+              <div className="text-sm space-y-1">
+                <a 
+                  href="https://maps.google.com/?q=вул. Маріупольська 13/2, Миколаїв, Україна" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block hover:text-[var(--accent)] transition-colors"
+                >
+                  <p className="font-medium" style={{ color: 'var(--ink)' }}>вул. Маріупольська 13/2</p>
+                  <p className="text-muted">Миколаїв, Україна</p>
+                </a>
+              </div>
+              <div className="space-y-2 text-sm">
+                <p className="text-muted">Зв'язок з нами:</p>
+                <div className="flex items-center gap-2">
+                  <Mail size={14} />
+                  <a href="mailto:info@stefa.books" className="hover:text-[var(--accent)] transition-colors">info@stefa.books</a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone size={14} />
+                  <a href="tel:+380501234567" className="hover:text-[var(--accent)] transition-colors">+38 (050) 123-45-67</a>
+                </div>
+              </div>
             </div>
           </section>
         </div>

@@ -19,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Tech Stack
 - **Next.js 14** with App Router (TypeScript)
 - **React 18** with client-side state management
-- **Tailwind CSS** with fluid typography and modern design system
+- **Tailwind CSS** with custom design system and CSS variables
 - **Zustand** for lightweight state management
 - **React Hook Form + Zod** for form validation
 - **React Query** for data fetching and caching
@@ -35,13 +35,17 @@ src/
 │   ├── layout.tsx       # Root layout with Header/Footer
 │   ├── page.tsx         # Homepage with section composition
 │   ├── books/           # Book catalog with filters
-│   └── plans/           # Subscription plans
+│   ├── plans/           # Subscription plans
+│   ├── subscribe/       # Subscription form page
+│   ├── privacy/         # Privacy Policy (Ukrainian legal compliance)
+│   └── terms/           # Terms of Use (Ukrainian law)
 ├── components/          # React components
 │   ├── ui/              # Reusable UI components (Button, Badge)
 │   ├── sections/        # Page sections (FAQ, ContactLocation, SocialProof)
 │   ├── hero/            # Hero section with steps card
 │   ├── layouts/         # Header and navigation
-│   └── subscribe/       # Subscription forms
+│   ├── subscribe/       # Subscription forms
+│   └── widgets/         # PlansLite component
 ├── lib/                 # Core utilities and data
 │   ├── types.ts         # TypeScript definitions
 │   ├── mock.ts          # Book data with real Ukrainian children's books
@@ -49,37 +53,19 @@ src/
 ```
 
 ### Design System and Styling
+**CSS Variables Architecture**: The project uses a comprehensive CSS variable system defined in `globals.css`:
+- Semantic color tokens (`--brand`, `--accent`, `--text-muted`)
+- Consistent spacing and radius variables
+- Shadow system for elevation
 
-**Fluid Typography System**: Modern clamp()-based typography that scales automatically:
-- Font scale: `--font-size-xs` through `--font-size-6xl` using `clamp(min, preferred, max)`
-- Example: `--font-size-base: clamp(1rem, 0.9rem + 0.3vw, 1.125rem)` (16-18px)
-- All sizes scale naturally across viewport widths without media queries
+**Yellow Accent Color**: Primary accent is yellow (`yellow-500`) used for:
+- CTA buttons (subscription, primary actions)
+- Important notifications and badges
+- Hover states and focus indicators
 
-**Design Token Architecture**: Comprehensive CSS variable system in `globals.css`:
-- **Typography**: Fluid font sizes, line heights, and letter spacing
-- **Spacing**: 8px-based scale (`--space-1` to `--space-32`) using rem units
-- **Colors**: Semantic tokens (`--brand`, `--accent`, `--text-muted`)
-- **Layout**: Section padding (`--section-padding`) with fluid scaling
-- **Content width**: Typography-optimized `--content-width: 72ch`
+**Button Consistency**: All buttons use `rounded-full` styling for visual unity.
 
-**Container Queries**: Components use container queries for true component-level responsiveness:
-- `.card-grid` and `.book-grid` adapt based on container width
-- `@container (min-width: 480px)` → 2 columns
-- `@container (min-width: 768px)` → 3 columns
-
-**Yellow Accent Color**: Primary accent (`yellow-500`) used for CTA buttons and focus states.
-
-**Typography Standards**:
-- Never use px values except for borders (1px) and shadows
-- All spacing uses CSS custom properties with rem/em units
-- Buttons use `padding: 0.75em 1.5em` to scale with font size
-- Icons sized in em units (`1.2em`) to scale with parent text
-
-**Utility Classes**: Pre-built components for consistency:
-- `.section`, `.container`, `.text-content` for layout
-- `.btn-primary`, `.btn-outline`, `.btn-ghost` for actions
-- `.card`, `.input` with built-in design tokens
-- `.p-fluid`, `.gap-fluid` for responsive spacing
+**Tailwind Configuration**: Extended with custom design tokens, typography system, and Tailwind plugins (@tailwindcss/typography, @tailwindcss/forms).
 
 ### Component Architecture Patterns
 
@@ -87,15 +73,9 @@ src/
 - Hero → Steps → Catalog → Plans → Categories → Subscribe → FAQ → SocialProof → ContactLocation → FinalCTA
 
 **State Management Strategy**:
-- **Global filters**: Zustand store (`src/lib/store.ts`) for search/filter state
-- **Favorites**: Separate Zustand store (`src/lib/favorites.ts`) with localStorage persistence
-- **Form state**: React Hook Form + Zod validation for complex forms
-- **Local UI state**: Component-level useState for interactions
-
-**Book Data Model** (`src/lib/types.ts`):
-- Core properties: `id`, `title`, `author`, `category`, `available`
-- Rich metadata: `status`, `badges`, `rating`, `price`
-- Ukrainian content structure with pricing in hryvnia (₴)
+- Global filters via Zustand (`src/lib/store.ts`)
+- Form state via React Hook Form + Zod validation
+- Local component state for UI interactions
 
 **Icon System**: Exclusively uses Lucide React for consistency (no mixed icon sources or emojis).
 
@@ -117,10 +97,19 @@ src/
 3. Fill subscription form → #subscribe  
 4. Pickup location → #pickup-location
 
-### External Integration Points
-**Google Maps**: ContactLocation section includes embedded map for pickup address (вул. Маріупольська 13/2, Миколаїв).
+### Business Context and External Integration Points
+**Ukrainian Book Rental Service**: Stefa.books is a subscription-based book rental service operating in Mykolaiv, Ukraine:
+- **Target Market**: Ukrainian families with children
+- **Business Model**: Monthly subscriptions (Mini 300₴, Maxi 500₴, Premium 2500₴/6mo)  
+- **Fulfillment**: Self-pickup only from partnering café at вул. Маріупольська 13/2, Миколаїв
+- **Payment Methods**: Monobank card transfer or online payment
+- **Legal Entity**: ФОП Власенко Стефанія Валентинівна (РНОКПП: 1234567890)
 
-**Image Optimization**: Next.js Image component configured for Unsplash remote patterns in `next.config.js`.
+**Google Maps**: ContactLocation section includes embedded map for pickup address.
+
+**Cloudinary Integration**: Used for screenshot uploads when users select "Переказ на карту" payment method.
+
+**Image Optimization**: Next.js Image component configured for local book images in `/public/images/books/`.
 
 ### Development Notes
 
@@ -130,15 +119,29 @@ src/
 
 **Form Handling**: Complex subscription form with Ukrainian phone validation, file uploads, and conditional payment method display.
 
-**Styling Guidelines**:
-- Use design tokens from CSS custom properties (`var(--space-4)`, `var(--font-size-lg)`)
-- Prefer utility classes (`.section`, `.btn-primary`) over custom CSS when available
-- Never use fixed px values for typography or spacing (use rem/em via design tokens)
-- Use container queries for component-level responsive design
-- Apply semantic HTML with proper accessibility attributes
+**Cache Management & Style Issues**: 
 
-**Component Organization**:
-- `/sections/` - Full-width page sections (Hero, FAQ, ContactLocation)
-- `/ui/` - Reusable UI primitives (Button, Badge, Input)
-- `/hero/` and `/subscribe/` - Feature-specific component groups
-- `/layouts/` - Header, Footer, and layout components
+When styles break or site behaves strangely, follow this escalating procedure:
+
+```bash
+# Level 1: Quick cache clear
+rm -rf .next && pnpm dev
+
+# Level 2: Full cache + dependencies reset  
+rm -rf .next node_modules/.cache && pnpm install && pnpm dev
+
+# Level 3: Nuclear option (CSS not generating)
+rm -rf .next .swc node_modules && pnpm install && pnpm dev
+
+# Level 4: Check if Tailwind compiles manually
+pnpm tailwindcss -i src/app/globals.css -o test-output.css
+```
+
+**Common symptoms requiring cache clear:**
+- CSS not loading (404 errors for static/css files)
+- Styles suddenly disappear
+- Components not rendering properly
+- Build manifest conflicts
+- Hydration errors
+
+**Prevention:** Always use consistent package manager (pnpm preferred) and clear cache when switching between build/dev modes.

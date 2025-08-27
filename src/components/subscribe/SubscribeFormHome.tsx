@@ -75,9 +75,9 @@ function SubscribeFormHomeContent() {
       let screenshotUrl = null;
       
       // Загрузка скриншота в Cloudinary если есть файл
-      if (data.screenshot && data.screenshot.length > 0) {
+      if (data.screenshot) {
         const formData = new FormData();
-        formData.append('file', data.screenshot[0]);
+        formData.append('file', data.screenshot);
         formData.append('upload_preset', 'stefa_books'); // TODO: создать upload preset в Cloudinary
         
         const cloudinaryResponse = await fetch(
