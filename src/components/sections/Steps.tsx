@@ -125,7 +125,7 @@ export default function Steps() {
                         <h3 className="text-2xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-slate-800">
                           {step.title}
                         </h3>
-                        <p className="text-slate-600 leading-relaxed mb-4">
+                        <p className="text-lg text-slate-600 leading-relaxed mb-4 max-w-lg">
                           {step.description}
                         </p>
                         

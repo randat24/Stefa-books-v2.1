@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
-import { BookOpen, Bookmark, Share2, X, Star, StarOff, Heart } from 'lucide-react';
+import { BookOpen, Bookmark, Share2, X, Star, Heart } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 type Book = {
@@ -22,11 +22,9 @@ type Book = {
 /** Рейтинг с одной звездочкой */
 function Rating({ value = 0, count = 0 }: { value: number; count?: number }) {
   return (
-    <div className="flex flex-col items-center gap-1" aria-label={`Рейтинг ${value} из 5`}>
-      <div className="inline-flex items-center gap-1">
-        <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" aria-hidden="true" />
-        <span className="font-medium text-base">{value.toFixed(1)}</span>
-      </div>
+    <div className="inline-flex items-center gap-1" aria-label={`Рейтинг ${value} из 5`}>
+      <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" aria-hidden="true" />
+      <span className="font-medium text-base">{value.toFixed(1)}</span>
       {count > 0 && (
         <span className="text-xs text-slate-500">({count} відгуків)</span>
       )}
@@ -148,6 +146,7 @@ function BookDialog({
                       {book.status}
                     </span>
                   )}
+                </div>
               </header>
 
               {book.short && (
