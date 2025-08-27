@@ -3,8 +3,8 @@ import { Clock, Mail, Instagram, Phone, ExternalLink } from "lucide-react";
 
 export default function ContactLocation() {
   return (
-    <section id="pickup-location" className="bg-gradient-to-b from-slate-50 to-white py-12 lg:py-16">
-      <div className="container">
+    <section id="pickup-location" className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-gradient-to-b from-slate-50 to-white py-12 lg:py-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 lg:mb-12">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
             Точка видачі книг

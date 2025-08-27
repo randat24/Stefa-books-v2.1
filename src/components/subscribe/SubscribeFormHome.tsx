@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Info } from "lucide-react";
+import { CheckCircle, Info } from "lucide-react"; 
 
 type FormData = {
   name: string;

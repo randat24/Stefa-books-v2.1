@@ -70,7 +70,7 @@ export function Catalog({ books }: { books: Book[] }) {
             </div>
             <a
               href="/books"
-              className="inline-flex items-center whitespace-nowrap rounded-2xl border border-slate-200 px-6 h-12 text-sm font-medium text-slate-900 hover:bg-slate-50 transition-colors"
+              className="inline-flex items-center whitespace-nowrap rounded-2xl bg-slate-900 px-6 h-12 text-sm font-medium text-white hover:bg-slate-800 transition-colors"
             >
               Увесь каталог →
             </a>
@@ -80,9 +80,6 @@ export function Catalog({ books }: { books: Book[] }) {
         {/* Категорії */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 max-w-4xl mx-auto">
           {CATEGORIES.map((category, index) => {
-            const categoryCount = category === 'Новинки' 
-              ? books.filter(book => book.badges?.includes('Нове') || book.status === 'Нове').length
-              : books.filter(book => book.category === category).length;
             const IconComponent = [Sparkles, BookOpen, Castle, Wand2][index];
             
             return (
@@ -108,11 +105,6 @@ export function Catalog({ books }: { books: Book[] }) {
                       selectedCategory === category ? 'text-white' : 'text-slate-900'
                     }`}>
                       {category}
-                    </div>
-                    <div className={`text-xs font-medium ${
-                      selectedCategory === category ? 'text-slate-300' : 'text-slate-500'
-                    }`}>
-                      {categoryCount}
                     </div>
                   </div>
                 </div>

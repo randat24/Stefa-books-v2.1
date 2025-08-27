@@ -2,6 +2,7 @@ import "./globals.css";
 import Providers from "@/components/Providers";
 import { Header } from "@/components/layouts/Header";
 import { Footer } from "@/components/layouts/Footer";
+import { BackToTop } from "@/components/ui/BackToTop";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,6 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           {/* Футер: секция на всю ширину, внутри — контейнер с колонками */}
           <Footer />
+          
+          {/* Кнопка вверх */}
+          <BackToTop />
         </Providers>
       </body>
     </html>

@@ -8,11 +8,11 @@ export default function PlansPage() {
 			period: 'грн/міс',
 			description: 'Береть 1 книгу за раз, змінюйте коли забажаєте.',
 			icon: BookOpen,
-			bgColor: 'bg-green-50',
-			borderColor: 'border-green-200',
-			iconColor: 'text-green-600',
-			priceColor: 'text-green-600',
-			buttonColor: 'bg-green-600 hover:bg-green-700',
+			bgColor: 'bg-white',
+			borderColor: 'border-slate-200',
+			iconColor: 'text-slate-600',
+			priceColor: 'text-slate-900',
+			buttonColor: 'bg-slate-900 hover:bg-slate-800',
 			features: [
 				'1 книга за раз',
 				'Самовивіз з кафе',
@@ -30,7 +30,7 @@ export default function PlansPage() {
 			borderColor: 'border-yellow-200',
 			iconColor: 'text-yellow-600',
 			priceColor: 'text-yellow-600',
-			buttonColor: 'bg-yellow-600 hover:bg-yellow-700',
+			buttonColor: 'bg-yellow-500 hover:bg-yellow-600',
 			popular: true,
 			features: [
 				'2 книги за раз',
@@ -45,11 +45,11 @@ export default function PlansPage() {
 			period: 'грн/пів року',
 			description: 'Вигідний план на 6 місяців: 2 книги за раз.',
 			icon: Crown,
-			bgColor: 'bg-purple-50',
-			borderColor: 'border-purple-200',
-			iconColor: 'text-purple-600',
-			priceColor: 'text-purple-600',
-			buttonColor: 'bg-purple-600 hover:bg-purple-700',
+			bgColor: 'bg-white',
+			borderColor: 'border-slate-200',
+			iconColor: 'text-slate-600',
+			priceColor: 'text-slate-900',
+			buttonColor: 'bg-slate-900 hover:bg-slate-800',
 			features: [
 				'2 книги за раз',
 				'Самовивіз з кафе',
@@ -62,7 +62,7 @@ export default function PlansPage() {
 	];
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 to-white py-12">
+		<div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen min-h-screen bg-gradient-to-br from-slate-50 to-white py-12">
 			<div className="container mx-auto px-6">
 				{/* Заголовок */}
 				<div className="text-center mb-16">
@@ -122,9 +122,8 @@ export default function PlansPage() {
 								{/* Кнопка */}
 								<a
 									href={`/subscribe?plan=${plan.name.toLowerCase()}&price=${plan.price}&period=${encodeURIComponent(plan.period)}`}
-									className={`w-full py-4 rounded-2xl text-white font-semibold transition-colors ${plan.buttonColor} flex items-center justify-center gap-2 mt-auto`}
+									className={`w-full py-4 rounded-2xl text-white font-semibold transition-colors ${plan.buttonColor} flex items-center justify-center mt-auto`}
 								>
-									<Heart className="h-4 w-4" />
 									Обрати {plan.name}
 								</a>
 							</div>

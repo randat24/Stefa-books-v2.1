@@ -27,7 +27,7 @@ export default function PlansLite() {
 
         <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
           {/* Mini */}
-          <div className="relative rounded-3xl border-2 border-green-200 bg-green-50 p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="relative rounded-3xl border-2 border-slate-200 bg-white p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             {/* Illustration area */}
             <div className="w-32 h-32 mx-auto mb-6">
               <Image
@@ -40,7 +40,7 @@ export default function PlansLite() {
             </div>
             
             <h4 className="text-3xl font-bold text-slate-900 mb-2">Mini</h4>
-            <p className="text-2xl font-bold text-green-600 mb-2">300 грн/міс.</p>
+            <p className="text-2xl font-bold text-slate-900 mb-2">300 грн/міс.</p>
             <p className="text-slate-600 mb-6 leading-relaxed">
               Береть 1 книгу за раз, повертайте,<br />
               та береть нову.
@@ -48,7 +48,7 @@ export default function PlansLite() {
 
             <button
               onClick={() => setPlanAndGo('mini')}
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-2xl font-semibold transition-colors"
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-6 rounded-2xl font-semibold transition-colors"
             >
               Обрати Mini
             </button>
