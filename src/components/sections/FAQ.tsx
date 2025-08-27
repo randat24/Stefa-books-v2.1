@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const QA = [
   {
@@ -25,7 +25,13 @@ const QA = [
 ];
 
 export default function FAQ() {
-  const [open, setOpen] = useState<number | null>(0);
+  const [open, setOpen] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+    setOpen(0); // Set first item open after mount
+  }, []);
   return (
     <section className="py-10 lg:py-16">
       <h2 className="h2 text-center mb-3">Питання та відповіді</h2>
@@ -44,7 +50,7 @@ export default function FAQ() {
                 {item.q}
                 <span className={`transition text-2xl ${active ? "rotate-45" : ""}`}>+</span>
               </button>
-              {active && (
+              {mounted && active && (
                 <div className="px-5 pb-5 text-muted">{item.a}</div>
               )}
             </div>

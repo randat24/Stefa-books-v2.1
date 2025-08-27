@@ -14,6 +14,7 @@ type SubscribeFormData = {
 
 export default function SubscribePage() {
   const [selectedPlan, setSelectedPlan] = useState<'mini' | 'maxi' | null>(null);
+  const [mounted, setMounted] = useState(false);
   
   const {
     register,
@@ -33,6 +34,7 @@ export default function SubscribePage() {
 
   // Читаем выбранный план из sessionStorage
   useEffect(() => {
+    setMounted(true);
     const saved = typeof window !== 'undefined' ? sessionStorage.getItem('selected_plan') : null;
     if (saved === 'mini' || saved === 'maxi') {
       setSelectedPlan(saved);
@@ -64,7 +66,7 @@ export default function SubscribePage() {
 
         <form id="form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Выбранный план */}
-          {selectedPlan && (
+          {mounted && selectedPlan && (
             <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
               <p className="text-sm text-slate-600 mb-2">Обраний план:</p>
               <p className="text-lg font-semibold text-slate-900 capitalize">

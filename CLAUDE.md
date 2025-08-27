@@ -19,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Tech Stack
 - **Next.js 14** with App Router (TypeScript)
 - **React 18** with client-side state management
-- **Tailwind CSS** with custom design system and CSS variables
+- **Tailwind CSS** with fluid typography and modern design system
 - **Zustand** for lightweight state management
 - **React Hook Form + Zod** for form validation
 - **React Query** for data fetching and caching
@@ -49,28 +49,53 @@ src/
 ```
 
 ### Design System and Styling
-**CSS Variables Architecture**: The project uses a comprehensive CSS variable system defined in `globals.css`:
-- Semantic color tokens (`--brand`, `--accent`, `--text-muted`)
-- Consistent spacing and radius variables
-- Shadow system for elevation
 
-**Yellow Accent Color**: Primary accent is yellow (`yellow-500`) used for:
-- CTA buttons (subscription, primary actions)
-- Important notifications and badges
-- Hover states and focus indicators
+**Fluid Typography System**: Modern clamp()-based typography that scales automatically:
+- Font scale: `--font-size-xs` through `--font-size-6xl` using `clamp(min, preferred, max)`
+- Example: `--font-size-base: clamp(1rem, 0.9rem + 0.3vw, 1.125rem)` (16-18px)
+- All sizes scale naturally across viewport widths without media queries
 
-**Button Consistency**: All buttons use `rounded-full` styling for visual unity.
+**Design Token Architecture**: Comprehensive CSS variable system in `globals.css`:
+- **Typography**: Fluid font sizes, line heights, and letter spacing
+- **Spacing**: 8px-based scale (`--space-1` to `--space-32`) using rem units
+- **Colors**: Semantic tokens (`--brand`, `--accent`, `--text-muted`)
+- **Layout**: Section padding (`--section-padding`) with fluid scaling
+- **Content width**: Typography-optimized `--content-width: 72ch`
 
-**Tailwind Configuration**: Extended with custom design tokens, typography system, and Tailwind plugins (@tailwindcss/typography, @tailwindcss/forms).
+**Container Queries**: Components use container queries for true component-level responsiveness:
+- `.card-grid` and `.book-grid` adapt based on container width
+- `@container (min-width: 480px)` → 2 columns
+- `@container (min-width: 768px)` → 3 columns
+
+**Yellow Accent Color**: Primary accent (`yellow-500`) used for CTA buttons and focus states.
+
+**Typography Standards**:
+- Never use px values except for borders (1px) and shadows
+- All spacing uses CSS custom properties with rem/em units
+- Buttons use `padding: 0.75em 1.5em` to scale with font size
+- Icons sized in em units (`1.2em`) to scale with parent text
+
+**Utility Classes**: Pre-built components for consistency:
+- `.section`, `.container`, `.text-content` for layout
+- `.btn-primary`, `.btn-outline`, `.btn-ghost` for actions
+- `.card`, `.input` with built-in design tokens
+- `.p-fluid`, `.gap-fluid` for responsive spacing
 
 ### Component Architecture Patterns
+
 **Page Composition**: Homepage (`src/app/page.tsx`) demonstrates section-based composition:
 - Hero → Steps → Catalog → Plans → Categories → Subscribe → FAQ → SocialProof → ContactLocation → FinalCTA
 
 **State Management Strategy**:
-- Global filters via Zustand (`src/lib/store.ts`)
-- Form state via React Hook Form + Zod validation
-- Local component state for UI interactions
+- **Global filters**: Zustand store (`src/lib/store.ts`) for search/filter state
+- **Favorites**: Separate Zustand store (`src/lib/favorites.ts`) with localStorage persistence
+- **Form state**: React Hook Form + Zod validation for complex forms
+- **Local UI state**: Component-level useState for interactions
+
+**Book Data Model** (`src/lib/types.ts`):
+- Core properties: `id`, `title`, `author`, `category`, `available`
+- Rich metadata: `status`, `badges`, `rating`, `price`
+- Ukrainian content structure with pricing in hryvnia (₴)
 
 **Icon System**: Exclusively uses Lucide React for consistency (no mixed icon sources or emojis).
 
@@ -98,8 +123,22 @@ src/
 **Image Optimization**: Next.js Image component configured for Unsplash remote patterns in `next.config.js`.
 
 ### Development Notes
+
 **Package Manager**: Project preferentially uses pnpm but supports npm fallback.
 
 **TypeScript**: Strict typing throughout with custom type definitions in `src/lib/types.ts`.
 
 **Form Handling**: Complex subscription form with Ukrainian phone validation, file uploads, and conditional payment method display.
+
+**Styling Guidelines**:
+- Use design tokens from CSS custom properties (`var(--space-4)`, `var(--font-size-lg)`)
+- Prefer utility classes (`.section`, `.btn-primary`) over custom CSS when available
+- Never use fixed px values for typography or spacing (use rem/em via design tokens)
+- Use container queries for component-level responsive design
+- Apply semantic HTML with proper accessibility attributes
+
+**Component Organization**:
+- `/sections/` - Full-width page sections (Hero, FAQ, ContactLocation)
+- `/ui/` - Reusable UI primitives (Button, Badge, Input)
+- `/hero/` and `/subscribe/` - Feature-specific component groups
+- `/layouts/` - Header, Footer, and layout components

@@ -54,7 +54,7 @@ export default function HeroStepsCard() {
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
   return (
-    <aside className="card relative mx-auto max-w-md">
+    <aside className="card relative mx-auto max-w-md md:ml-0 md:max-w-none lg:ml-auto lg:max-w-md xl:mr-[-1.2rem] 2xl:mr-[0.3rem]">
       {/* Заголовок с ценами */}
       <div className="text-center border-b border-slate-100 p-4 sm:p-5">
         <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-2">
