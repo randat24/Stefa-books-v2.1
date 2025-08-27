@@ -41,7 +41,7 @@ export function Footer() {
                 style={{ color: 'var(--text-muted)' }}
               >
                 <Phone size={16} />
-                +38 (050) 123-45-67
+                +38 (63) 856-64-14
               </a>
               <div className="inline-flex items-center gap-2 text-sm text-muted">
                 <MapPin size={16} />

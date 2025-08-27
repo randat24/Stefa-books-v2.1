@@ -35,12 +35,21 @@ src/
 │   ├── layout.tsx       # Root layout with Header/Footer
 │   ├── page.tsx         # Homepage with section composition
 │   ├── books/           # Book catalog with filters
+│   │   └── page.tsx     # Suspense-wrapped catalog with SimpleSearch
 │   ├── plans/           # Subscription plans
 │   ├── subscribe/       # Subscription form page
 │   ├── privacy/         # Privacy Policy (Ukrainian legal compliance)
 │   └── terms/           # Terms of Use (Ukrainian law)
 ├── components/          # React components
 │   ├── ui/              # Reusable UI components (Button, Badge)
+│   ├── search/          # Search system components
+│   │   ├── HeaderSearch.tsx    # Modal search overlay (light theme)
+│   │   ├── SimpleSearch.tsx    # Main catalog search with filters
+│   │   └── SearchProvider.tsx  # Context provider (legacy)
+│   ├── filters/         # Filter system
+│   │   └── FilterPopup.tsx     # Catalog-style filter popup
+│   ├── catalog/         # Catalog components
+│   │   └── CatalogPopup.tsx    # Category browser popup
 │   ├── sections/        # Page sections (FAQ, ContactLocation, SocialProof)
 │   ├── hero/            # Hero section with steps card
 │   ├── layouts/         # Header and navigation
@@ -49,6 +58,7 @@ src/
 ├── lib/                 # Core utilities and data
 │   ├── types.ts         # TypeScript definitions
 │   ├── mock.ts          # Book data with real Ukrainian children's books
+│   ├── store.ts         # Zustand state management (filters)
 │   └── cn.ts            # Tailwind class merging
 ```
 
@@ -73,9 +83,10 @@ src/
 - Hero → Steps → Catalog → Plans → Categories → Subscribe → FAQ → SocialProof → ContactLocation → FinalCTA
 
 **State Management Strategy**:
-- Global filters via Zustand (`src/lib/store.ts`)
+- Global filters via Zustand (`src/lib/store.ts`) - simple q/category/availability filters
 - Form state via React Hook Form + Zod validation
-- Local component state for UI interactions
+- Local component state for UI interactions (search modals, popups)
+- URL-based state for search queries and category filters
 
 **Icon System**: Exclusively uses Lucide React for consistency (no mixed icon sources or emojis).
 
@@ -88,8 +99,17 @@ src/
 **Language**: Ukrainian interface throughout (`lang="uk"` in layout).
 
 ### Navigation and User Flow
-**Header Navigation**: Includes quick access buttons:
-- Головна, Каталог, Тарифи, Підписка (with yellow accent)
+**Header Navigation**: Modern navigation with integrated search functionality:
+- Search button opens modal search overlay with live results
+- Головна (Home) → root page
+- Каталог (Catalog) → direct link to /books page  
+- Підписка (Subscription) with yellow accent CTA button
+
+**Search System Architecture**:
+- **HeaderSearch**: Modal overlay with live search, categorized results (Books, Categories, Authors)
+- **SimpleSearch**: Main catalog page search with URL parameter integration  
+- **FilterPopup**: Comprehensive category browser similar to catalog structure
+- All search components integrate via URL parameters for seamless navigation
 
 **Interactive Steps Card**: 4-step process linking to different page sections:
 1. Choose plan → #plans
@@ -118,6 +138,12 @@ src/
 **TypeScript**: Strict typing throughout with custom type definitions in `src/lib/types.ts`.
 
 **Form Handling**: Complex subscription form with Ukrainian phone validation, file uploads, and conditional payment method display.
+
+**Search System Implementation**: 
+- **HeaderSearch**: Light theme modal with live search, categorized results (Books/Categories/Authors)
+- **SimpleSearch**: Main catalog page component with URL parameter integration (`?search=` and `?category=`)
+- **FilterPopup**: Comprehensive category browser triggered by filter button, mirrors catalog structure
+- All components work together via URL state and navigation for seamless user experience
 
 **Cache Management & Style Issues Prevention**: 
 
