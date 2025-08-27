@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
-import { BookOpen, Bookmark, Share2, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { BookOpen, Bookmark, Share2, X, Star, StarOff, Heart } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 type Book = {
@@ -18,6 +18,275 @@ type Book = {
   rating?: { value: number; count: number };
   available?: boolean;
 };
+
+/** Рейтинг с одной звездочкой */
+function Rating({ value = 0, count = 0 }: { value: number; count?: number }) {
+  return (
+    <div className="flex flex-col items-center gap-1" aria-label={`Рейтинг ${value} из 5`}>
+      <div className="inline-flex items-center gap-1">
+        <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" aria-hidden="true" />
+        <span className="font-medium text-base">{value.toFixed(1)}</span>
+      </div>
+      {count > 0 && (
+        <span className="text-xs text-slate-500">({count} відгуків)</span>
+      )}
+    </div>
+  );
+}
+
+function BookDialog({
+  open,
+  onClose,
+  book
+}: {
+  open: boolean;
+  onClose: () => void;
+  book: Book;
+}) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  const statusMap = {
+    'В наявності': { label: 'В наявності', className: 'bg-green-100 text-green-700 ring-green-200' },
+    'Зарезервовано': { label: 'Зарезервовано', className: 'bg-amber-100 text-amber-700 ring-amber-200' },
+  };
+  
+  const statusInfo = book.available 
+    ? statusMap['В наявності'] 
+    : statusMap['Зарезервовано'];
+
+  const share = async () => {
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    const text = `${book.title} — ${book.author}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: book.title, text, url });
+      } else {
+        const tg = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+        window.open(tg, '_blank');
+      }
+    } catch {/* noop */}
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="book-dialog-title"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+
+      <div
+        ref={dialogRef}
+        className="relative z-10 mx-auto my-6 w-[min(95vw,900px)] rounded-2xl bg-white shadow-xl outline-none"
+        style={{ marginTop: 'max(1.5rem, calc(50vh - 300px))' }}
+      >
+        <button
+          onClick={onClose}
+          className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/5 hover:bg-black/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black z-10"
+          aria-label="Закрити діалог"
+        >
+          <X className="h-5 w-5" aria-hidden="true" />
+        </button>
+
+        <div className="grid gap-4 p-4 sm:p-6">
+          {/* Мобильная версия с обложкой сверху */}
+          <div className="flex flex-col gap-4 sm:hidden">
+            {/* Обложка для мобильных */}
+            <div className="relative mx-auto">
+              <div className="aspect-[3/4] w-48 overflow-hidden rounded-xl">
+                <Image
+                  src={book.cover}
+                  alt={`Обкладинка: ${book.title}`}
+                  fill
+                  className="object-cover"
+                  sizes="192px"
+                />
+              </div>
+              <span
+                className={`absolute left-3 top-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${statusInfo.className}`}
+                aria-live="polite"
+              >
+                <span className="inline-block size-1.5 rounded-full bg-current/70" />
+                {statusInfo.label}
+              </span>
+            </div>
+
+            {/* Рейтинг под обложкой для мобильных */}
+            {book.rating && (
+              <div className="flex justify-center">
+                <Rating value={book.rating.value} count={book.rating.count} />
+              </div>
+            )}
+
+            {/* Контент для мобильных */}
+            <div className="flex min-w-0 flex-col gap-4 text-center">
+              <header className="space-y-2">
+                <h2
+                  id="book-dialog-title"
+                  className="text-balance font-semibold tracking-tight text-xl"
+                >
+                  {book.title}
+                </h2>
+                <p className="text-base text-slate-600">{book.author}</p>
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                  <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700 ring-1 ring-slate-200">
+                    {book.category}
+                  </span>
+                  {book.status && (
+                    <span className="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-700 ring-1 ring-blue-200">
+                      {book.status}
+                    </span>
+                  )}
+              </header>
+
+              {book.short && (
+                <p className="text-pretty text-sm leading-relaxed text-slate-700 text-left">
+                  {book.short}
+                </p>
+              )}
+
+              {/* Метаданные */}
+              <div className="flex flex-wrap justify-center gap-2 text-xs text-slate-500">
+                <span>Код: {book.code}</span>
+                <span>•</span>
+                <span>{book.pages} сторінок</span>
+              </div>
+
+              {/* Действия для мобильных */}
+              <div className="flex flex-col gap-2 pt-2">
+                <button
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium text-slate-900 bg-yellow-500 hover:bg-yellow-400 transition-colors"
+                >
+                  <BookOpen className="h-4 w-4" aria-hidden="true" />
+                  Взяти в аренду
+                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 ring-1 ring-slate-200 transition-colors"
+                  >
+                    <Heart className="h-4 w-4" aria-hidden="true" />
+                    В обране
+                  </button>
+                  <button
+                    onClick={share}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 ring-1 ring-slate-200 transition-colors"
+                  >
+                    <Share2 className="h-4 w-4" aria-hidden="true" />
+                    Поділитися
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Планшетная и десктопная версия */}
+          <div className="hidden sm:grid sm:grid-cols-[280px_1fr] md:grid-cols-[320px_1fr] sm:gap-6">
+            {/* Обложка и рейтинг */}
+            <div className="flex flex-col gap-4">
+              <div className="relative">
+                <div className="aspect-[3/4] w-full overflow-hidden rounded-xl">
+                  <Image
+                    src={book.cover}
+                    alt={`Обкладинка: ${book.title}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 280px, 320px"
+                  />
+                </div>
+                <span
+                  className={`absolute left-3 top-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${statusInfo.className}`}
+                  aria-live="polite"
+                >
+                  <span className="inline-block size-1.5 rounded-full bg-current/70" />
+                  {statusInfo.label}
+                </span>
+              </div>
+              
+              {/* Рейтинг под обложкой */}
+              {book.rating && (
+                <div className="flex justify-center">
+                  <Rating value={book.rating.value} count={book.rating.count} />
+                </div>
+              )}
+            </div>
+
+            {/* Контент */}
+            <div className="flex min-w-0 flex-col gap-4">
+              <header className="space-y-2">
+                <h2
+                  id="book-dialog-title"
+                  className="text-balance font-semibold tracking-tight text-xl sm:text-2xl lg:text-3xl"
+                >
+                  {book.title}
+                </h2>
+                <p className="text-base sm:text-lg text-slate-600">{book.author}</p>
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700 ring-1 ring-slate-200">
+                    {book.category}
+                  </span>
+                  {book.status && (
+                    <span className="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-700 ring-1 ring-blue-200">
+                      {book.status}
+                    </span>
+                  )}
+                </div>
+              </header>
+
+              {book.short && (
+                <p className="max-w-prose text-pretty text-sm sm:text-base leading-relaxed text-slate-700">
+                  {book.short}
+                </p>
+              )}
+
+              {/* Метаданные */}
+              <div className="flex flex-wrap gap-2 text-xs text-slate-500">
+                <span>Код: {book.code}</span>
+                <span>•</span>
+                <span>{book.pages} сторінок</span>
+              </div>
+
+              {/* Действия */}
+              <div className="mt-auto flex flex-wrap gap-3 pt-4">
+                <button
+                  className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium text-slate-900 bg-yellow-500 hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 transition-colors"
+                >
+                  <BookOpen className="h-4 w-4" aria-hidden="true" />
+                  Взяти в аренду
+                </button>
+
+                <button
+                  className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 ring-1 ring-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors"
+                >
+                  <Heart className="h-4 w-4" aria-hidden="true" />
+                  В обране
+                </button>
+
+                <button
+                  onClick={share}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 ring-1 ring-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors"
+                >
+                  <Share2 className="h-4 w-4" aria-hidden="true" />
+                  Поділитися
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function BookCard({ book }: { book: Book }) {
   const [open, setOpen] = useState(false);
@@ -89,186 +358,7 @@ export function BookCard({ book }: { book: Book }) {
         </div>
       </article>
 
-      {/* Поп-ап с полным описом */}
-      {open && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 p-0 md:p-4"
-          onClick={() => setOpen(false)}
-        >
-          <button
-            onClick={() => setOpen(false)}
-            className="absolute right-4 top-4 md:relative md:right-auto md:top-auto rounded-full border border-white/20 bg-white/10 backdrop-blur-sm md:border-slate-200 md:bg-white p-2 md:p-2 shadow-sm z-10 text-white md:text-slate-700 mb-2 md:mb-0"
-            aria-label="Закрити"
-          >
-            <X className="h-4 w-4" />
-          </button>
-          <div
-            className="relative w-full max-w-full md:max-w-2xl lg:max-w-4xl max-h-[100vh] md:max-h-[95vh] overflow-y-auto rounded-none md:rounded-3xl bg-white shadow-xl mx-0 md:mx-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-
-            {/* Мобильный и планшетный вид - вертикальная раскладка */}
-            <div className="flex flex-col md:hidden">
-              {/* Заголовок */}
-              <div className="p-4 border-b border-slate-100">
-                <h3 className="text-lg font-semibold text-slate-900 leading-tight mb-1">{book.title}</h3>
-                <p className="text-sm text-slate-600">{book.author}</p>
-              </div>
-
-              {/* Основной контент */}
-              <div className="flex-1 p-4 space-y-4">
-                {/* Обложка и рейтинг в одной строке */}
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="relative w-20 h-28 overflow-hidden rounded-lg">
-                      <Image alt={book.title} src={book.cover} fill className="object-cover" />
-                    </div>
-                  </div>
-                  <div className="flex-1 space-y-3">
-                    {/* Рейтинг */}
-                    {book.rating && (
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1">
-                          <span className="text-yellow-500 text-base">★</span>
-                          <span className="font-medium text-base">{book.rating.value}</span>
-                        </div>
-                        <span className="text-xs text-slate-500">({book.rating.count} відгуків)</span>
-                      </div>
-                    )}
-                    
-                    {/* Метаданные */}
-                    <div className="space-y-1 text-xs text-slate-500">
-                      <div>Код: {book.code}</div>
-                      <div>{book.pages} сторінок • {book.category}</div>
-                      {book.status && <div className="font-medium">{book.status}</div>}
-                      <div className={cn(
-                        "font-medium",
-                        book.available ? "text-green-600" : "text-red-600"
-                      )}>
-                        {book.available ? "В наявності" : "Зарезервовано"}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Описание */}
-                {book.short && (
-                  <div>
-                    <p className="text-sm text-slate-600 leading-relaxed">{book.short}</p>
-                  </div>
-                )}
-
-                {/* Кнопки */}
-                <div className="space-y-2 pt-2">
-                  <a
-                    href="#subscribe"
-                    className="w-full inline-flex items-center justify-center rounded-xl bg-yellow-500 px-4 py-3 text-sm font-medium text-slate-900 hover:bg-yellow-400 transition-colors"
-                  >
-                    Оформити підписку
-                  </a>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
-                      aria-label="Додати в обране"
-                    >
-                      <Bookmark className="h-4 w-4 mr-2" />
-                      <span className="text-xs">Обране</span>
-                    </button>
-                    <button
-                      className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors"
-                      aria-label="Поділитися"
-                    >
-                      <Share2 className="h-4 w-4 mr-2" />
-                      <span className="text-xs">Поділитись</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Десктопный вид - горизонтальная раскладка */}
-            <div className="hidden md:grid md:grid-cols-[180px,1fr] lg:grid-cols-[220px,1fr] gap-6 lg:gap-8 p-6 lg:p-8">
-              <div className="flex flex-col gap-4">
-                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl">
-                  <Image alt={book.title} src={book.cover} fill className="object-cover" />
-                </div>
-                
-                {/* Рейтинг под обложкой */}
-                {book.rating && (
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <span className="text-yellow-500 text-lg">★</span>
-                        <span className="font-medium text-lg">{book.rating.value}</span>
-                      </div>
-                      <span className="text-sm text-slate-500">({book.rating.count} відгуків)</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <div>
-                  <h3 className="text-2xl lg:text-3xl font-semibold text-slate-900 mb-2 leading-tight">{book.title}</h3>
-                  <p className="text-lg lg:text-xl text-slate-700 mb-4">{book.author}</p>
-                </div>
-
-                {/* Описание книги */}
-                {book.short && (
-                  <div>
-                    <p className="text-slate-600 leading-relaxed text-base lg:text-lg">{book.short}</p>
-                  </div>
-                )}
-
-                {/* Метки */}
-                <div className="flex flex-wrap gap-2 text-xs text-slate-500">
-                  <span>Код: {book.code}</span>
-                  <span>•</span>
-                  <span>{book.pages} сторінок</span>
-                  <span>•</span>
-                  <span>{book.category}</span>
-                  {book.status && (
-                    <>
-                      <span>•</span>
-                      <span>{book.status}</span>
-                    </>
-                  )}
-                  <span>•</span>
-                  <span className={cn(
-                    book.available ? "text-green-600" : "text-red-600"
-                  )}>
-                    {book.available ? "В наявності" : "Зарезервовано"}
-                  </span>
-                </div>
-
-                {/* Действия */}
-                <div className="mt-6 flex gap-3">
-                  <a
-                    href="#subscribe"
-                    className="flex-1 inline-flex items-center justify-center rounded-2xl bg-yellow-500 px-6 py-3 text-sm font-medium text-slate-900 hover:bg-yellow-400 transition-colors"
-                  >
-                    Оформити підписку
-                  </a>
-                  <button
-                    className="rounded-2xl border border-slate-200 px-4 py-3 text-slate-700 hover:bg-slate-50 transition-colors"
-                    aria-label="Додати в обране"
-                  >
-                    <Bookmark className="h-4 w-4" />
-                  </button>
-                  <button
-                    className="rounded-2xl border border-slate-200 px-4 py-3 text-slate-700 hover:bg-slate-50 transition-colors"
-                    aria-label="Поділитися"
-                  >
-                    <Share2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <BookDialog open={open} onClose={() => setOpen(false)} book={book} />
     </>
   );
 }
