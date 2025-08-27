@@ -51,7 +51,7 @@ function BooksPageContent() {
         <div className="text-sm text-[--muted]">Знайдено: <b>{list.length}</b></div>
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
             {list.map(b => <BookCard key={b.id} book={b} />)}
           </div>
           <aside className="card p-5 h-max sticky top-24" id="rent-form">
