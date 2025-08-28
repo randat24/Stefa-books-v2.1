@@ -5,18 +5,12 @@ import { supabase } from '@/lib/supabase'
 // API ДЛЯ ПОЛУЧЕНИЯ ОДНОЙ КНИГИ ПО ID
 // ============================================================================
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
-
 export async function GET(
   request: NextRequest, 
-  { params }: RouteParams
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     
     if (!id) {
       return NextResponse.json(

@@ -31,6 +31,19 @@ export interface CategoriesResponse {
   error?: string
 }
 
+export interface CategoryStats {
+  name: string
+  total: number
+  available: number
+}
+
+export interface CategoriesStatsResponse {
+  success: boolean
+  data: CategoryStats[]
+  count: number
+  error?: string
+}
+
 // ============================================================================
 // УТИЛИТЫ ДЛЯ URL
 // ============================================================================
@@ -75,7 +88,6 @@ export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksRespon
 
     const endpoint = `/api/books?${params.toString()}`
     const url = buildApiUrl(endpoint)
-    console.log('🔍 Client: Fetching books from:', url)
 
     const response = await fetch(url, {
       method: 'GET',
@@ -94,12 +106,10 @@ export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksRespon
       throw new Error(result.error || 'Ошибка при получении книг')
     }
 
-    console.log(`✅ Client: Received ${result.count} books`)
     
     return result
 
   } catch (error) {
-    console.error('💥 Client: Error fetching books:', error)
     return {
       success: false,
       data: [],
@@ -192,6 +202,50 @@ export async function fetchCategories(): Promise<CategoriesResponse> {
 
   } catch (error) {
     console.error('💥 Client: Error fetching categories:', error)
+    return {
+      success: false,
+      data: [],
+      count: 0,
+      error: error instanceof Error ? error.message : 'Неизвестная ошибка'
+    }
+  }
+}
+
+// ============================================================================
+// ПОЛУЧЕНИЕ СТАТИСТИКИ ПО КАТЕГОРИЯМ
+// ============================================================================
+
+export async function fetchCategoriesStats(): Promise<CategoriesStatsResponse> {
+  try {
+    console.log('📊 Client: Fetching categories with stats')
+
+    const endpoint = '/api/books'
+    const url = buildApiUrl(endpoint)
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ action: 'get_categories_stats' })
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+    
+    if (!result.success) {
+      throw new Error(result.error || 'Ошибка при получении статистики категорий')
+    }
+
+    console.log(`✅ Client: Received ${result.count} categories with stats`)
+    
+    return result
+
+  } catch (error) {
+    console.error('💥 Client: Error fetching categories stats:', error)
     return {
       success: false,
       data: [],

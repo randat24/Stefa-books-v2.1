@@ -82,10 +82,10 @@ function SubscribeFormHomeContent() {
       if (data.screenshot) {
         const formData = new FormData();
         formData.append('file', data.screenshot);
-        formData.append('upload_preset', 'stefa_books'); // TODO: создать upload preset в Cloudinary
+        formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!);
         
         const cloudinaryResponse = await fetch(
-          'https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload', // TODO: заменить на реальный cloud name
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
           {
             method: 'POST',
             body: formData,

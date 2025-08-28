@@ -9,10 +9,11 @@ import { BookViewTracker } from "@/components/BookViewTracker";
 import { Star, BookOpen, Calendar, Users, Award } from "lucide-react";
 import type { Metadata } from "next";
 
-type Params = { id: string };
+type Params = Promise<{ id: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const response = await fetchBook(params.id);
+  const { id } = await params;
+  const response = await fetchBook(id);
   if (!response.success || !response.data) return { title: "Книга не знайдена" };
   
   const book = response.data;
@@ -27,7 +28,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function BookPage({ params }: { params: Params }) {
-  const bookResponse = await fetchBook(params.id);
+  const { id } = await params;
+  const bookResponse = await fetchBook(id);
   if (!bookResponse.success || !bookResponse.data) return notFound();
 
   const book = bookResponse.data;

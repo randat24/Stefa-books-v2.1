@@ -5,8 +5,8 @@ import { ClientLayoutWrapper } from "@/components/layouts/ClientLayoutWrapper";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="uk">
-      <body className="min-h-screen flex flex-col bg-white text-slate-900">
+    <html lang="uk" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col bg-white text-slate-900" suppressHydrationWarning>
         <ErrorBoundary>
           <Providers>
             <ClientLayoutWrapper>{children}</ClientLayoutWrapper>

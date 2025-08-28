@@ -86,7 +86,16 @@ export async function POST(req: Request) {
     const publicId = `stefa-books-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
     // Завантажуємо через upload_stream
-    const result = await new Promise<any>((resolve, reject) => {
+    interface CloudinaryUploadResult {
+      secure_url: string;
+      public_id: string;
+      width: number;
+      height: number;
+      bytes: number;
+      format: string;
+    }
+
+    const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder,

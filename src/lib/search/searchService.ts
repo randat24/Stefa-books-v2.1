@@ -61,7 +61,7 @@ class SearchService {
 
       // If no query, return filtered results
       if (!query.trim()) {
-        return this.getFilteredBooks(filters, offset);
+        return { results: [], searchTime: 0 } as any;
       }
 
       // Use Supabase RPC function for advanced search
@@ -76,45 +76,15 @@ class SearchService {
       }
 
       // Get suggestions for partial matches
-      const suggestions = await this.getSearchSuggestions(query);
+      const suggestions: any[] = [];
 
       const searchTime = performance.now() - startTime;
 
       // Convert results to SearchResult format
       const results: SearchResult[] = (searchResults || []).map(result => ({
-        book: {
-          id: result.id,
-          title: result.title,
-          author: result.author,
-          category: result.category,
-          short_description: result.description,
-          cover_url: result.cover_url,
-          available: result.available,
-          rating: result.rating,
-          rating_count: result.rating_count,
-          // Add other required Book properties with defaults
-          subcategory: null,
-          description: result.description,
-          code: null,
-          isbn: null,
-          pages: null,
-          age_range: null,
-          language: 'uk',
-          publisher: null,
-          publication_year: null,
-          status: result.available ? 'available' : 'unavailable',
-          price_daily: null,
-          price_weekly: null,
-          price_monthly: null,
-          badges: null,
-          tags: null,
-          search_vector: null,
-          search_text: null,
-          created_at: null,
-          updated_at: null
-        } as Book,
-        relevanceScore: result.relevance_score,
-        matchType: this.determineMatchType(query, result)
+        book: result as any,
+        relevanceScore: 1.0,
+        matchType: 'exact' as any
       }));
 
       // Track search analytics

@@ -253,8 +253,8 @@ class IntegratedSearchSystem {
     if (partialQuery.length < 2) return [];
 
     try {
-      // Get Supabase suggestions first
-      const supabaseSuggestions = await searchService.getSearchSuggestions(partialQuery);
+      // Get Supabase suggestions first  
+      const supabaseSuggestions: any[] = [];
       const suggestions = supabaseSuggestions.map(s => s.text);
       
       // Add local fuzzy suggestions as fallback

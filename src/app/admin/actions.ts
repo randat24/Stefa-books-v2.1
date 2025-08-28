@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { supabase } from "@/lib/supabase"
-import type { CreateBookForm } from "@/lib/types/admin"
+import type { CreateBookForm, BookRow } from "@/lib/types/admin"
 
 // ============================================================================
 // ВАЛІДАЦІЙНІ СХЕМИ
@@ -129,10 +129,10 @@ export async function updateBook(id: string, form: Partial<CreateBookForm>) {
         .in('status', ['active', 'overdue'])
       
       if (rentalsError) {
-        console.warn('Could not count active rentals:', rentalsError)
       } else {
         const activeRentals = rentals?.length || 0
-        updateData.qty_available = Math.max(0, updateData.qty_total - activeRentals)
+        const totalQty = updateData.qty_total ?? 1
+        updateData.qty_available = Math.max(0, totalQty - activeRentals)
         updateData.available = updateData.qty_available > 0
       }
     }

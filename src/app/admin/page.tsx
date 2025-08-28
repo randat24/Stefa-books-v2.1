@@ -29,20 +29,15 @@ export default function AdminPage() {
       setLoading(true)
       setError(null)
       
-      console.log('🚀 Admin page: Starting to load books from database...')
       
       const booksData = await getBooks()
-      console.log('✅ Loaded books:', booksData.length)
-      console.log('📚 Book IDs and titles:', booksData.map(b => `${b.id}: ${b.title}`))
       
       setBooks(booksData)
       
     } catch (err) {
-      console.error('💥 Failed to load admin data:', err)
       setError('Помилка завантаження даних. Спробуйте перезавантажити сторінку.')
     } finally {
       setLoading(false)
-      console.log('🏁 Loading finished!')
     }
   }
 

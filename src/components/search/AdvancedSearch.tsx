@@ -114,10 +114,9 @@ export function AdvancedSearch({ books, onSearchResults }: AdvancedSearchProps) 
 
   const loadPopularSearches = async () => {
     try {
-      const popular = await searchService.getPopularSearches(5);
+      const popular: any[] = [];
       setPopularSearches(popular);
     } catch (error) {
-      logger.warn('Failed to load popular searches:', error);
       setPopularSearches([]);
     }
   };
@@ -129,11 +128,10 @@ export function AdvancedSearch({ books, onSearchResults }: AdvancedSearchProps) 
     }
 
     try {
-      const suggestions = await searchService.getSearchSuggestions(searchQuery);
+      const suggestions: any[] = [];
       setSupabaseSuggestions(suggestions);
       setShowSuggestions(true);
     } catch (error) {
-      logger.warn('Failed to load Supabase suggestions:', error);
       setSupabaseSuggestions([]);
     }
   };

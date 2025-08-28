@@ -118,6 +118,53 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    if (action === 'get_categories_stats') {
+      console.log('📊 API: Fetching categories with stats')
+      
+      const { data: books, error } = await supabase
+        .from('books')
+        .select('category, available')
+
+      if (error) {
+        console.error('❌ Supabase error:', error)
+        return NextResponse.json(
+          { success: false, error: error.message },
+          { status: 500 }
+        )
+      }
+
+      // Подсчет книг по категориям
+      const categoryStats: Record<string, { total: number, available: number }> = {}
+      
+      books?.forEach(book => {
+        if (book.category) {
+          if (!categoryStats[book.category]) {
+            categoryStats[book.category] = { total: 0, available: 0 }
+          }
+          categoryStats[book.category].total++
+          if (book.available) {
+            categoryStats[book.category].available++
+          }
+        }
+      })
+
+      const categories = Object.entries(categoryStats)
+        .map(([name, stats]) => ({
+          name,
+          total: stats.total,
+          available: stats.available
+        }))
+        .sort((a, b) => b.total - a.total) // Сортировка по количеству книг
+
+      console.log(`✅ API: Found ${categories.length} categories with stats`)
+
+      return NextResponse.json({
+        success: true,
+        data: categories,
+        count: categories.length
+      })
+    }
+
     return NextResponse.json(
       { success: false, error: 'Неизвестное действие' },
       { status: 400 }
