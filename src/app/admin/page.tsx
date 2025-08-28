@@ -1,21 +1,24 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Building2, BookOpen, Users, CreditCard, TrendingUp, CheckCircle, FileText, Calendar, BarChart3 } from "lucide-react"
+import { Building2, BookOpen, Users, CreditCard, TrendingUp, CheckCircle, FileText, Calendar, BarChart3, RefreshCw } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/Badge"
+import { Button } from "@/components/ui/button"
 import { BooksTable } from "./components/BooksTable"
-import type { AdminDashboardData, BookRow } from "@/lib/types/admin"
+import { getBooks } from "./data"
+import type { BookRow } from "@/lib/types/admin"
 
 // ============================================================================
 // АДМІН-ПАНЕЛЬ STEFA.BOOKS
 // ============================================================================
 
 export default function AdminPage() {
-  const [data, setData] = useState<AdminDashboardData | null>(null)
+  const [books, setBooks] = useState<BookRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
 
   // ============================================================================
   // ЗАВАНТАЖЕННЯ ДАНИХ
@@ -26,16 +29,29 @@ export default function AdminPage() {
       setLoading(true)
       setError(null)
       
-      // Загружаем реальные данные из Supabase
-      const { getAdminDashboardData } = await import('./data')
-      const dashboardData = await getAdminDashboardData()
+      console.log('🚀 Admin page: Starting to load books from database...')
       
-      setData(dashboardData)
+      const booksData = await getBooks()
+      console.log('✅ Loaded books:', booksData.length)
+      console.log('📚 Book IDs and titles:', booksData.map(b => `${b.id}: ${b.title}`))
+      
+      setBooks(booksData)
+      
     } catch (err) {
-      console.error('Failed to load admin data:', err)
-      setError('Помилка завантаження даних. Перевірте підключення до Supabase.')
+      console.error('💥 Failed to load admin data:', err)
+      setError('Помилка завантаження даних. Спробуйте перезавантажити сторінку.')
     } finally {
       setLoading(false)
+      console.log('🏁 Loading finished!')
+    }
+  }
+
+  async function handleRefresh() {
+    try {
+      setRefreshing(true)
+      await loadData()
+    } finally {
+      setRefreshing(false)
     }
   }
 
@@ -47,12 +63,20 @@ export default function AdminPage() {
   // ОБРОБНИКИ ПОДІЙ
   // ============================================================================
 
-  function handleRefresh() {
+  function handleBookCreated() {
     loadData()
   }
 
-  function handleBookCreated() {
-    loadData()
+  // ============================================================================
+  // СТАТИСТИКА
+  // ============================================================================
+  
+  const stats = {
+    totalBooks: books.length,
+    availableBooks: books.filter(book => book.available).length,
+    activeUsers: 25, // Временно
+    totalRevenue: 8500, // Временно
+    totalBooksCost: books.reduce((sum, book) => sum + (book.price_uah || 0), 0)
   }
 
   // ============================================================================
@@ -61,10 +85,11 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-600 mx-auto"></div>
-          <p className="text-slate-600">Завантаження адмін-панелі...</p>
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-600 mx-auto"></div>
+          <p className="text-slate-600 text-lg font-medium">Завантаження адмін-панелі...</p>
+          <p className="text-slate-500 text-sm">Будь ласка, зачекайте</p>
         </div>
       </div>
     )
@@ -72,135 +97,219 @@ export default function AdminPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <p className="text-red-600">{error}</p>
-          <button 
-            onClick={handleRefresh}
-            className="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700"
-          >
-            Спробувати знову
-          </button>
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
+        <div className="text-center space-y-6 max-w-md mx-auto px-4">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+            <FileText className="size-8 text-red-600" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Помилка завантаження</h2>
+            <p className="text-slate-600 mb-6">{error}</p>
+            <div className="space-y-3">
+              <Button 
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="w-full"
+              >
+                {refreshing ? (
+                  <>
+                    <RefreshCw className="size-4 mr-2 animate-spin" />
+                    Оновлення...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="size-4 mr-2" />
+                    Спробувати знову
+                  </>
+                )}
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.reload()}
+                className="w-full"
+              >
+                Перезавантажити сторінку
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Заголовок */}
-      <div className="sticky top-0 z-10 border-b border-slate-200/60 bg-white/90 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-4 py-4 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex size-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <Building2 className="size-6 text-slate-600"/>
+      <div className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-sm">
+        <div className="w-full px-4 py-6 lg:px-6 xl:px-8 2xl:px-10">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="flex size-14 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <Building2 className="size-7 text-slate-600"/>
               </div>
               <div>
-                <div className="text-sm text-slate-500">Адмін‑панель</div>
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                <div className="text-sm text-slate-500 font-medium">Адмін‑панель</div>
+                <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-slate-900">
                   Stefa.books — Управління
                 </h1>
               </div>
             </div>
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1">
-              <CheckCircle className="size-3" />
-              Система працює
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-2 px-3 py-1">
+                <CheckCircle className="size-4" />
+                <span className="hidden sm:inline">Система працює</span>
+                <span className="sm:hidden">ОК</span>
+              </Badge>
+              <Button
+                variant="outline"
+                size="md"
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="hidden sm:flex"
+              >
+                {refreshing ? (
+                  <>
+                    <RefreshCw className="size-4 mr-2 animate-spin" />
+                    Оновлення
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="size-4 mr-2" />
+                    Оновити
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Основний контент */}
-      <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
-        <div className="space-y-6">
+      <div className="w-full px-4 py-8 lg:px-6 xl:px-8 2xl:px-10">
+        <div className="space-y-8">
           
           {/* KPI метрики */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="rounded-2xl">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Книги в наявності</CardTitle>
-                <BookOpen className="h-4 w-4 text-muted-foreground" />
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-6">
+            <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-semibold text-slate-700">Книги в наявності</CardTitle>
+                <BookOpen className="h-5 w-5 text-slate-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {data?.stats.availableBooks || 0}
+                  {stats.availableBooks}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  з {data?.stats.totalBooks || 0} загалом
+                <p className="text-xs text-slate-500 mt-1">
+                  з {stats.totalBooks} загалом
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="rounded-2xl">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Активні користувачі</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+            <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-semibold text-slate-700">Активні користувачі</CardTitle>
+                <Users className="h-5 w-5 text-slate-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-600">
-                  {data?.stats.activeUsers || 0}
+                  {stats.activeUsers}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-slate-500 mt-1">
                   підписників
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="rounded-2xl">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Доходи (місяць)</CardTitle>
-                <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-semibold text-slate-700">Доходи (місяць)</CardTitle>
+                <CreditCard className="h-5 w-5 text-slate-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-purple-600">
-                  {(data?.stats.totalRevenue || 0).toLocaleString('uk-UA')} ₴
+                  {stats.totalRevenue.toLocaleString('uk-UA')} ₴
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  +12% від минулого місяця
+                <p className="text-xs text-slate-500 mt-1">
+                  Витрати: {stats.totalBooksCost.toLocaleString('uk-UA')} ₴
+                </p>
+                <p className="text-xs text-green-600 font-medium mt-1">
+                  Прибуток: {(stats.totalRevenue - stats.totalBooksCost).toLocaleString('uk-UA')} ₴
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="rounded-2xl">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Ефективність</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-semibold text-slate-700">РОІ (окупність)</CardTitle>
+                <TrendingUp className="h-5 w-5 text-slate-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-orange-600">91%</div>
-                <p className="text-xs text-muted-foreground">
-                  книги в обороті
+                <div className="text-2xl font-bold text-orange-600">
+                  {stats.totalBooksCost ? Math.round((stats.totalRevenue / stats.totalBooksCost) * 100) : 0}%
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  повернення інвестицій
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Додаткові метрики для широких екранів */}
+            <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow hidden 2xl:block">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-semibold text-slate-700">Середня ціна</CardTitle>
+                <FileText className="h-5 w-5 text-slate-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-indigo-600">
+                  {stats.totalBooks ? Math.round(stats.totalBooksCost / stats.totalBooks) : 0} ₴
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  за книгу в колекції
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow hidden 2xl:block">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-semibold text-slate-700">Використання</CardTitle>
+                <BarChart3 className="h-5 w-5 text-slate-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-teal-600">
+                  {stats.totalBooks ? Math.round(((stats.totalBooks - stats.availableBooks) / stats.totalBooks) * 100) : 0}%
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  книг зараз у читачів
                 </p>
               </CardContent>
             </Card>
           </div>
 
           {/* Головні таби */}
-          <Tabs defaultValue="books" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4 rounded-2xl">
-              <TabsTrigger value="books" className="rounded-xl flex items-center gap-2">
+          <Tabs defaultValue="books" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4 rounded-2xl bg-slate-100 p-1">
+              <TabsTrigger value="books" className="rounded-xl flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <BookOpen className="size-4" />
-                Книги
+                <span className="hidden sm:inline">Книги</span>
               </TabsTrigger>
-              <TabsTrigger value="users" className="rounded-xl flex items-center gap-2">
+              <TabsTrigger value="users" className="rounded-xl flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Users className="size-4" />
-                Користувачі
+                <span className="hidden sm:inline">Користувачі</span>
               </TabsTrigger>
-              <TabsTrigger value="rentals" className="rounded-xl flex items-center gap-2">
+              <TabsTrigger value="rentals" className="rounded-xl flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Calendar className="size-4" />
-                Оренди
+                <span className="hidden sm:inline">Оренди</span>
               </TabsTrigger>
-              <TabsTrigger value="reports" className="rounded-xl flex items-center gap-2">
+              <TabsTrigger value="reports" className="rounded-xl flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <BarChart3 className="size-4" />
-                Звіти
+                <span className="hidden sm:inline">Звіти</span>
               </TabsTrigger>
             </TabsList>
 
             {/* Таб книг */}
             <TabsContent value="books" className="space-y-4">
               <BooksTable
-                books={data?.books || []}
+                books={books}
                 onRefresh={handleRefresh}
                 onBookCreated={handleBookCreated}
               />
@@ -208,15 +317,15 @@ export default function AdminPage() {
 
             {/* Таб користувачів */}
             <TabsContent value="users" className="space-y-4">
-              <Card className="rounded-2xl">
+              <Card className="rounded-2xl border-slate-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle>Управління користувачами</CardTitle>
+                  <CardTitle className="text-slate-900">Управління користувачами</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-8 text-slate-500">
-                    <Users className="size-12 mx-auto mb-3 opacity-50" />
-                    <p className="text-lg font-medium">Користувачі</p>
-                    <p className="text-sm">Управління підписниками (в розробці)</p>
+                  <div className="text-center py-12 text-slate-500">
+                    <Users className="size-16 mx-auto mb-4 opacity-50" />
+                    <p className="text-xl font-semibold text-slate-700 mb-2">Користувачі</p>
+                    <p className="text-slate-500">Управління підписниками (в розробці)</p>
                   </div>
                 </CardContent>
               </Card>
@@ -224,15 +333,15 @@ export default function AdminPage() {
 
             {/* Таб орендувань */}
             <TabsContent value="rentals" className="space-y-4">
-              <Card className="rounded-2xl">
+              <Card className="rounded-2xl border-slate-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle>Управління орендами</CardTitle>
+                  <CardTitle className="text-slate-900">Управління орендами</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-8 text-slate-500">
-                    <CreditCard className="size-12 mx-auto mb-3 opacity-50" />
-                    <p className="text-lg font-medium">Орендні записи</p>
-                    <p className="text-sm">Відстеження видачі та повернень (в розробці)</p>
+                  <div className="text-center py-12 text-slate-500">
+                    <Calendar className="size-16 mx-auto mb-4 opacity-50" />
+                    <p className="text-xl font-semibold text-slate-700 mb-2">Орендні записи</p>
+                    <p className="text-slate-500">Відстеження видачі та повернень (в розробці)</p>
                   </div>
                 </CardContent>
               </Card>
@@ -240,15 +349,15 @@ export default function AdminPage() {
 
             {/* Таб звітів */}
             <TabsContent value="reports" className="space-y-4">
-              <Card className="rounded-2xl">
+              <Card className="rounded-2xl border-slate-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle>Звіти та аналітика</CardTitle>
+                  <CardTitle className="text-slate-900">Звіти та аналітика</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-8 text-slate-500">
-                    <TrendingUp className="size-12 mx-auto mb-3 opacity-50" />
-                    <p className="text-lg font-medium">Аналітика</p>
-                    <p className="text-sm">Фінансові звіти та статистика (в розробці)</p>
+                  <div className="text-center py-12 text-slate-500">
+                    <BarChart3 className="size-16 mx-auto mb-4 opacity-50" />
+                    <p className="text-xl font-semibold text-slate-700 mb-2">Аналітика</p>
+                    <p className="text-slate-500">Фінансові звіти та статистика (в розробці)</p>
                   </div>
                 </CardContent>
               </Card>

@@ -1,14 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Image from "next/image"
 import { 
-  Eye, Edit, Trash2, ImageIcon, ExternalLink, CheckCircle, BookOpenCheck, Clock, XCircle 
+  Eye, Edit, Trash2, ImageIcon, ExternalLink, CheckCircle, BookOpenCheck, Clock, XCircle,
+  BookOpen, FileText, User, Tag, Hash, CreditCard, MapPin, Settings, Search, Filter,
+  ChevronLeft, ChevronRight, Plus
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Chip } from "@/components/ui/chip"
 import { 
-  Card, CardContent 
+  Card, CardContent, CardHeader, CardTitle 
 } from "@/components/ui/card"
 import { 
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
@@ -17,7 +19,9 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle 
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 import { AddBookDialog } from "./AddBookDialog"
+import { EditBookDialog } from "./EditBookDialog"
 import type { BookRow } from "@/lib/types/admin"
 
 // ============================================================================
@@ -32,7 +36,35 @@ interface BooksTableProps {
 
 export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps) {
   const [selectedBook, setSelectedBook] = useState<BookRow | null>(null)
+  const [editingBook, setEditingBook] = useState<BookRow | null>(null)
   const [imageViewBook, setImageViewBook] = useState<BookRow | null>(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(20)
+
+  // ============================================================================
+  // ФІЛЬТРАЦІЯ ТА ПОШУК
+  // ============================================================================
+
+  const filteredBooks = useMemo(() => {
+    if (!searchTerm.trim()) return books
+    
+    const search = searchTerm.toLowerCase()
+    return books.filter(book => 
+      book.title.toLowerCase().includes(search) ||
+      book.author.toLowerCase().includes(search) ||
+      book.code.toLowerCase().includes(search) ||
+      book.category.toLowerCase().includes(search) ||
+      (book.description?.toLowerCase().includes(search) || false)
+    )
+  }, [books, searchTerm])
+
+  const paginatedBooks = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return filteredBooks.slice(startIndex, startIndex + itemsPerPage)
+  }, [filteredBooks, currentPage, itemsPerPage])
+
+  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage)
 
   // ============================================================================
   // ФУНКЦІЇ ДЛЯ РОБОТИ З КНИГАМИ
@@ -47,23 +79,37 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
   }
 
   function handleEditBook(book: BookRow) {
-    // TODO: Реалізувати редагування
-    console.log('Edit book:', book)
+    setEditingBook(book)
   }
 
   async function handleDeleteBook(book: BookRow) {
-    if (!confirm(`Ви впевнені, що хочете видалити книгу "${book.title}"?`)) {
+    if (!confirm(`Ви впевнені, що хочете видалити книгу "${book.title}"?\n\nЦю дію неможливо скасувати!`)) {
       return
     }
 
     try {
-      // TODO: Викликати deleteBook action
-      console.log('Delete book:', book.id)
-      onRefresh()
+      const { deleteBook } = await import('../actions')
+      const result = await deleteBook(book.id)
+      
+      if (result.success) {
+        onRefresh()
+        alert('Книгу успішно видалено!')
+      } else {
+        alert(`Помилка видалення: ${result.error}`)
+      }
     } catch (error) {
       console.error('Delete error:', error)
-      alert('Помилка видалення книги')
+      alert('Помилка видалення книги. Перевірте підключення до бази даних.')
     }
+  }
+
+  function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchTerm(e.target.value)
+    setCurrentPage(1) // Скидаємо на першу сторінку при пошуку
+  }
+
+  function handlePageChange(page: number) {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)))
   }
 
   // ============================================================================
@@ -71,33 +117,71 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
   // ============================================================================
 
   function getStatusBadge(status: string) {
-    const labels = {
-      available: "Доступна",
-      issued: "Видана", 
-      reserved: "Зарезервована",
-      lost: "Втрачена"
-    }
-
-    const getStatusIcon = () => {
-      switch (status) {
-        case 'available': return <CheckCircle className="size-3" />
-        case 'issued': return <BookOpenCheck className="size-3" />
-        case 'reserved': return <Clock className="size-3" />
-        case 'lost': return <XCircle className="size-3" />
-        default: return null
+    const statusConfig = {
+      available: {
+        label: "Доступна",
+        icon: <CheckCircle className="size-3" />,
+        className: "bg-green-50 text-green-700 border-green-200"
+      },
+      issued: {
+        label: "Видана",
+        icon: <BookOpenCheck className="size-3" />,
+        className: "bg-blue-50 text-blue-700 border-blue-200"
+      },
+      reserved: {
+        label: "Зарезервована",
+        icon: <Clock className="size-3" />,
+        className: "bg-yellow-50 text-yellow-700 border-yellow-200"
+      },
+      lost: {
+        label: "Втрачена",
+        icon: <XCircle className="size-3" />,
+        className: "bg-red-50 text-red-700 border-red-200"
       }
     }
 
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.available
+
     return (
-      <Chip className={`flex items-center gap-1 ${
-        status === 'available' ? 'bg-green-50 text-green-700' : 
-        status === 'issued' ? 'bg-blue-50 text-blue-700' : 
-        status === 'reserved' ? 'bg-yellow-50 text-yellow-700' : 
-        'bg-red-50 text-red-700'
-      }`}>
-        {getStatusIcon()}
-        {labels[status as keyof typeof labels] || status}
+      <Chip 
+        variant="status" 
+        className={config.className}
+      >
+        {config.icon}
+        {config.label}
       </Chip>
+    )
+  }
+
+  function getQuantityIndicator(available: number, total: number) {
+    const percentage = total > 0 ? (available / total) * 100 : 0
+    
+    let color = "text-green-600"
+    let bgColor = "bg-green-200"
+    
+    if (available === 0) {
+      color = "text-red-600"
+      bgColor = "bg-red-200"
+    } else if (available <= 1) {
+      color = "text-amber-600"
+      bgColor = "bg-amber-200"
+    }
+
+    return (
+      <div className="flex flex-col items-center space-y-2">
+        <div className={`text-2xl font-bold ${color}`}>
+          {available}
+        </div>
+        <div className="text-xs text-slate-500 font-medium">
+          з {total} шт
+        </div>
+        <div className={`w-16 h-2 rounded-full ${bgColor}`}>
+          <div 
+            className={`h-full rounded-full transition-all duration-500 ${color.replace('text-', 'bg-')}`}
+            style={{ width: `${Math.min(100, percentage)}%` }}
+          />
+        </div>
+      </div>
     )
   }
 
@@ -106,196 +190,357 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
   // ============================================================================
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-slate-900">Управління книгами</h3>
-          <p className="text-sm text-slate-500">Всього книг: {books.length}</p>
-        </div>
-        <AddBookDialog onBookCreated={onBookCreated} />
-      </div>
-      
-      <Card className="rounded-2xl">
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-20">Обкладинка</TableHead>
-                  <TableHead>Код</TableHead>
-                  <TableHead className="min-w-[200px]">Книга</TableHead>
-                  <TableHead>Автор</TableHead>
-                  <TableHead>Категорія</TableHead>
-                  <TableHead className="text-center">Кількість</TableHead>
-                  <TableHead className="text-right">Ціна</TableHead>
-                  <TableHead>Статус</TableHead>
-                  <TableHead>Локація</TableHead>
-                  <TableHead className="text-center">Дії</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {books.map((book) => (
-                  <TableRow key={book.id} className="group">
-                    {/* Обкладинка */}
-                    <TableCell className="p-2">
-                      <div className="relative">
-                        {book.cover_url ? (
-                          <div 
-                            className="relative group/cover cursor-pointer"
-                            onClick={() => handleViewCover(book)}
-                          >
-                            <Image
-                              src={book.cover_url}
-                              alt={`Обкладинка: ${book.title}`}
-                              width={48}
-                              height={64}
-                              className="rounded-lg object-cover border border-slate-200 shadow-sm transition-transform group-hover/cover:scale-105"
-                            />
-                            {/* Ефект при наведенні */}
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/cover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                              <Eye className="size-4 text-white" />
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="w-12 h-16 bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center">
-                            <ImageIcon className="size-5 text-slate-400" />
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-
-                    {/* Код книги */}
-                    <TableCell>
-                      <code className="px-2 py-1 bg-slate-100 text-slate-700 rounded text-xs font-mono">
-                        {book.code}
-                      </code>
-                    </TableCell>
-
-                    {/* Назва та опис */}
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div 
-                          className="font-medium text-slate-900 line-clamp-2 cursor-pointer hover:text-blue-600"
-                          onClick={() => handleViewBook(book)}
-                          title={book.title}
-                        >
-                          {book.title}
-                        </div>
-                        {book.description && (
-                          <div 
-                            className="text-xs text-slate-500 line-clamp-2" 
-                            title={book.description}
-                          >
-                            {book.description}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-
-                    {/* Автор */}
-                    <TableCell>
-                      <div className="text-sm text-slate-700 font-medium" title={book.author}>
-                        {book.author}
-                      </div>
-                    </TableCell>
-
-                    {/* Категорія */}
-                    <TableCell>
-                      <Chip className="text-xs whitespace-nowrap bg-slate-50 text-slate-700">
-                        {book.category}
-                      </Chip>
-                    </TableCell>
-
-                    {/* Кількість */}
-                    <TableCell className="text-center">
-                      <div className="space-y-1">
-                        <div className={`font-medium ${book.qty_available === 0 ? 'text-red-600' : 'text-green-600'}`}>
-                          {book.qty_available}
-                        </div>
-                        <div className="text-xs text-slate-500">
-                          з {book.qty_total}
-                        </div>
-                      </div>
-                    </TableCell>
-
-                    {/* Ціна */}
-                    <TableCell className="text-right">
-                      {book.price_uah ? (
-                        <div className="font-medium text-slate-900">
-                          {book.price_uah.toLocaleString('uk-UA')} ₴
-                        </div>
-                      ) : (
-                        <span className="text-slate-400 text-sm">—</span>
-                      )}
-                    </TableCell>
-
-                    {/* Статус */}
-                    <TableCell>
-                      {getStatusBadge(book.status)}
-                    </TableCell>
-
-                    {/* Локація */}
-                    <TableCell>
-                      {book.location ? (
-                        <div className="text-sm text-slate-600 max-w-[120px] truncate" title={book.location}>
-                          {book.location}
-                        </div>
-                      ) : (
-                        <span className="text-slate-400 text-sm">—</span>
-                      )}
-                    </TableCell>
-
-                    {/* Дії */}
-                    <TableCell>
-                      <div className="flex items-center justify-center gap-1">
-                        <Button
-                          size="md"
-                          variant="ghost"
-                          className="size-8 p-0 hover:bg-blue-50 hover:text-blue-600"
-                          onClick={() => handleViewBook(book)}
-                          title="Переглянути деталі"
-                        >
-                          <Eye className="size-4" />
-                        </Button>
-                        <Button
-                          size="md"
-                          variant="ghost"
-                          className="size-8 p-0 hover:bg-amber-50 hover:text-amber-600"
-                          onClick={() => handleEditBook(book)}
-                          title="Редагувати"
-                        >
-                          <Edit className="size-4" />
-                        </Button>
-                        <Button
-                          size="md"
-                          variant="ghost"
-                          className="size-8 p-0 hover:bg-red-50 hover:text-red-600"
-                          onClick={() => handleDeleteBook(book)}
-                          title="Видалити"
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-
-                {books.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={10} className="text-center py-8">
-                      <div className="flex flex-col items-center gap-2 text-slate-500">
-                        <ImageIcon className="size-8" />
-                        <p>Книги не знайдено</p>
-                        <p className="text-sm">Додайте першу книгу до колекції</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+    <div className="space-y-6">
+      {/* Заголовок з пошуком */}
+      <Card className="rounded-2xl border-slate-200 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center">
+                <BookOpen className="size-6 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-xl text-slate-900">Управління книгами</CardTitle>
+                <p className="text-sm text-slate-600">
+                  Всього книг: <span className="font-semibold text-slate-900">{books.length}</span>
+                  {searchTerm && (
+                    <span className="ml-2">
+                      • Знайдено: <span className="font-semibold text-slate-900">{filteredBooks.length}</span>
+                    </span>
+                  )}
+                </p>
+              </div>
+            </div>
+            <AddBookDialog onBookCreated={onBookCreated} />
+          </div>
+        </CardHeader>
+        
+        {/* Пошук та фільтри */}
+        <CardContent className="pt-0">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 size-4 text-slate-400" />
+              <Input
+                placeholder="Пошук по назві, автору, коду..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="pl-10 pr-4 h-11 border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+              />
+            </div>
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <Filter className="size-4" />
+              <span>Фільтри: {filteredBooks.length} з {books.length}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
+      
+      {/* Таблиця */}
+      <Card className="rounded-2xl border-slate-200 shadow-sm overflow-hidden">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <div className="min-w-[1200px] lg:min-w-full">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-slate-50 border-b-2 border-slate-200">
+                    <TableHead className="w-20 bg-slate-50 font-semibold text-slate-700 p-4">
+                      <div className="flex items-center gap-2">
+                        <ImageIcon className="size-4" />
+                        <span className="hidden sm:inline">Обкладинка</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-28 font-semibold text-slate-700 p-4">
+                      <div className="flex items-center gap-2">
+                        <FileText className="size-4" />
+                        <span className="hidden sm:inline">Код</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="min-w-[280px] font-semibold text-slate-700 p-4">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="size-4" />
+                        Книга
+                      </div>
+                    </TableHead>
+                    <TableHead className="min-w-[180px] font-semibold text-slate-700 p-4">
+                      <div className="flex items-center gap-2">
+                        <User className="size-4" />
+                        <span className="hidden lg:inline">Автор</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="min-w-[140px] font-semibold text-slate-700 p-4">
+                      <div className="flex items-center gap-2">
+                        <Tag className="size-4" />
+                        <span className="hidden lg:inline">Категорія</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-center w-32 font-semibold text-slate-700 p-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <Hash className="size-4" />
+                        <span className="hidden sm:inline">Кількість</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-right w-28 font-semibold text-slate-700 p-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <CreditCard className="size-4" />
+                        <span className="hidden sm:inline">Ціна</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-32 font-semibold text-slate-700 p-4">
+                      <div className="flex items-center gap-2">
+                        <Clock className="size-4" />
+                        <span className="hidden lg:inline">Статус</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="min-w-[120px] font-semibold text-slate-700 p-4">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="size-4" />
+                        <span className="hidden xl:inline">Локація</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-center w-44 bg-slate-100 font-semibold text-slate-800 p-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <Settings className="size-4" />
+                        Дії
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paginatedBooks.map((book, index) => (
+                    <TableRow 
+                      key={book.id} 
+                      className={`group hover:bg-slate-50 transition-all duration-200 border-b border-slate-100 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-slate-25'
+                      }`}
+                    >
+                      {/* Обкладинка */}
+                      <TableCell className="p-4">
+                        <div className="relative">
+                          {book.cover_url ? (
+                            <div 
+                              className="relative group/cover cursor-pointer"
+                              onClick={() => handleViewCover(book)}
+                            >
+                              <Image
+                                src={book.cover_url}
+                                alt={`Обкладинка: ${book.title}`}
+                                width={48}
+                                height={64}
+                                className="rounded-lg object-cover border border-slate-200 shadow-sm transition-transform group-hover/cover:scale-105"
+                              />
+                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/cover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                                <Eye className="size-4 text-white" />
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="w-12 h-16 bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center">
+                              <ImageIcon className="size-5 text-slate-400" />
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+
+                      {/* Код книги */}
+                      <TableCell className="p-4">
+                        <div className="inline-block px-3 py-2 bg-slate-100 text-slate-800 rounded-lg text-sm font-mono font-semibold border border-slate-300 shadow-sm whitespace-nowrap">
+                          {book.code}
+                        </div>
+                      </TableCell>
+
+                      {/* Назва та опис */}
+                      <TableCell className="p-4">
+                        <div className="space-y-2">
+                          <div 
+                            className="font-bold text-slate-900 line-clamp-2 cursor-pointer hover:text-slate-600 transition-colors duration-200 text-sm leading-snug"
+                            onClick={() => handleViewBook(book)}
+                            title={book.title}
+                          >
+                            {book.title}
+                          </div>
+                          {book.description && (
+                            <div 
+                              className="text-xs text-slate-500 line-clamp-2 leading-relaxed" 
+                              title={book.description}
+                            >
+                              {book.description}
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+
+                      {/* Автор */}
+                      <TableCell className="p-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
+                            <User className="size-4 text-slate-600" />
+                          </div>
+                          <div className="text-sm text-slate-700 font-semibold truncate max-w-[140px]" title={book.author}>
+                            {book.author}
+                          </div>
+                        </div>
+                      </TableCell>
+
+                      {/* Категорія */}
+                      <TableCell className="p-4">
+                        <div className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 rounded-full text-xs font-semibold border border-emerald-200 shadow-sm">
+                          <Tag className="size-3" />
+                          <span className="truncate max-w-[100px]" title={book.category}>
+                            {book.category}
+                          </span>
+                        </div>
+                      </TableCell>
+
+                      {/* Кількість */}
+                      <TableCell className="text-center p-4">
+                        {getQuantityIndicator(book.qty_available, book.qty_total)}
+                      </TableCell>
+
+                      {/* Ціна */}
+                      <TableCell className="text-right p-4">
+                        {book.price_uah ? (
+                          <div className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-green-50 to-green-100 text-green-700 rounded-full font-bold text-sm border border-green-200 shadow-sm">
+                            <CreditCard className="size-3" />
+                            {book.price_uah.toLocaleString('uk-UA')} ₴
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 text-sm font-medium">—</span>
+                        )}
+                      </TableCell>
+
+                      {/* Статус */}
+                      <TableCell className="p-4">
+                        {getStatusBadge(book.status)}
+                      </TableCell>
+
+                      {/* Локація */}
+                      <TableCell className="p-4">
+                        {book.location ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 bg-slate-200 rounded-full flex items-center justify-center">
+                              <MapPin className="size-3 text-slate-600" />
+                            </div>
+                            <div className="text-sm text-slate-600 font-medium truncate max-w-[100px]" title={book.location}>
+                              {book.location}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 text-sm font-medium">—</span>
+                        )}
+                      </TableCell>
+
+                      {/* Дії */}
+                      <TableCell className="w-44 bg-slate-50 p-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            className="group w-9 h-9 rounded-xl bg-slate-600 text-white hover:bg-slate-700 transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 hover:-translate-y-0.5"
+                            onClick={() => handleViewBook(book)}
+                            title="Переглянути деталі"
+                          >
+                            <Eye className="size-4 group-hover:scale-110 transition-transform" />
+                          </button>
+                          <button
+                            className="group w-9 h-9 rounded-xl bg-slate-500 text-white hover:bg-slate-600 transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 hover:-translate-y-0.5"
+                            onClick={() => handleEditBook(book)}
+                            title="Редагувати"
+                          >
+                            <Edit className="size-4 group-hover:scale-110 transition-transform" />
+                          </button>
+                          <button
+                            className="group w-9 h-9 rounded-xl bg-slate-800 text-white hover:bg-slate-900 transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 hover:-translate-y-0.5"
+                            onClick={() => handleDeleteBook(book)}
+                            title="Видалити"
+                          >
+                            <Trash2 className="size-4 group-hover:scale-110 transition-transform" />
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+
+                  {paginatedBooks.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={10} className="text-center py-12">
+                        <div className="flex flex-col items-center gap-3 text-slate-500">
+                          <ImageIcon className="size-12 text-slate-300" />
+                          <p className="text-lg font-medium">Книги не знайдено</p>
+                          {searchTerm ? (
+                            <p className="text-sm">Спробуйте змінити пошуковий запит</p>
+                          ) : (
+                            <p className="text-sm">Додайте першу книгу до колекції</p>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Пагінація */}
+      {totalPages > 1 && (
+        <Card className="rounded-2xl border-slate-200 shadow-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-slate-600">
+                Показано {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredBooks.length)} з {filteredBooks.length} книг
+              </div>
+              <div className="flex items-center gap-2">
+                                 <Button
+                   variant="outline"
+                   size="md"
+                   onClick={() => handlePageChange(currentPage - 1)}
+                   disabled={currentPage === 1}
+                   className="h-9 px-3"
+                 >
+                   <ChevronLeft className="size-4" />
+                   <span className="hidden sm:inline ml-1">Назад</span>
+                 </Button>
+                 
+                 <div className="flex items-center gap-1">
+                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                     let pageNum: number
+                     if (totalPages <= 5) {
+                       pageNum = i + 1
+                     } else if (currentPage <= 3) {
+                       pageNum = i + 1
+                     } else if (currentPage >= totalPages - 2) {
+                       pageNum = totalPages - 4 + i
+                     } else {
+                       pageNum = currentPage - 2 + i
+                     }
+                     
+                     return (
+                       <Button
+                         key={pageNum}
+                         variant={currentPage === pageNum ? "primary" : "outline"}
+                         size="md"
+                         onClick={() => handlePageChange(pageNum)}
+                         className="h-9 w-9 p-0"
+                       >
+                         {pageNum}
+                       </Button>
+                     )
+                   })}
+                 </div>
+                 
+                 <Button
+                   variant="outline"
+                   size="md"
+                   onClick={() => handlePageChange(currentPage + 1)}
+                   disabled={currentPage === totalPages}
+                   className="h-9 px-3"
+                 >
+                   <span className="hidden sm:inline mr-1">Вперед</span>
+                   <ChevronRight className="size-4" />
+                 </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Діалог деталей книги */}
       <Dialog open={!!selectedBook} onOpenChange={() => setSelectedBook(null)}>
@@ -317,12 +562,12 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
                       height={375}
                       className="rounded-lg object-cover border border-slate-200 shadow-lg"
                     />
-                    <Button
-                      size="md"
-                      variant="outline"
-                      className="absolute top-2 right-2"
-                      onClick={() => selectedBook.cover_url && window.open(selectedBook.cover_url, '_blank')}
-                    >
+                                          <Button
+                        size="md"
+                        variant="outline"
+                        className="absolute top-2 right-2"
+                        onClick={() => selectedBook.cover_url && window.open(selectedBook.cover_url, '_blank')}
+                      >
                       <ExternalLink className="size-4" />
                     </Button>
                   </div>
@@ -407,6 +652,14 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Діалог редагування книги */}
+      <EditBookDialog
+        book={editingBook}
+        open={!!editingBook}
+        onOpenChange={(open) => !open && setEditingBook(null)}
+        onBookUpdated={onRefresh}
+      />
 
       {/* Діалог перегляду обкладинки */}
       <Dialog open={!!imageViewBook} onOpenChange={() => setImageViewBook(null)}>

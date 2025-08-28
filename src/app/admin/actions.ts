@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { revalidatePath } from "next/cache"
 import { supabase } from "@/lib/supabase"
 import type { CreateBookForm } from "@/lib/types/admin"
 
@@ -54,19 +53,21 @@ export async function createBook(form: CreateBookForm) {
         updated_at: new Date().toISOString()
       })
       .select()
-      .single()
     
     if (error) {
       console.error('Supabase error:', error)
       throw new Error(error.message)
     }
     
-    // Обновляем кеш страницы
-    revalidatePath('/admin')
+    if (!data || data.length === 0) {
+      throw new Error('Не вдалося створити книгу - дані не повернулися з бази')
+    }
     
-    console.log('Book created successfully:', data)
+    const createdBook = data[0]
     
-    return { success: true, data }
+    console.log('Book created successfully:', createdBook)
+    
+    return { success: true, data: createdBook }
     
   } catch (error) {
     console.error('Create book error:', error)
@@ -87,11 +88,93 @@ export async function createBook(form: CreateBookForm) {
 
 export async function updateBook(id: string, form: Partial<CreateBookForm>) {
   try {
-    console.log('Updating book:', id, form)
+    console.log('📝 Starting book update:', id, form)
     
-    // TODO: Реальне оновлення через Supabase
+    // Проверяем что ID действительно передан
+    if (!id || !id.trim()) {
+      return { success: false, error: "ID книги не передан або пустий" }
+    }
     
-    return { success: true, data: { id, ...form } }
+    // Валідуємо обов'язкові поля якщо вони присутні
+    if (form.code && !form.code.trim()) {
+      return { success: false, error: "Код книги не може бути пустим" }
+    }
+    if (form.title && !form.title.trim()) {
+      return { success: false, error: "Назва книги не може бути пустою" }
+    }
+    
+    // Підготовлюємо дані для оновлення
+    const updateData: any = {}
+    
+    if (form.code) updateData.code = form.code.trim()
+    if (form.title) updateData.title = form.title.trim()
+    if (form.author) updateData.author = form.author.trim()
+    if (form.category) updateData.category = form.category.trim()
+    if (form.subcategory !== undefined) updateData.subcategory = form.subcategory?.trim() || null
+    if (form.description !== undefined) updateData.description = form.description?.trim() || null
+    if (form.short_description !== undefined) updateData.short_description = form.short_description?.trim() || null
+    if (form.location !== undefined) updateData.location = form.location?.trim() || null
+    if (form.cover_url !== undefined) updateData.cover_url = form.cover_url || null
+    if (form.status) updateData.status = form.status
+    if (form.qty_total !== undefined) updateData.qty_total = Math.max(1, form.qty_total)
+    if (form.price_uah !== undefined) updateData.price_uah = form.price_uah || null
+    
+    // Якщо змінюється кількість, оновлюємо доступність
+    if (form.qty_total !== undefined) {
+      // Підраховуємо активні аренди
+      const { data: rentals, error: rentalsError } = await supabase
+        .from('rentals')
+        .select('id')
+        .eq('book_id', id)
+        .in('status', ['active', 'overdue'])
+      
+      if (rentalsError) {
+        console.warn('Could not count active rentals:', rentalsError)
+      } else {
+        const activeRentals = rentals?.length || 0
+        updateData.qty_available = Math.max(0, updateData.qty_total - activeRentals)
+        updateData.available = updateData.qty_available > 0
+      }
+    }
+    
+    // Оновлюємо дату зміни
+    updateData.updated_at = new Date().toISOString()
+    
+    console.log('💾 Attempting to update book with ID:', id)
+    console.log('📦 Update data:', JSON.stringify(updateData, null, 2))
+    
+    // Спочатку перевіримо, чи існує книга з таким ID
+    const { data: existingBook, error: checkError } = await supabase
+      .from('books')
+      .select('id')
+      .eq('id', id)
+      .single()
+    
+    if (checkError || !existingBook) {
+      const errorMessage = `Книгу з ID ${id} не знайдено в базі даних`
+      console.error(errorMessage, checkError)
+      return { success: false, error: errorMessage }
+    }
+    
+    console.log('✅ Book exists, proceeding with update')
+    
+    // Оновлюємо книгу в Supabase
+    const { data, error } = await supabase
+      .from('books')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single()
+    
+    if (error) {
+      console.error('Supabase error:', error)
+      throw new Error(error.message)
+    }
+    
+    console.log('✅ Book updated successfully:', data)
+    console.log('🔍 Updated book data:', JSON.stringify(data, null, 2))
+    
+    return { success: true, data }
     
   } catch (error) {
     console.error('Update book error:', error)
@@ -106,7 +189,35 @@ export async function deleteBook(id: string) {
   try {
     console.log('Deleting book:', id)
     
-    // TODO: Реальне видалення через Supabase
+    // Проверяем есть ли активные аренды для этой книги
+    const { data: rentals, error: rentalsError } = await supabase
+      .from('rentals')
+      .select('id')
+      .eq('book_id', id)
+      .in('status', ['active', 'overdue'])
+    
+    if (rentalsError) {
+      throw new Error(`Помилка перевірки орендувань: ${rentalsError.message}`)
+    }
+    
+    if (rentals && rentals.length > 0) {
+      return { 
+        success: false, 
+        error: 'Неможливо видалити книгу, яка має активні орендування. Спочатку поверніть всі примірники.'
+      }
+    }
+    
+    // Удаляем книгу
+    const { error } = await supabase
+      .from('books')
+      .delete()
+      .eq('id', id)
+    
+    if (error) {
+      throw new Error(error.message)
+    }
+    
+    console.log('Book deleted successfully:', id)
     
     return { success: true }
     

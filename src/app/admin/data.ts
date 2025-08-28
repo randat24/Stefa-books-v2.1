@@ -8,45 +8,54 @@ import type { AdminDashboardData, BookRow, UserRow, RentalRow, PaymentRow } from
 // ============================================================================
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> {
+  console.log('🚀 Loading admin dashboard data from database...')
+  
   try {
-    // Загружаем все данные параллельно
-    const [
-      booksResult,
-      usersResult, 
-      rentalsResult,
-      paymentsResult,
-      statsResult
-    ] = await Promise.all([
+    // Загружаем реальные данные из базы
+    const [books, users, rentals, payments, stats] = await Promise.all([
       getBooks(),
       getUsers(),
       getRentals(),
       getPayments(),
-      getDashboardStats()
+      getBooksOnlyStats()
     ])
 
-    return {
-      stats: statsResult,
-      books: booksResult,
-      users: usersResult,
-      rentals: rentalsResult,
-      payments: paymentsResult
+    const result = {
+      stats,
+      books,
+      users,
+      rentals,
+      payments
     }
-  } catch (error) {
-    console.error('Error loading dashboard data:', error)
     
-    // Возвращаем пустые данные в случае ошибки
-    return {
+    console.log('✅ Database data loaded:', {
+      books: result.books.length,
+      users: result.users.length,
+      rentals: result.rentals.length,
+      payments: result.payments.length,
+      stats: result.stats
+    })
+    
+    return result
+  } catch (error) {
+    console.error('❌ Error loading admin dashboard data:', error)
+    
+    // Fallback to static data if database fails
+    const fallbackResult = {
       stats: {
         totalBooks: 0,
         availableBooks: 0,
         activeUsers: 0,
-        totalRevenue: 0
+        totalRevenue: 0,
+        totalBooksCost: 0
       },
       books: [],
       users: [],
       rentals: [],
       payments: []
     }
+    
+    return fallbackResult
   }
 }
 
@@ -231,7 +240,8 @@ export async function getDashboardStats() {
     const [
       booksStats,
       usersStats,
-      paymentsStats
+      paymentsStats,
+      booksCostStats
     ] = await Promise.all([
       // Статистика книг
       supabase
@@ -264,6 +274,17 @@ export async function getDashboardStats() {
           if (error) throw error
           const total = data?.reduce((sum, payment) => sum + (payment.amount_uah || 0), 0) || 0
           return { total }
+        }),
+
+      // Статистика затрат на книги (цена закупки)
+      supabase
+        .from('books')
+        .select('price_uah, qty_total')
+        .not('price_uah', 'is', null)
+        .then(({ data, error }) => {
+          if (error) throw error
+          const totalCost = data?.reduce((sum, book) => sum + ((book.price_uah || 0) * (book.qty_total || 1)), 0) || 0
+          return { totalCost }
         })
     ])
 
@@ -271,7 +292,8 @@ export async function getDashboardStats() {
       totalBooks: booksStats.total,
       availableBooks: booksStats.available,
       activeUsers: usersStats.active,
-      totalRevenue: paymentsStats.total
+      totalRevenue: paymentsStats.total,
+      totalBooksCost: booksCostStats.totalCost
     }
   } catch (error) {
     console.error('Error loading dashboard stats:', error)
@@ -279,7 +301,56 @@ export async function getDashboardStats() {
       totalBooks: 0,
       availableBooks: 0,
       activeUsers: 0,
-      totalRevenue: 0
+      totalRevenue: 0,
+      totalBooksCost: 0
+    }
+  }
+}
+
+// ============================================================================
+// УПРОЩЕННАЯ СТАТИСТИКА (ТОЛЬКО КНИГИ)
+// ============================================================================
+
+export async function getBooksOnlyStats() {
+  try {
+    console.log('Loading books stats...')
+    
+    // Получаем статистику только по книгам
+    const { data: booksData, error } = await supabase
+      .from('books')
+      .select('id, available, price_uah, qty_total')
+
+    if (error) {
+      console.error('Error fetching books for stats:', error)
+      throw error
+    }
+
+    console.log('Books data for stats:', booksData?.length || 0)
+
+    const totalBooks = booksData?.length || 0
+    const availableBooks = booksData?.filter(book => book.available).length || 0
+    const totalBooksCost = booksData?.reduce((sum, book) => 
+      sum + ((book.price_uah || 0) * (book.qty_total || 1)), 0
+    ) || 0
+
+    const stats = {
+      totalBooks,
+      availableBooks,
+      activeUsers: 0, // Пока 0, добавим позже
+      totalRevenue: 0, // Пока 0, добавим позже  
+      totalBooksCost
+    }
+
+    console.log('Calculated stats:', stats)
+    return stats
+  } catch (error) {
+    console.error('Error loading books stats:', error)
+    return {
+      totalBooks: 0,
+      availableBooks: 0,
+      activeUsers: 0,
+      totalRevenue: 0,
+      totalBooksCost: 0
     }
   }
 }

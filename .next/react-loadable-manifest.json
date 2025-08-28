@@ -15,10 +15,8 @@
     "id": "../../../../node_modules/.pnpm/@supabase+storage-js@2.11.0/node_modules/@supabase/storage-js/dist/module/lib/helpers.js -> @supabase/node-fetch",
     "files": []
   },
-  "app/admin/page.tsx -> ./data": {
-    "id": "app/admin/page.tsx -> ./data",
-    "files": [
-      "static/chunks/_app-pages-browser_src_app_admin_data_ts.js"
-    ]
+  "app/admin/components/BooksTable.tsx -> ../actions": {
+    "id": "app/admin/components/BooksTable.tsx -> ../actions",
+    "files": []
   }
 }

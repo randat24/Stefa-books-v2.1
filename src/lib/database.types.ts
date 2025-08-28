@@ -12,13 +12,13 @@ export interface Database {
       books: {
         Row: {
           id: string
+          code: string
           title: string
           author: string
           category: string
           subcategory: string | null
           description: string | null
           short_description: string | null
-          code: string | null
           isbn: string | null
           pages: number | null
           age_range: string | null
@@ -26,29 +26,30 @@ export interface Database {
           publisher: string | null
           publication_year: number | null
           cover_url: string | null
-          status: string | null
-          available: boolean | null
+          status: string
+          available: boolean
+          qty_total: number
+          qty_available: number
+          price_uah: number | null
+          location: string | null
           rating: number | null
           rating_count: number | null
-          price_daily: number | null
-          price_weekly: number | null
-          price_monthly: number | null
           badges: string[] | null
           tags: string[] | null
           search_vector: unknown | null
           search_text: string | null
-          created_at: string | null
-          updated_at: string | null
+          created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
+          code: string
           title: string
           author: string
           category: string
           subcategory?: string | null
           description?: string | null
           short_description?: string | null
-          code?: string | null
           isbn?: string | null
           pages?: number | null
           age_range?: string | null
@@ -56,29 +57,30 @@ export interface Database {
           publisher?: string | null
           publication_year?: number | null
           cover_url?: string | null
-          status?: string | null
-          available?: boolean | null
+          status?: string
+          available?: boolean
+          qty_total?: number
+          qty_available?: number
+          price_uah?: number | null
+          location?: string | null
           rating?: number | null
           rating_count?: number | null
-          price_daily?: number | null
-          price_weekly?: number | null
-          price_monthly?: number | null
           badges?: string[] | null
           tags?: string[] | null
           search_vector?: unknown | null
           search_text?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
+          code?: string
           title?: string
           author?: string
           category?: string
           subcategory?: string | null
           description?: string | null
           short_description?: string | null
-          code?: string | null
           isbn?: string | null
           pages?: number | null
           age_range?: string | null
@@ -86,19 +88,20 @@ export interface Database {
           publisher?: string | null
           publication_year?: number | null
           cover_url?: string | null
-          status?: string | null
-          available?: boolean | null
+          status?: string
+          available?: boolean
+          qty_total?: number
+          qty_available?: number
+          price_uah?: number | null
+          location?: string | null
           rating?: number | null
           rating_count?: number | null
-          price_daily?: number | null
-          price_weekly?: number | null
-          price_monthly?: number | null
           badges?: string[] | null
           tags?: string[] | null
           search_vector?: unknown | null
           search_text?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -111,7 +114,7 @@ export interface Database {
           nationality: string | null
           website: string | null
           search_vector: unknown | null
-          created_at: string | null
+          created_at: string
         }
         Insert: {
           id?: string
@@ -121,7 +124,7 @@ export interface Database {
           nationality?: string | null
           website?: string | null
           search_vector?: unknown | null
-          created_at?: string | null
+          created_at?: string
         }
         Update: {
           id?: string
@@ -131,7 +134,7 @@ export interface Database {
           nationality?: string | null
           website?: string | null
           search_vector?: unknown | null
-          created_at?: string | null
+          created_at?: string
         }
         Relationships: []
       }
@@ -145,7 +148,7 @@ export interface Database {
           icon: string | null
           color: string | null
           search_vector: unknown | null
-          created_at: string | null
+          created_at: string
         }
         Insert: {
           id?: string
@@ -156,7 +159,7 @@ export interface Database {
           icon?: string | null
           color?: string | null
           search_vector?: unknown | null
-          created_at?: string | null
+          created_at?: string
         }
         Update: {
           id?: string
@@ -167,7 +170,7 @@ export interface Database {
           icon?: string | null
           color?: string | null
           search_vector?: unknown | null
-          created_at?: string | null
+          created_at?: string
         }
         Relationships: [
           {
@@ -197,17 +200,166 @@ export interface Database {
         }
         Relationships: [
           {
+            foreignKeyName: "book_authors_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "book_authors_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "authors"
             referencedColumns: ["id"]
+          }
+        ]
+      }
+      users: {
+        Row: {
+          id: string
+          name: string
+          email: string
+          phone: string | null
+          subscription_type: string | null
+          subscription_start: string | null
+          subscription_end: string | null
+          status: string | null
+          address: string | null
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          email: string
+          phone?: string | null
+          subscription_type?: string | null
+          subscription_start?: string | null
+          subscription_end?: string | null
+          status?: string | null
+          address?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          email?: string
+          phone?: string | null
+          subscription_type?: string | null
+          subscription_start?: string | null
+          subscription_end?: string | null
+          status?: string | null
+          address?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      rentals: {
+        Row: {
+          id: string
+          user_id: string
+          book_id: string
+          rental_date: string
+          due_date: string | null
+          return_date: string | null
+          status: string | null
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          book_id: string
+          rental_date?: string
+          due_date?: string | null
+          return_date?: string | null
+          status?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          book_id?: string
+          rental_date?: string
+          due_date?: string | null
+          return_date?: string | null
+          status?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rentals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "book_authors_book_id_fkey"
+            foreignKeyName: "rentals_book_id_fkey"
             columns: ["book_id"]
             isOneToOne: false
             referencedRelation: "books"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      payments: {
+        Row: {
+          id: string
+          user_id: string
+          amount_uah: number
+          currency: string | null
+          payment_method: string | null
+          status: string | null
+          transaction_id: string | null
+          payment_date: string | null
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          amount_uah: number
+          currency?: string | null
+          payment_method?: string | null
+          status?: string | null
+          transaction_id?: string | null
+          payment_date?: string | null
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          amount_uah?: number
+          currency?: string | null
+          payment_method?: string | null
+          status?: string | null
+          transaction_id?: string | null
+          payment_date?: string | null
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -222,7 +374,7 @@ export interface Database {
           ip_address: string | null
           filters: Json | null
           clicked_results: string[] | null
-          created_at: string | null
+          created_at: string
         }
         Insert: {
           id?: string
@@ -233,7 +385,7 @@ export interface Database {
           ip_address?: string | null
           filters?: Json | null
           clicked_results?: string[] | null
-          created_at?: string | null
+          created_at?: string
         }
         Update: {
           id?: string
@@ -244,7 +396,7 @@ export interface Database {
           ip_address?: string | null
           filters?: Json | null
           clicked_results?: string[] | null
-          created_at?: string | null
+          created_at?: string
         }
         Relationships: []
       }
@@ -256,24 +408,28 @@ export interface Database {
       search_books: {
         Args: {
           query_text: string
-          category_filter?: string[] | null
-          author_filter?: string[] | null
-          available_only?: boolean
           limit_count?: number
-          offset_count?: number
         }
         Returns: {
           id: string
           title: string
           author: string
           category: string
-          description: string
-          cover_url: string
+          subcategory: string | null
+          cover_url: string | null
+          rating: number | null
+          rating_count: number | null
           available: boolean
-          rating: number
-          rating_count: number
-          relevance_score: number
+          badges: string[] | null
+          rank: number
         }[]
+      }
+      update_book_availability: {
+        Args: {
+          book_id: string
+          qty_change: number
+        }
+        Returns: boolean
       }
       get_search_suggestions: {
         Args: {

@@ -8,6 +8,7 @@ export interface AdminDashboardData {
     availableBooks: number
     activeUsers: number
     totalRevenue: number
+    totalBooksCost: number
   }
   books: BookRow[]
   users: UserRow[]

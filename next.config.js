@@ -14,7 +14,25 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/images/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3001',
+        pathname: '/images/**',
+      },
     ],
+  },
+  // Отключаем статическую оптимизацию для админ страниц
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['localhost:3000']
+    }
   },
   // Заголовки безпеки
   async headers() {

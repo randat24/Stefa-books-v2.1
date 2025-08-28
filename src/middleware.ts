@@ -2,13 +2,20 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Protect admin routes
+  // Create response with proper headers
+  const response = NextResponse.next();
+  
+  // Disable caching for admin routes to prevent static generation issues
   if (request.nextUrl.pathname.startsWith('/admin')) {
+    response.headers.set('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    
     const authToken = request.cookies.get('admin_token');
     
     // For development, allow access without authentication
     if (process.env.NODE_ENV === 'development') {
-      return NextResponse.next();
+      return response;
     }
     
     // In production, check for valid auth token
@@ -18,7 +25,7 @@ export function middleware(request: NextRequest) {
     }
   }
   
-  return NextResponse.next();
+  return response;
 }
 
 function isValidToken(token: string): boolean {

@@ -9,6 +9,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run dev` - Alternative using npm
 - `pnpm build` - Build production bundle
 - `pnpm lint` - Run ESLint for code quality checks
+- `pnpm check-styles` - Verify CSS generation and styling integrity
+- `pnpm fix-styles` - Fix common CSS and styling issues
 
 ### Testing
 - `pnpm test` - Run all Jest unit and integration tests
@@ -19,6 +21,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm test:e2e:headed` - Run E2E tests in headed mode
 - `pnpm test:all` - Run both unit and E2E tests
 
+### Database Management
+- `node scripts/seed-books.js` - Load catalog books into Supabase database
+- `node scripts/fix-image-urls.js` - Fix book image URL format in database
+- Access admin panel at http://localhost:3000/admin (development only)
+
 ### Installation
 - `pnpm install` - Install dependencies (preferred package manager)
 - `npm install` - Alternative using npm
@@ -28,6 +35,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Tech Stack
 - **Next.js 14** with App Router (TypeScript)
 - **React 18** with client-side state management
+- **Supabase** PostgreSQL database with Row Level Security (RLS)
 - **Tailwind CSS** with custom design system and CSS variables
 - **Zustand** for lightweight state management
 - **React Hook Form + Zod** for form validation
@@ -52,6 +60,12 @@ src/
 │   ├── page.tsx         # Homepage with section composition
 │   ├── books/           # Book catalog with filters
 │   │   └── page.tsx     # Suspense-wrapped catalog with SimpleSearch
+│   ├── admin/           # Admin panel with database management
+│   │   ├── layout.tsx   # Force dynamic rendering for admin routes
+│   │   ├── page.tsx     # Admin dashboard with statistics and books table
+│   │   ├── actions.ts   # Server Actions for CRUD operations
+│   │   ├── data.ts      # Database queries and data fetching
+│   │   └── components/  # Admin-specific components
 │   ├── plans/           # Subscription plans
 │   ├── subscribe/       # Subscription form page
 │   ├── privacy/         # Privacy Policy (Ukrainian legal compliance)
@@ -77,15 +91,25 @@ src/
 │   └── widgets/         # PlansLite component
 ├── lib/                 # Core utilities and data
 │   ├── types.ts         # TypeScript definitions
+│   ├── types/admin.ts   # Admin panel type definitions
 │   ├── mock.ts          # Book data with real Ukrainian children's books
+│   ├── supabase.ts      # Supabase client and database types
+│   ├── database.types.ts # Auto-generated Supabase types
 │   ├── store.ts         # Zustand state management (filters)
 │   ├── recentViews.ts   # Recent book views utility with localStorage
 │   └── cn.ts            # Tailwind class merging
 ├── __tests__/           # Unit and integration tests
 │   ├── components/      # Component tests (Button, Badge, etc.)
 │   └── lib/             # Utility function tests
-└── tests/               # E2E tests
-    └── e2e/             # Playwright test files
+├── tests/               # E2E tests
+│   └── e2e/             # Playwright test files
+├── scripts/             # Database and maintenance scripts
+│   ├── seed-books.js    # Load catalog books into database
+│   ├── fix-image-urls.js # Fix book image URLs
+│   └── check-styles.sh  # Style verification script
+├── supabase/            # Database schema and migrations
+│   └── setup_database.sql # Complete database schema
+└── middleware.ts        # Next.js middleware for admin routes
 ```
 
 ### Design System and Styling
@@ -156,6 +180,38 @@ src/
 **Cloudinary Integration**: Used for screenshot uploads when users select "Переказ на карту" payment method.
 
 **Image Optimization**: Next.js Image component configured for local book images in `/public/images/books/`.
+
+### Database Architecture
+
+**Supabase Integration**: PostgreSQL database with comprehensive schema:
+- **Books Table**: Complete book management with search vectors, ratings, availability tracking
+- **Users Table**: Subscription and user management
+- **Rentals Table**: Book lending tracking with overdue management  
+- **Payments Table**: Transaction history and payment method tracking
+- **Row Level Security (RLS)**: Configured for data protection
+
+**Database Constraints**: Enforced status values for data integrity:
+- Book status: `'available', 'issued', 'reserved', 'lost'`
+- User status: `'active', 'inactive', 'suspended'`
+- Rental status: `'active', 'overdue', 'returned', 'lost'`
+- Payment status: `'pending', 'completed', 'failed', 'refunded'`
+
+**Full-Text Search**: PostgreSQL tsvector with trigram matching for Ukrainian content.
+
+### Admin Panel Architecture
+
+**Server Actions Pattern**: Modern Next.js approach for database operations:
+- `src/app/admin/actions.ts`: CRUD operations with Zod validation
+- `src/app/admin/data.ts`: Database queries and statistics
+- Force dynamic rendering to prevent static generation issues
+
+**Admin Components**:
+- **BooksTable**: Full CRUD with search, pagination, and inline editing
+- **EditBookDialog**: Modal form with file upload and validation
+- **AddBookDialog**: Book creation with cover upload to Cloudinary
+- **Statistics Dashboard**: Real-time KPI metrics and business intelligence
+
+**Security**: Development-only access via middleware, production requires JWT authentication.
 
 ### Development Notes
 
@@ -257,3 +313,20 @@ cat .next/app-build-manifest.json | grep -q "static/css" && echo "✅ CSS in man
 4. Keep .env.local file with all required variables
 5. Verify CSS generation after major dependency changes
 6. Use Next.js 14.2.4 (stable version) instead of newer unstable versions
+
+### Admin Panel Development Notes
+
+**Critical Server Actions Issue**: Never use `revalidatePath()` in Server Actions within the admin panel - it causes "Invariant: static generation store missing" errors in Next.js 14. Instead:
+- Use manual data refresh through component state
+- Call `onRefresh()` callbacks after successful operations
+- Rely on `force-dynamic` in admin layout to prevent static generation
+
+**Database Status Constraints**: When updating book status, only use these values:
+- `'available'` - Book is ready for rental
+- `'issued'` - Book is currently rented out  
+- `'reserved'` - Book is reserved for specific user
+- `'lost'` - Book is missing/damaged
+
+**Image URL Format**: All book cover URLs should use `/images/books/filename.ext` format (not `http://localhost:3001/images/books/`) for proper Next.js Image optimization.
+
+**Admin Middleware**: Development environment bypasses authentication. Production requires valid JWT token in `admin_token` cookie.
