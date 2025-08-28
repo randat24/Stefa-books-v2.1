@@ -14,13 +14,6 @@ export default function PlansLite() {
   return (
     <section id="plans" className="py-16 px-6">
       <div className="max-w-4xl mx-auto text-center">
-        <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-4">
-          Оберіть свій тариф
-        </h3>
-        <p className="text-slate-600 text-lg mb-12">
-          Береть 1 книгу за раз, повертайте, та береть нову.
-        </p>
-
         <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
           {/* Mini */}
           <div className="relative rounded-3xl border-2 border-slate-200 bg-white p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
@@ -37,10 +30,6 @@ export default function PlansLite() {
             
             <h4 className="text-3xl font-bold text-slate-900 mb-2">Mini</h4>
             <p className="text-2xl font-bold text-slate-900 mb-2">300 грн/міс.</p>
-            <p className="text-slate-600 mb-6 leading-relaxed">
-              Береть 1 книгу за раз, повертайте,<br />
-              та береть нову.
-            </p>
 
             <button
               onClick={() => setPlanAndGo('mini')}
@@ -65,10 +54,6 @@ export default function PlansLite() {
             
             <h4 className="text-3xl font-bold text-slate-900 mb-2">Maxi</h4>
             <p className="text-2xl font-bold text-yellow-600 mb-2">500 грн/міс.</p>
-            <p className="text-slate-600 mb-6 leading-relaxed">
-              Береть 1-2 книги за раз,<br />
-              повертайте, та береть нові.
-            </p>
 
             <button
               onClick={() => setPlanAndGo('maxi')}

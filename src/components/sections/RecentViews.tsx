@@ -35,7 +35,7 @@ export function RecentViews({
         return;
       }
 
-      console.log('📚 RecentViews: Loading recent books:', recentIds);
+      
 
       // Load books from API by IDs
       const bookPromises = recentIds.map(recentView => fetchBook(recentView.id));
@@ -48,10 +48,10 @@ export function RecentViews({
 
       setRecentBooks(validBooks);
       
-      console.log('✅ RecentViews: Loaded recent books:', validBooks.length);
+      
       
     } catch (error) {
-      console.error('💥 RecentViews: Error loading recent books:', error);
+      
       setRecentBooks([]);
     } finally {
       setIsLoading(false);

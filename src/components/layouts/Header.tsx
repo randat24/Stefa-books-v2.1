@@ -17,6 +17,7 @@ export function Header() {
                 width={28} 
                 height={28}
                 className="text-slate-700"
+                priority
               />
             </div>
             <span className="text-2xl font-bold">Stefa.books</span>

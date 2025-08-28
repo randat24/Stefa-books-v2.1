@@ -28,7 +28,7 @@ export function Catalog() {
 
         if (booksResponse.success) {
           setBooks(booksResponse.data);
-          console.log('✅ Catalog: Loaded books:', booksResponse.data.length);
+          
         } else {
           throw new Error(booksResponse.error || 'Ошибка загрузки книг');
         }
@@ -37,13 +37,13 @@ export function Catalog() {
           // Добавляем "Новинки" в начало списка категорий
           const allCategories = ['Новинки', ...categoriesResponse.data];
           setCategories(allCategories);
-          console.log('✅ Catalog: Loaded categories:', allCategories);
+          
         }
 
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
         setError(errorMessage);
-        console.error('💥 Catalog: Error loading data:', err);
+        
       } finally {
         setLoading(false);
       }

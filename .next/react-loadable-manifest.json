@@ -1,1 +1,62 @@
-{}
+{
+  "app/page.tsx -> @/components/sections/BookRecommendations": {
+    "id": "app/page.tsx -> @/components/sections/BookRecommendations",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_sections_BookRecommendations_tsx.js"
+    ]
+  },
+  "app/page.tsx -> @/components/sections/Catalog": {
+    "id": "app/page.tsx -> @/components/sections/Catalog",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_sections_Catalog_tsx.js"
+    ]
+  },
+  "app/page.tsx -> @/components/sections/Categories": {
+    "id": "app/page.tsx -> @/components/sections/Categories",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_sections_Categories_tsx.js"
+    ]
+  },
+  "app/page.tsx -> @/components/sections/ContactLocation": {
+    "id": "app/page.tsx -> @/components/sections/ContactLocation",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_sections_ContactLocation_tsx.js"
+    ]
+  },
+  "app/page.tsx -> @/components/sections/FAQ": {
+    "id": "app/page.tsx -> @/components/sections/FAQ",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_sections_FAQ_tsx.js"
+    ]
+  },
+  "app/page.tsx -> @/components/sections/FinalCTA": {
+    "id": "app/page.tsx -> @/components/sections/FinalCTA",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_sections_FinalCTA_tsx.js"
+    ]
+  },
+  "app/page.tsx -> @/components/sections/RecentViews": {
+    "id": "app/page.tsx -> @/components/sections/RecentViews",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_sections_RecentViews_tsx.js"
+    ]
+  },
+  "app/page.tsx -> @/components/sections/SocialProof": {
+    "id": "app/page.tsx -> @/components/sections/SocialProof",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_sections_SocialProof_tsx.js"
+    ]
+  },
+  "app/page.tsx -> @/components/subscribe/SubscribeFormHome": {
+    "id": "app/page.tsx -> @/components/subscribe/SubscribeFormHome",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_subscribe_SubscribeFormHome_tsx.js"
+    ]
+  },
+  "app/page.tsx -> @/components/widgets/PlansLite": {
+    "id": "app/page.tsx -> @/components/widgets/PlansLite",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_widgets_PlansLite_tsx.js"
+    ]
+  }
+}

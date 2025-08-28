@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function PrivacyPage() {
   return (
     <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen min-h-screen bg-gradient-to-br from-slate-50 to-white py-12">
@@ -16,7 +18,7 @@ export default function PrivacyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Загальні положення</h2>
               <p className="text-slate-700 leading-relaxed mb-4">
-                Ця Політика конфіденційності (далі — "Політика") визначає порядок збору, використання, зберігання, обробки та захисту персональних даних користувачів веб-сайту stefa-books.com.ua (далі — "Сайт"), який належить та адмініструється Федорова Анастасія Віталіївна, РНОКПП 1234567890, що здійснює діяльність за адресою: м. Миколаїв, вул. Маріупольська 13/2, Україна (надалі — "Адміністратор", "Ми").
+                Ця Політика конфіденційності (далі — &ldquo;Політика&rdquo;) визначає порядок збору, використання, зберігання, обробки та захисту персональних даних користувачів веб-сайту stefa-books.com.ua (далі — &ldquo;Сайт&rdquo;), який належить та адмініструється Федорова Анастасія Віталіївна, РНОКПП 1234567890, що здійснює діяльність за адресою: м. Миколаїв, вул. Маріупольська 13/2, Україна (надалі — &ldquo;Адміністратор&rdquo;, &ldquo;Ми&rdquo;).
               </p>
               <p className="text-slate-700 leading-relaxed mb-4">
                 Ми поважаємо ваше право на конфіденційність та дотримуємося вимог:
@@ -42,7 +44,7 @@ export default function PrivacyPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-2">Ідентифікаційні дані</h3>
                   <ul className="list-disc list-inside text-slate-700 ml-4 space-y-1">
-                    <li>Ім'я, прізвище, по батькові</li>
+                    <li>Ім&rsquo;я, прізвище, по батькові</li>
                     <li>Логін, нікнейм або Telegram/Instagram username</li>
                   </ul>
                 </div>
@@ -92,7 +94,7 @@ export default function PrivacyPage() {
                 <li>Надавати послуги оренди книг та управління підписками</li>
                 <li>Забезпечувати доставку/повернення книг</li>
                 <li>Ідентифікувати користувача при вході в акаунт</li>
-                <li>Виконувати договірні зобов'язання</li>
+                <li>Виконувати договірні зобов&rsquo;язання</li>
                 <li>Обробляти платежі та формувати бухгалтерську звітність</li>
                 <li>Інформувати про статус підписки, новинки, акції (маркетинг з вашої згоди)</li>
                 <li>Забезпечувати технічну підтримку та покращення сервісу</li>
@@ -136,7 +138,7 @@ export default function PrivacyPage() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">Ваші права як суб'єкта персональних даних</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Ваші права як суб&rsquo;єкта персональних даних</h2>
               <p className="text-slate-700 leading-relaxed mb-4">
                 Ви маєте право:
               </p>
@@ -208,7 +210,7 @@ export default function PrivacyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Юрисдикція та вирішення спорів</h2>
               <div className="space-y-4 text-slate-700 leading-relaxed">
-                <p>Ця Політика регулюється законодавством України. Всі спори, що можуть виникнути у зв'язку з обробкою персональних даних, вирішуються у порядку, встановленому чинним законодавством України.</p>
+                <p>Ця Політика регулюється законодавством України. Всі спори, що можуть виникнути у зв&rsquo;язку з обробкою персональних даних, вирішуються у порядку, встановленому чинним законодавством України.</p>
                 <p>Місцем вирішення спорів є компетентні суди України відповідно до правил підсудності.</p>
               </div>
             </section>
@@ -233,12 +235,12 @@ export default function PrivacyPage() {
           </div>
 
           <div className="mt-12 text-center">
-            <a 
+            <Link 
               href="/" 
               className="inline-flex items-center justify-center px-8 py-3 bg-yellow-500 text-slate-900 rounded-full hover:bg-yellow-400 transition-colors font-semibold shadow-md hover:shadow-lg"
             >
               Повернутися на головну
-            </a>
+            </Link>
           </div>
         </div>
       </div>

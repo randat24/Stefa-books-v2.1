@@ -2,13 +2,14 @@
 
 import { supabase } from "@/lib/supabase"
 import type { AdminDashboardData, BookRow, UserRow, RentalRow, PaymentRow } from "@/lib/types/admin"
+import { logger } from "@/lib/logger"
 
 // ============================================================================
 // ЗАГРУЗКА ДАННЫХ АДМИН-ПАНЕЛИ
 // ============================================================================
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> {
-  console.log('🚀 Loading admin dashboard data from database...')
+  logger.info('Loading admin dashboard data from database', undefined, 'Admin')
   
   try {
     // Загружаем реальные данные из базы
@@ -28,17 +29,17 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       payments
     }
     
-    console.log('✅ Database data loaded:', {
+    logger.info('Database data loaded', {
       books: result.books.length,
       users: result.users.length,
       rentals: result.rentals.length,
       payments: result.payments.length,
       stats: result.stats
-    })
+    }, 'Admin')
     
     return result
   } catch (error) {
-    console.error('❌ Error loading admin dashboard data:', error)
+    logger.error('Error loading admin dashboard data', error, 'Admin')
     
     // Fallback to static data if database fails
     const fallbackResult = {
@@ -71,7 +72,7 @@ export async function getBooks(): Promise<BookRow[]> {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching books:', error)
+      logger.error('Error fetching books', error, 'Admin')
       return []
     }
 
@@ -105,7 +106,7 @@ export async function getBooks(): Promise<BookRow[]> {
       updated_at: book.updated_at
     }))
   } catch (error) {
-    console.error('Error in getBooks:', error)
+    logger.error('Error in getBooks', error, 'Admin')
     return []
   }
 }
@@ -122,7 +123,7 @@ export async function getUsers(): Promise<UserRow[]> {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching users:', error)
+      logger.error('Error fetching users', error, 'Admin')
       return []
     }
 
@@ -141,7 +142,7 @@ export async function getUsers(): Promise<UserRow[]> {
       updated_at: user.updated_at
     }))
   } catch (error) {
-    console.error('Error in getUsers:', error)
+    logger.error('Error in getUsers', error, 'Admin')
     return []
   }
 }
@@ -162,7 +163,7 @@ export async function getRentals(): Promise<RentalRow[]> {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching rentals:', error)
+      logger.error('Error fetching rentals', error, 'Admin')
       return []
     }
 
@@ -184,7 +185,7 @@ export async function getRentals(): Promise<RentalRow[]> {
       book_code: rental.books?.code
     }))
   } catch (error) {
-    console.error('Error in getRentals:', error)
+    logger.error('Error in getRentals', error, 'Admin')
     return []
   }
 }
@@ -204,7 +205,7 @@ export async function getPayments(): Promise<PaymentRow[]> {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching payments:', error)
+      logger.error('Error fetching payments', error, 'Admin')
       return []
     }
 
@@ -225,7 +226,7 @@ export async function getPayments(): Promise<PaymentRow[]> {
       user_email: payment.users?.email
     }))
   } catch (error) {
-    console.error('Error in getPayments:', error)
+    logger.error('Error in getPayments', error, 'Admin')
     return []
   }
 }
@@ -296,7 +297,7 @@ export async function getDashboardStats() {
       totalBooksCost: booksCostStats.totalCost
     }
   } catch (error) {
-    console.error('Error loading dashboard stats:', error)
+    logger.error('Error loading dashboard stats', error, 'Admin')
     return {
       totalBooks: 0,
       availableBooks: 0,
@@ -313,7 +314,7 @@ export async function getDashboardStats() {
 
 export async function getBooksOnlyStats() {
   try {
-    console.log('Loading books stats...')
+    logger.info('Loading books stats', undefined, 'Admin')
     
     // Получаем статистику только по книгам
     const { data: booksData, error } = await supabase
@@ -321,11 +322,11 @@ export async function getBooksOnlyStats() {
       .select('id, available, price_uah, qty_total')
 
     if (error) {
-      console.error('Error fetching books for stats:', error)
+      logger.error('Error fetching books for stats', error, 'Admin')
       throw error
     }
 
-    console.log('Books data for stats:', booksData?.length || 0)
+    logger.info('Books data for stats', { count: booksData?.length || 0 }, 'Admin')
 
     const totalBooks = booksData?.length || 0
     const availableBooks = booksData?.filter(book => book.available).length || 0
@@ -341,10 +342,10 @@ export async function getBooksOnlyStats() {
       totalBooksCost
     }
 
-    console.log('Calculated stats:', stats)
+    logger.info('Calculated stats', stats, 'Admin')
     return stats
   } catch (error) {
-    console.error('Error loading books stats:', error)
+    logger.error('Error loading books stats', error, 'Admin')
     return {
       totalBooks: 0,
       availableBooks: 0,
@@ -371,13 +372,13 @@ export async function searchBooks(query: string, limit = 50) {
     })
 
     if (error) {
-      console.error('Error searching books:', error)
+      logger.error('Error searching books', error, 'Admin')
       return []
     }
 
     return data || []
   } catch (error) {
-    console.error('Error in searchBooks:', error)
+    logger.error('Error in searchBooks', error, 'Admin')
     return []
   }
 }

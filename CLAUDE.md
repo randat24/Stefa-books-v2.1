@@ -9,17 +9,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run dev` - Alternative using npm
 - `pnpm build` - Build production bundle
 - `pnpm lint` - Run ESLint for code quality checks
+- `pnpm lint:fix` - Run ESLint with automatic fixes
+- `pnpm type-check` - Run TypeScript type checking without emitting files
 - `pnpm check-styles` - Verify CSS generation and styling integrity
 - `pnpm fix-styles` - Fix common CSS and styling issues
+- `pnpm clean` - Clean all build artifacts, cache, and reports
 
 ### Testing
 - `pnpm test` - Run all Jest unit and integration tests
 - `pnpm test:watch` - Run Jest in watch mode for development
 - `pnpm test:coverage` - Run tests with coverage report (70% threshold)
+- `pnpm test:performance` - Run performance-specific tests
 - `pnpm test:e2e` - Run Playwright end-to-end tests
 - `pnpm test:e2e:ui` - Run E2E tests with Playwright UI
 - `pnpm test:e2e:headed` - Run E2E tests in headed mode
 - `pnpm test:all` - Run both unit and E2E tests
+
+### Performance Analysis
+- `pnpm analyze:performance` - Run comprehensive performance analysis
+- `pnpm analyze:bundle` - Analyze bundle size with detailed breakdown
 
 ### Database Management
 - `node scripts/seed-books.js` - Load catalog books into Supabase database
@@ -33,17 +41,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Architecture Overview
 
 ### Tech Stack
-- **Next.js 14.2.4** with App Router (TypeScript)
-- **React 18.3.1** with client-side state management
-- **Supabase 2.55.0** PostgreSQL database with Row Level Security (RLS)
+- **Next.js 15.5.2** with App Router (TypeScript) and performance optimizations
+- **React 19.1.1** with client-side state management and modern features
+- **Supabase 2.56.0** PostgreSQL database with Row Level Security (RLS)
 - **Tailwind CSS 3.4.10** with custom design system and CSS variables
-- **Zustand 4.5.4** for lightweight state management
+- **Zustand 5.0.8** for lightweight state management
 - **React Hook Form 7.53.0 + Zod 3.23.8** for form validation
 - **React Query 5.59.0** for data fetching and caching
 - **Lucide React 0.441.0** for consistent iconography
 - **Radix UI** components for dialogs, selects, tabs, and other primitives
 - **Cloudinary 2.7.0** for image upload and optimization
-- **Framer Motion 11.3.20** installed but not actively used (only CSS transitions)
+- **Framer Motion 12.23.12** installed but not actively used (only CSS transitions)
 
 ### Testing Infrastructure
 - **Jest + React Testing Library** for unit and integration tests
@@ -92,6 +100,13 @@ src/
 │   ├── subscribe/       # Subscription forms
 │   └── widgets/         # PlansLite component
 ├── lib/                 # Core utilities and data
+│   ├── api/             # Client-side API utilities
+│   │   └── books.ts     # Books API with caching integration
+│   ├── search/          # Advanced search system
+│   │   ├── fuzzySearch.ts     # Typo-tolerant search
+│   │   ├── semanticSearch.ts  # Content-based similarity
+│   │   ├── analytics.ts       # Search behavior tracking
+│   │   └── autocomplete.ts    # ML-powered suggestions
 │   ├── types.ts         # TypeScript definitions
 │   ├── types/admin.ts   # Admin panel type definitions
 │   ├── mock.ts          # Book data with real Ukrainian children's books
@@ -99,6 +114,9 @@ src/
 │   ├── database.types.ts # Auto-generated Supabase types
 │   ├── store.ts         # Zustand state management (filters)
 │   ├── recentViews.ts   # Recent book views utility with localStorage
+│   ├── cache.ts         # Multi-layer API caching system
+│   ├── logger.ts        # Structured logging utility
+│   ├── serviceWorker.ts # Service Worker registration and management
 │   └── cn.ts            # Tailwind class merging
 ├── __tests__/           # Unit and integration tests
 │   ├── components/      # Component tests (Button, Badge, etc.)
@@ -111,6 +129,10 @@ src/
 │   └── check-styles.sh  # Style verification script
 ├── supabase/            # Database schema and migrations
 │   └── setup_database.sql # Complete database schema
+├── public/              # Static assets
+│   ├── sw.js            # Service Worker for offline functionality
+│   ├── logo.svg         # Application logo
+│   └── images/          # Book covers and placeholder images
 └── middleware.ts        # Next.js middleware for admin routes
 ```
 
@@ -352,7 +374,7 @@ cat .next/app-build-manifest.json | grep -q "static/css" && echo "✅ CSS in man
 - POST endpoint for fetching categories
 - Individual book endpoint at `/api/books/[id]` with proper 404 handling
 - Supabase integration with full-text search using `ilike` pattern matching
-- Console logging for debugging: `📚 API: Fetching books with params:`
+- Structured logging with context-aware logger utility
 
 **Critical Type Safety**: All components must import `Book` type from `@/lib/supabase` (not `@/lib/types`) to ensure compatibility with database schema. The Supabase types are auto-generated from the database schema.
 
@@ -408,8 +430,85 @@ return NextResponse.json({ success: true, data: books, count: books.length })
 return NextResponse.json({ success: false, error: 'Error message' }, { status: 500 })
 ```
 
-**Database Query Logging**: All API routes include console logging for debugging:
+### Performance Optimizations
+
+**Bundle Optimization**: The application implements comprehensive performance optimizations:
+
+**Code Splitting**: Dynamic imports with React.lazy() for non-critical components:
 ```tsx
-console.log('📚 API: Fetching books with params:', { category, search, limit })
-console.log('✅ API: Found X books')
+const PlansLite = lazy(() => import("@/components/widgets/PlansLite"));
+const Categories = lazy(() => import("@/components/sections/Categories"));
+// All lazy components wrapped with Suspense and loading states
+<Suspense fallback={<div className="h-80 bg-slate-50 animate-pulse rounded-lg" />}>
+  <PlansLite />
+</Suspense>
 ```
+
+**API Caching**: Multi-layer caching system (`src/lib/cache.ts`):
+- In-memory cache with configurable TTL (Time To Live)
+- Separate cache instances for different data types (books, categories, search)
+- Automatic cache cleanup and invalidation
+- Cache-first strategy for static data, network-first for dynamic content
+
+**Image Optimization**: Enhanced Next.js image handling:
+```tsx
+<Image
+  src={book.cover_url || '/images/book-placeholder.svg'}
+  alt={book.title}
+  loading="lazy"
+  placeholder="blur"
+  blurDataURL="data:image/jpeg;base64,..." // Base64 placeholder
+  sizes="(min-width: 1280px) 320px, (min-width: 768px) 33vw, 100vw"
+/>
+```
+
+**Service Worker**: Offline-first PWA capabilities (`public/sw.js`):
+- Static asset caching for offline functionality
+- API response caching with network-first strategy
+- Background sync for offline actions
+- Update notifications for new versions
+- Registration utility (`src/lib/serviceWorker.ts`)
+
+**Production Optimizations**: Next.js configuration includes:
+- Automatic console.log removal in production builds
+- WebP/AVIF image format optimization
+- Package import optimization for Lucide React and Radix UI
+- Memory-based worker optimizations
+- Aggressive security headers
+
+### Environment Configuration
+
+**Environment Variables**: Comprehensive environment setup with multiple configuration files:
+- `.env.example` - Template with all required variables
+- `.env.local.example` - Development configuration template  
+- `.env.production` - Production environment template
+
+**Critical Environment Variables**:
+```bash
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
+# Admin Security
+ADMIN_JWT_SECRET=your-super-secret-admin-jwt-token
+```
+
+### Logging and Debugging
+
+**Structured Logging**: Professional logging system (`src/lib/logger.ts`) replaces console statements:
+```tsx
+import { logger } from '@/lib/logger';
+
+// Development vs production logging levels
+logger.debug('Cache hit for key', { key, data }, 'Cache');
+logger.info('API request successful', { count: books.length }, 'API');  
+logger.error('Database connection failed', error, 'Database');
+```
+
+**Context-Based Logging**: Organized by functional areas (API, Cache, Search, Analytics, Admin) for better debugging and monitoring.

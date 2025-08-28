@@ -16,7 +16,13 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:all": "npm run test && npm run test:e2e"
+    "test:all": "npm run test && npm run test:e2e",
+    "analyze:performance": "./scripts/analyze-performance.sh",
+    "analyze:bundle": "ANALYZE=true next build",
+    "test:performance": "jest --testPathPatterns=performance",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next out dist coverage performance-reports"
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.0",

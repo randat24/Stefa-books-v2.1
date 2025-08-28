@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 // ============================================================================
 // API ДЛЯ ПОЛУЧЕНИЯ ОДНОЙ КНИГИ ПО ID
@@ -19,7 +20,7 @@ export async function GET(
       )
     }
 
-    console.log(`📖 API: Fetching book with ID: ${id}`)
+    logger.info(`Fetching book with ID: ${id}`, undefined, 'API')
 
     const { data: book, error } = await supabase
       .from('books')
@@ -28,7 +29,7 @@ export async function GET(
       .single()
 
     if (error) {
-      console.error('❌ Supabase error:', error)
+      logger.error('Supabase error', error, 'API')
       
       // Если книга не найдена
       if (error.code === 'PGRST116') {
@@ -44,7 +45,7 @@ export async function GET(
       )
     }
 
-    console.log(`✅ API: Found book: ${book.title}`)
+    logger.info(`Found book: ${book.title}`, undefined, 'API')
 
     return NextResponse.json({
       success: true,
@@ -52,7 +53,7 @@ export async function GET(
     })
 
   } catch (error) {
-    console.error('💥 API error:', error)
+    logger.error('API error', error, 'API')
     return NextResponse.json(
       { 
         success: false, 

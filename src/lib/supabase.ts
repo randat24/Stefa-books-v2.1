@@ -21,4 +21,25 @@ export type BookUpdate = Database['public']['Tables']['books']['Update'];
 
 export type Author = Database['public']['Tables']['authors']['Row'];
 export type Category = Database['public']['Tables']['categories']['Row'];
+export type CategoryInsert = Database['public']['Tables']['categories']['Insert'];
+export type CategoryUpdate = Database['public']['Tables']['categories']['Update'];
 export type SearchQuery = Database['public']['Tables']['search_queries']['Row'];
+
+// Extended types for category hierarchy
+export type CategoryWithParent = Category & {
+  parent_name?: string;
+  parent_slug?: string;
+};
+
+export type CategoryTree = Category & {
+  level: number;
+  path: string[];
+  children?: CategoryTree[];
+};
+
+export type CategoryBreadcrumb = {
+  id: string;
+  name: string;
+  slug: string;
+  level: number;
+};

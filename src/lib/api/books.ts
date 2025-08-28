@@ -1,4 +1,6 @@
 import type { Book } from '@/lib/supabase'
+import { booksCache, categoriesCache, searchCache, APICache } from '@/lib/cache'
+import { logger } from '@/lib/logger'
 
 // ============================================================================
 // КЛИЕНТСКАЯ БИБЛИОТЕКА ДЛЯ РАБОТЫ С КНИГАМИ
@@ -6,6 +8,9 @@ import type { Book } from '@/lib/supabase'
 
 export interface BooksFilter {
   category?: string
+  category_id?: string
+  age_category?: string
+  age_category_id?: string
   search?: string
   limit?: number
   available_only?: boolean
@@ -68,10 +73,32 @@ function buildApiUrl(endpoint: string): string {
 
 export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksResponse> {
   try {
+    // Generate cache key from filters
+    const cacheKey = APICache.createKey('books', filters)
+    
+    // Check cache first
+    const cachedData = booksCache.get<BooksResponse>(cacheKey)
+    if (cachedData) {
+      logger.debug('Returning cached books data', { filters }, 'API')
+      return cachedData
+    }
+
     const params = new URLSearchParams()
     
     if (filters.category && filters.category !== 'all') {
       params.append('category', filters.category)
+    }
+    
+    if (filters.category_id) {
+      params.append('category_id', filters.category_id)
+    }
+    
+    if (filters.age_category) {
+      params.append('age_category', filters.age_category)
+    }
+    
+    if (filters.age_category_id) {
+      params.append('age_category_id', filters.age_category_id)
     }
     
     if (filters.search) {
@@ -106,6 +133,9 @@ export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksRespon
       throw new Error(result.error || 'Ошибка при получении книг')
     }
 
+    // Cache successful response
+    booksCache.set(cacheKey, result)
+    logger.debug('Cached books data', { filters, count: result.count }, 'API')
     
     return result
 
@@ -129,8 +159,6 @@ export async function fetchBook(id: string): Promise<BookResponse> {
       throw new Error('ID книги не указан')
     }
 
-    console.log(`📖 Client: Fetching book with ID: ${id}`)
-
     const endpoint = `/api/books/${id}`
     const url = buildApiUrl(endpoint)
 
@@ -153,13 +181,10 @@ export async function fetchBook(id: string): Promise<BookResponse> {
     if (!result.success) {
       throw new Error(result.error || 'Ошибка при получении книги')
     }
-
-    console.log(`✅ Client: Received book: ${result.data.title}`)
     
     return result
 
   } catch (error) {
-    console.error('💥 Client: Error fetching book:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Неизвестная ошибка'
@@ -173,7 +198,14 @@ export async function fetchBook(id: string): Promise<BookResponse> {
 
 export async function fetchCategories(): Promise<CategoriesResponse> {
   try {
-    console.log('📂 Client: Fetching categories')
+    const cacheKey = 'categories'
+    
+    // Check cache first
+    const cachedData = categoriesCache.get<CategoriesResponse>(cacheKey)
+    if (cachedData) {
+      logger.debug('Returning cached categories data', undefined, 'API')
+      return cachedData
+    }
 
     const endpoint = '/api/books'
     const url = buildApiUrl(endpoint)
@@ -195,13 +227,14 @@ export async function fetchCategories(): Promise<CategoriesResponse> {
     if (!result.success) {
       throw new Error(result.error || 'Ошибка при получении категорий')
     }
-
-    console.log(`✅ Client: Received ${result.count} categories`)
+    
+    // Cache successful response
+    categoriesCache.set(cacheKey, result)
+    logger.debug('Cached categories data', { count: result.count }, 'API')
     
     return result
 
   } catch (error) {
-    console.error('💥 Client: Error fetching categories:', error)
     return {
       success: false,
       data: [],
@@ -217,8 +250,6 @@ export async function fetchCategories(): Promise<CategoriesResponse> {
 
 export async function fetchCategoriesStats(): Promise<CategoriesStatsResponse> {
   try {
-    console.log('📊 Client: Fetching categories with stats')
-
     const endpoint = '/api/books'
     const url = buildApiUrl(endpoint)
 
@@ -239,13 +270,10 @@ export async function fetchCategoriesStats(): Promise<CategoriesStatsResponse> {
     if (!result.success) {
       throw new Error(result.error || 'Ошибка при получении статистики категорий')
     }
-
-    console.log(`✅ Client: Received ${result.count} categories with stats`)
     
     return result
 
   } catch (error) {
-    console.error('💥 Client: Error fetching categories stats:', error)
     return {
       success: false,
       data: [],

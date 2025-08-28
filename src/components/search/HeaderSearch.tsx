@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, X, ShoppingBag, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { searchBooks, fetchCategories } from '@/lib/api/books';
 import type { Book } from '@/lib/supabase';
@@ -58,7 +59,7 @@ export function HeaderSearch() {
     setIsSearching(true);
     
     try {
-      console.log('🔍 HeaderSearch: Searching for:', searchQuery);
+      // Search logging removed for production
 
       // Поиск книг и получение категорий параллельно
       const [booksResponse, categoriesResponse] = await Promise.all([
@@ -85,18 +86,14 @@ export function HeaderSearch() {
           books: books
         });
 
-        console.log('✅ HeaderSearch: Found results:', {
-          categories: matchedCategories.length,
-          authors: authors.length,
-          books: books.length
-        });
+        // Search results logging removed for production
       } else {
-        console.error('❌ HeaderSearch: Search failed');
+        // Search failed - logging removed for production
         setSearchResults(null);
       }
 
-    } catch (error) {
-      console.error('💥 HeaderSearch: Search error:', error);
+    } catch {
+      // Search error - logging removed for production
       setSearchResults(null);
     } finally {
       setIsSearching(false);
@@ -222,9 +219,11 @@ export function HeaderSearch() {
                             >
                               <div className="h-16 w-12 rounded-lg overflow-hidden bg-slate-100">
                                 {book.cover_url ? (
-                                  <img 
+                                  <Image 
                                     src={book.cover_url} 
                                     alt={book.title}
+                                    width={48}
+                                    height={64}
                                     className="w-full h-full object-cover"
                                   />
                                 ) : (

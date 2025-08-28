@@ -89,7 +89,7 @@ export default function RentalForm({ bookId }: { bookId?: string }) {
               onChange={onPhoneInput}
               onBlur={() => trigger("phone")}
               className="input px-3 py-2 text-base w-full" 
-              placeholder="+380 XX XXX XX XX" 
+              placeholder="+380 95 123 45 67" 
             />
             {errors.phone && <span className="text-xs text-red-600 mt-1">{errors.phone.message}</span>}
           </div>

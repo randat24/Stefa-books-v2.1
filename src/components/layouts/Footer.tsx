@@ -1,5 +1,6 @@
-import { Mail, Phone, MapPin, BookOpen, Users, Truck } from "lucide-react";
+import { Mail, Phone, MapPin, BookOpen, Users } from "lucide-react";
 import Image from 'next/image';
+import Link from 'next/link';
 
 export function Footer() {
   return (
@@ -43,22 +44,22 @@ export function Footer() {
             <h4 className="font-semibold" style={{ color: 'var(--ink)' }}>Навігація</h4>
             <ul className="space-y-2">
               <li>
-                <a 
+                <Link 
                   href="/" 
                   className="text-sm transition-colors hover:text-[var(--accent)]"
                   style={{ color: 'var(--text-muted)' }}
                 >
                   Головна
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
+                <Link 
                   href="/books" 
                   className="text-sm transition-colors hover:text-[var(--accent)]"
                   style={{ color: 'var(--text-muted)' }}
                 >
                   Каталог книг
-                </a>
+                </Link>
               </li>
               <li>
                 <a 
@@ -110,7 +111,7 @@ export function Footer() {
                 </a>
               </div>
               <div className="space-y-2 text-sm">
-                <p className="text-muted">Зв'язок з нами:</p>
+                <p className="text-muted">Зв&rsquo;язок з нами:</p>
                 <div className="flex items-center gap-2">
                   <Mail size={14} />
                   <a href="mailto:info@stefa.books" className="hover:text-[var(--accent)] transition-colors">info@stefa.books</a>

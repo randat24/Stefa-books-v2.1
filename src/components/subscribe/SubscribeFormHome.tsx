@@ -142,7 +142,7 @@ function SubscribeFormHomeContent() {
 
   if (sent) {
     return (
-      <section className="py-16 px-6" id="subscribe">
+      <section className="py-4 px-6" id="subscribe">
         <div className="mx-auto max-w-2xl">
           <div className="rounded-3xl bg-white border border-slate-200 shadow-xl p-8 text-center">
             <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center">
@@ -174,9 +174,9 @@ function SubscribeFormHomeContent() {
   }
 
   return (
-    <section className="py-16 px-6" id="subscribe">
+    <section className="py-4 px-6" id="subscribe">
       <div className="mx-auto max-w-2xl">
-        <div className="text-center mb-12">
+        <div className="text-center mb-6">
           <h2 className="text-4xl font-semibold tracking-tight text-slate-900 mb-2">
             Оформити підписку
           </h2>

@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { fetchBook, fetchBooksByCategory } from "@/lib/api/books";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/Badge";
 import { BookCard } from "@/components/BookCard";
 import { BookViewTracker } from "@/components/BookViewTracker";
-import { Star, BookOpen, Calendar, Users, Award } from "lucide-react";
+import { BookOpen, Award } from "lucide-react";
 import type { Metadata } from "next";
 
 type Params = Promise<{ id: string }>;
@@ -114,7 +115,7 @@ export default async function BookPage({ params }: { params: Params }) {
               </a>
             </Button>
             <Button variant="outline" asChild>
-              <a href="/books">Назад до каталогу</a>
+              <Link href="/books">Назад до каталогу</Link>
             </Button>
           </div>
         </div>

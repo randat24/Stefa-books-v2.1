@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import type { Book } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 // ============================================================================
 // API ДЛЯ ПОЛУЧЕНИЯ КНИГ
@@ -10,18 +11,24 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
+    const category_id = searchParams.get('category_id')
+    const age_category = searchParams.get('age_category')
+    const age_category_id = searchParams.get('age_category_id')
     const search = searchParams.get('search')
     const limit = searchParams.get('limit')
     const available_only = searchParams.get('available_only') === 'true'
     
-    console.log('📚 API: Fetching books with params:', {
+    logger.info('📚 API: Fetching books with params:', {
       category,
+      category_id,
+      age_category,
+      age_category_id,
       search,
       limit,
       available_only
-    })
+    }, 'API')
 
-    // Базовый запрос
+    // Базовый запрос - пробуем с JOIN, если не получается - без категорий
     let query = supabase
       .from('books')
       .select('*')
@@ -32,8 +39,20 @@ export async function GET(request: NextRequest) {
       query = query.eq('available', true)
     }
 
-    // Фильтр по категории
-    if (category && category !== 'all') {
+    // Фильтр по ID жанровой категории (пропускаем до миграции)
+    // TODO: Включить после миграции БД
+    // if (category_id) {
+    //   query = query.eq('category_id', category_id)
+    // }
+    
+    // Фильтр по ID возрастной категории (пропускаем до миграции)
+    // TODO: Включить после миграции БД
+    // if (age_category_id) {
+    //   query = query.eq('age_category_id', age_category_id)
+    // }
+
+    // Фильтр по старому полю категории (для совместимости)
+    if (category && category !== 'all' && !category_id) {
       query = query.eq('category', category)
     }
 
@@ -54,14 +73,14 @@ export async function GET(request: NextRequest) {
     const { data: books, error } = await query
 
     if (error) {
-      console.error('❌ Supabase error:', error)
+      logger.error('Supabase error', error, 'API')
       return NextResponse.json(
         { success: false, error: error.message },
         { status: 500 }
       )
     }
 
-    console.log(`✅ API: Found ${books?.length || 0} books`)
+    logger.info(`Found ${books?.length || 0} books`, undefined, 'API')
 
     return NextResponse.json({
       success: true,
@@ -70,7 +89,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('💥 API error:', error)
+    logger.error('API error', error, 'API')
     return NextResponse.json(
       { 
         success: false, 
@@ -90,14 +109,14 @@ export async function POST(request: NextRequest) {
     const { action } = await request.json()
     
     if (action === 'get_categories') {
-      console.log('📂 API: Fetching categories')
+      logger.info('Fetching categories', undefined, 'API')
       
       const { data: books, error } = await supabase
         .from('books')
         .select('category')
 
       if (error) {
-        console.error('❌ Supabase error:', error)
+        logger.error('Supabase error', error, 'API')
         return NextResponse.json(
           { success: false, error: error.message },
           { status: 500 }
@@ -109,7 +128,7 @@ export async function POST(request: NextRequest) {
         .filter(Boolean)
         .sort()
 
-      console.log(`✅ API: Found ${categories.length} categories:`, categories)
+      logger.info(`Found ${categories.length} categories`, categories, 'API')
 
       return NextResponse.json({
         success: true,
@@ -119,14 +138,14 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'get_categories_stats') {
-      console.log('📊 API: Fetching categories with stats')
+      logger.info('Fetching categories with stats', undefined, 'API')
       
       const { data: books, error } = await supabase
         .from('books')
         .select('category, available')
 
       if (error) {
-        console.error('❌ Supabase error:', error)
+        logger.error('Supabase error', error, 'API')
         return NextResponse.json(
           { success: false, error: error.message },
           { status: 500 }
@@ -156,7 +175,7 @@ export async function POST(request: NextRequest) {
         }))
         .sort((a, b) => b.total - a.total) // Сортировка по количеству книг
 
-      console.log(`✅ API: Found ${categories.length} categories with stats`)
+      logger.info(`Found ${categories.length} categories with stats`, undefined, 'API')
 
       return NextResponse.json({
         success: true,
@@ -171,7 +190,7 @@ export async function POST(request: NextRequest) {
     )
 
   } catch (error) {
-    console.error('💥 API error:', error)
+    logger.error('API error', error, 'API')
     return NextResponse.json(
       { 
         success: false, 

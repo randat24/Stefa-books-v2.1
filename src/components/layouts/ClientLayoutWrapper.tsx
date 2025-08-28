@@ -1,10 +1,12 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 import { Header } from '@/components/layouts/Header';
 import { Footer } from '@/components/layouts/Footer';
 import { BackToTop } from '@/components/ui/BackToTop';
 import { ErrorBoundary } from '@/components/error-boundary';
+import { registerServiceWorker, checkServiceWorkerUpdate } from '@/lib/serviceWorker';
 
 interface ClientLayoutWrapperProps {
   children: React.ReactNode;
@@ -13,6 +15,18 @@ interface ClientLayoutWrapperProps {
 export function ClientLayoutWrapper({ children }: ClientLayoutWrapperProps) {
   const pathname = usePathname();
   const isAdminPage = pathname?.startsWith('/admin');
+
+  // Register service worker on mount
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      registerServiceWorker();
+      
+      // Check for updates periodically
+      const updateInterval = setInterval(checkServiceWorkerUpdate, 60000); // Every minute
+      
+      return () => clearInterval(updateInterval);
+    }
+  }, []);
 
   // Для админ-панели возвращаем только children без Header/Footer
   if (isAdminPage) {

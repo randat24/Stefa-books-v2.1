@@ -1,18 +1,20 @@
 "use client"
 
+import { Suspense, lazy } from "react";
 import Hero from "@/components/hero/Hero";
 import Steps from "@/components/sections/Steps";
-import PlansLite from "@/components/widgets/PlansLite";
-import Categories from "@/components/sections/Categories";
-import SubscribeFormHome from "@/components/subscribe/SubscribeFormHome";
-import SocialProof from "@/components/sections/SocialProof";
-import FAQ from "@/components/sections/FAQ";
-import FinalCTA from "@/components/sections/FinalCTA";
-import ContactLocation from "@/components/sections/ContactLocation";
-import { Catalog } from "@/components/sections/Catalog";
-import { BookRecommendations } from "@/components/sections/BookRecommendations";
-import { RecentViews } from "@/components/sections/RecentViews";
-import { BOOKS } from "@/lib/mock";
+
+// Dynamic imports for non-critical components
+const PlansLite = lazy(() => import("@/components/widgets/PlansLite"));
+const Categories = lazy(() => import("@/components/sections/Categories"));
+const SubscribeFormHome = lazy(() => import("@/components/subscribe/SubscribeFormHome"));
+const SocialProof = lazy(() => import("@/components/sections/SocialProof"));
+const FAQ = lazy(() => import("@/components/sections/FAQ"));
+const FinalCTA = lazy(() => import("@/components/sections/FinalCTA"));
+const ContactLocation = lazy(() => import("@/components/sections/ContactLocation"));
+const Catalog = lazy(() => import("@/components/sections/Catalog").then(mod => ({ default: mod.Catalog })));
+const BookRecommendations = lazy(() => import("@/components/sections/BookRecommendations").then(mod => ({ default: mod.BookRecommendations })));
+const RecentViews = lazy(() => import("@/components/sections/RecentViews").then(mod => ({ default: mod.RecentViews })));
 
 export default function HomePage() {
 	return (
@@ -24,32 +26,49 @@ export default function HomePage() {
 			<Steps />
 			
 			{/* Recent Views */}
-			<RecentViews maxItems={5} />
+			<Suspense fallback={<div className="h-32 bg-slate-50 animate-pulse rounded-lg" />}>
+				<RecentViews maxItems={5} />
+			</Suspense>
 
 			{/* Каталог книг */}
-			<Catalog />
+			<Suspense fallback={<div className="h-96 bg-slate-50 animate-pulse rounded-lg" />}>
+				<Catalog />
+			</Suspense>
 
 			{/* Тарифы */}
-			<PlansLite />
+			<Suspense fallback={<div className="h-80 bg-slate-50 animate-pulse rounded-lg" />}>
+				<PlansLite />
+			</Suspense>
 
 			{/* Categories */}
-			<Categories />
-
+			<Suspense fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-lg" />}>
+				<Categories />
+			</Suspense>
 
 			{/* Subscribe Form */}
-			<SubscribeFormHome />
+			<Suspense fallback={<div className="h-96 bg-slate-50 animate-pulse rounded-lg" />}>
+				<SubscribeFormHome />
+			</Suspense>
 
 			{/* FAQ */}
-			<FAQ />
+			<Suspense fallback={<div className="h-80 bg-slate-50 animate-pulse rounded-lg" />}>
+				<FAQ />
+			</Suspense>
 
 			{/* Social Proof */}
-			<SocialProof />
+			<Suspense fallback={<div className="h-48 bg-slate-50 animate-pulse rounded-lg" />}>
+				<SocialProof />
+			</Suspense>
 
 			{/* Contact Location */}
-			<ContactLocation />
+			<Suspense fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-lg" />}>
+				<ContactLocation />
+			</Suspense>
 
 			{/* Final CTA */}
-			<FinalCTA />
+			<Suspense fallback={<div className="h-32 bg-slate-50 animate-pulse rounded-lg" />}>
+				<FinalCTA />
+			</Suspense>
 		</>
 	)
 }

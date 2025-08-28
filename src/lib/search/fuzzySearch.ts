@@ -130,7 +130,7 @@ class FuzzySearchEngine<T extends SearchableItem> {
     const matches = new Map<number, SearchMatch[]>();
 
     // Corrected query for typos
-    let correctedQuery = enableTypoCorrection ? this.correctTypos(query) : query;
+    const correctedQuery = enableTypoCorrection ? this.correctTypos(query) : query;
 
     queryTerms.forEach(term => {
       // Exact matches

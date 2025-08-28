@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Search, Filter, X, SlidersHorizontal, BookOpen, Users, Grid3X3, Loader2 } from 'lucide-react';
+import { Search, X, SlidersHorizontal, Loader2 } from 'lucide-react';
 import { BookCard } from '@/components/BookCard';
-import { Badge } from '@/components/ui/Badge';
 import { FilterPopup } from '@/components/filters/FilterPopup';
 import { fetchBooks, fetchCategories } from '@/lib/api/books';
 import type { Book } from '@/lib/supabase';
@@ -47,7 +46,7 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
         setLoading(true);
         setError(null);
 
-        console.log('🔍 SimpleSearch: Loading books and categories...');
+        
 
         // Load books and categories in parallel
         const [booksResponse, categoriesResponse] = await Promise.all([
@@ -58,20 +57,20 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
         if (booksResponse.success) {
           setBooks(booksResponse.data);
           setDisplayedBooks(booksResponse.data);
-          console.log('✅ SimpleSearch: Loaded books:', booksResponse.data.length);
+          
         } else {
           throw new Error(booksResponse.error || 'Ошибка загрузки книг');
         }
 
         if (categoriesResponse.success) {
           setCategories(categoriesResponse.data);
-          console.log('✅ SimpleSearch: Loaded categories:', categoriesResponse.data.length);
+          
         }
 
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
         setError(errorMessage);
-        console.error('💥 SimpleSearch: Error loading data:', err);
+        // Error logging removed for production
       } finally {
         setLoading(false);
       }
@@ -103,7 +102,7 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
 
     try {
       // First apply filters
-      let searchableBooks = applyFilters(books);
+      const searchableBooks = applyFilters(books);
       
       // Then search within filtered books
       const results = searchableBooks.filter(book => {

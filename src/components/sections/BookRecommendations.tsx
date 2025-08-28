@@ -5,6 +5,7 @@ import { BookCard } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
 import { fetchBooks } from "@/lib/api/books";
 import { Sparkles, TrendingUp, Heart, Award, Loader2 } from "lucide-react";
+import Link from "next/link";
 import type { Book } from "@/lib/supabase";
 
 interface BookRecommendationsProps {
@@ -38,7 +39,7 @@ export function BookRecommendations({
         setLoading(true);
         setError(null);
 
-        console.log('📖 BookRecommendations: Loading books...');
+        
 
         const response = await fetchBooks({
           available_only: true,
@@ -47,7 +48,7 @@ export function BookRecommendations({
 
         if (response.success) {
           setBooks(response.data);
-          console.log('✅ BookRecommendations: Loaded books:', response.data.length);
+          
         } else {
           throw new Error(response.error || 'Ошибка загрузки рекомендаций');
         }
@@ -55,7 +56,7 @@ export function BookRecommendations({
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
         setError(errorMessage);
-        console.error('💥 BookRecommendations: Error loading books:', err);
+        
       } finally {
         setLoading(false);
       }
@@ -65,7 +66,7 @@ export function BookRecommendations({
   }, []);
 
   const recommendations = useMemo(() => {
-    let filtered = books.filter(book => 
+    const filtered = books.filter(book => 
       book.available && 
       !excludeIds.includes(book.id) &&
       (!category || book.category === category)
@@ -221,9 +222,9 @@ export function BookRecommendations({
         {recommendations.length >= maxItems && (
           <div className="text-center mt-8">
             <Button variant="outline" asChild>
-              <a href="/books">
+              <Link href="/books">
                 Переглянути всі книги
-              </a>
+              </Link>
             </Button>
           </div>
         )}

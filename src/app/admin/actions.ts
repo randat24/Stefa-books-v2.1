@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { supabase } from "@/lib/supabase"
 import type { CreateBookForm, BookRow } from "@/lib/types/admin"
+import { logger } from "@/lib/logger"
 
 // ============================================================================
 // ВАЛІДАЦІЙНІ СХЕМИ
@@ -40,7 +41,7 @@ export async function createBook(form: CreateBookForm) {
     // Валідуємо дані
     const input = BookInsertSchema.parse(form)
     
-    console.log('Creating book:', input)
+    logger.info('Creating book', input, 'Admin')
     
     // Создаем книгу в Supabase
     const { data, error } = await supabase
@@ -55,7 +56,7 @@ export async function createBook(form: CreateBookForm) {
       .select()
     
     if (error) {
-      console.error('Supabase error:', error)
+      logger.error('Supabase error', error, 'Admin')
       throw new Error(error.message)
     }
     
@@ -65,12 +66,12 @@ export async function createBook(form: CreateBookForm) {
     
     const createdBook = data[0]
     
-    console.log('Book created successfully:', createdBook)
+    logger.info('Book created successfully', createdBook, 'Admin')
     
     return { success: true, data: createdBook }
     
   } catch (error) {
-    console.error('Create book error:', error)
+    logger.error('Create book error', error, 'Admin')
     
     if (error instanceof z.ZodError) {
       return { 
@@ -88,7 +89,7 @@ export async function createBook(form: CreateBookForm) {
 
 export async function updateBook(id: string, form: Partial<CreateBookForm>) {
   try {
-    console.log('📝 Starting book update:', id, form)
+    logger.info('Starting book update', { id, form }, 'Admin')
     
     // Проверяем что ID действительно передан
     if (!id || !id.trim()) {
@@ -140,8 +141,7 @@ export async function updateBook(id: string, form: Partial<CreateBookForm>) {
     // Оновлюємо дату зміни
     updateData.updated_at = new Date().toISOString()
     
-    console.log('💾 Attempting to update book with ID:', id)
-    console.log('📦 Update data:', JSON.stringify(updateData, null, 2))
+    logger.info('Attempting to update book', { id, updateData }, 'Admin')
     
     // Спочатку перевіримо, чи існує книга з таким ID
     const { data: existingBook, error: checkError } = await supabase
@@ -152,11 +152,11 @@ export async function updateBook(id: string, form: Partial<CreateBookForm>) {
     
     if (checkError || !existingBook) {
       const errorMessage = `Книгу з ID ${id} не знайдено в базі даних`
-      console.error(errorMessage, checkError)
+      logger.error(errorMessage, checkError)
       return { success: false, error: errorMessage }
     }
     
-    console.log('✅ Book exists, proceeding with update')
+    logger.info('✅ Book exists, proceeding with update')
     
     // Оновлюємо книгу в Supabase
     const { data, error } = await supabase
@@ -167,17 +167,16 @@ export async function updateBook(id: string, form: Partial<CreateBookForm>) {
       .single()
     
     if (error) {
-      console.error('Supabase error:', error)
+      logger.error('Supabase error', error, 'Admin')
       throw new Error(error.message)
     }
     
-    console.log('✅ Book updated successfully:', data)
-    console.log('🔍 Updated book data:', JSON.stringify(data, null, 2))
+    logger.info('Book updated successfully', data, 'Admin')
     
     return { success: true, data }
     
   } catch (error) {
-    console.error('Update book error:', error)
+    logger.error('Update book error', error, 'Admin')
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Невідома помилка'
@@ -187,7 +186,7 @@ export async function updateBook(id: string, form: Partial<CreateBookForm>) {
 
 export async function deleteBook(id: string) {
   try {
-    console.log('Deleting book:', id)
+    logger.info('Deleting book', { id }, 'Admin')
     
     // Проверяем есть ли активные аренды для этой книги
     const { data: rentals, error: rentalsError } = await supabase
@@ -217,12 +216,12 @@ export async function deleteBook(id: string) {
       throw new Error(error.message)
     }
     
-    console.log('Book deleted successfully:', id)
+    logger.info('Book deleted successfully', { id }, 'Admin')
     
     return { success: true }
     
   } catch (error) {
-    console.error('Delete book error:', error)
+    logger.error('Delete book error', error, 'Admin')
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Невідома помилка'
