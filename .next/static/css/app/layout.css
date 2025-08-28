@@ -1774,6 +1774,9 @@ video {
 .max-h-\[90vh\] {
   max-height: 90vh;
 }
+.max-h-96 {
+  max-height: 24rem;
+}
 .min-h-\[80px\] {
   min-height: 80px;
 }
@@ -2568,6 +2571,9 @@ video {
 }
 .pt-6 {
   padding-top: 1.5rem;
+}
+.pr-32 {
+  padding-right: 8rem;
 }
 .text-left {
   text-align: left;
