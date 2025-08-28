@@ -110,7 +110,7 @@ function BookDialog({
             {/* Рейтинг под обложкой для мобильных */}
             {book.rating && (
               <div className="flex justify-center">
-                <Rating value={book.rating.value} count={book.rating.count} />
+                <Rating value={book.rating || 0} count={book.rating_count || 0} />
               </div>
             )}
 
@@ -136,9 +136,9 @@ function BookDialog({
                 </div>
               </header>
 
-              {book.short && (
+              {book.short_description && (
                 <p className="text-pretty text-sm leading-relaxed text-slate-700 text-left">
-                  {book.short}
+                  {book.short_description}
                 </p>
               )}
 
@@ -202,7 +202,7 @@ function BookDialog({
               {/* Рейтинг под обложкой */}
               {book.rating && (
                 <div className="flex justify-center">
-                  <Rating value={book.rating.value} count={book.rating.count} />
+                  <Rating value={book.rating || 0} count={book.rating_count || 0} />
                 </div>
               )}
             </div>
@@ -229,9 +229,9 @@ function BookDialog({
                 </div>
               </header>
 
-              {book.short && (
+              {book.short_description && (
                 <p className="max-w-lg text-pretty text-sm sm:text-base leading-relaxed text-slate-700 mr-8">
-                  {book.short}
+                  {book.short_description}
                 </p>
               )}
 
@@ -336,11 +336,11 @@ export function BookCard({ book }: { book: Book }) {
 
         {/* Контент - только название и автор */}
         <div className="flex flex-1 flex-col gap-3 px-4 pb-5 pt-4">
-          <h3 className="line-clamp-2 text-xl font-semibold tracking-tight text-slate-900 leading-tight">
+          <h3 className="line-clamp-2 text-lg font-semibold tracking-tight text-slate-900 leading-tight">
             {book.title}
           </h3>
 
-          <p className="text-base text-slate-600 font-medium">{book.author}</p>
+          <p className="text-sm text-slate-600 font-medium">{book.author}</p>
         </div>
       </article>
 

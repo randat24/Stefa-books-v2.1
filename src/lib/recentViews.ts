@@ -2,7 +2,7 @@
  * Recent Views utility for managing recently viewed books
  */
 
-import type { Book } from '@/lib/types';
+import type { Book } from '@/lib/supabase';
 
 const RECENT_VIEWS_KEY = 'stefa-books-recent-views';
 const MAX_RECENT_VIEWS = 5;
@@ -32,7 +32,7 @@ export function addToRecentViews(book: Book): void {
       id: book.id,
       title: book.title,
       author: book.author,
-      cover: book.cover,
+      cover: book.cover_url || '/images/book-placeholder.svg',
       viewedAt: new Date().toISOString(),
     };
     

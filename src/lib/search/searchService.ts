@@ -67,11 +67,7 @@ class SearchService {
       // Use Supabase RPC function for advanced search
       const { data: searchResults, error } = await supabase.rpc('search_books', {
         query_text: query,
-        category_filter: filters.categories || null,
-        author_filter: filters.authors || null,
-        available_only: filters.availableOnly || false,
-        limit_count: filters.maxResults || 50,
-        offset_count: offset
+        limit_count: filters.maxResults || 50
       });
 
       if (error) {

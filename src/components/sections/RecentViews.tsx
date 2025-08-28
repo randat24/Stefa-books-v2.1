@@ -38,7 +38,7 @@ export function RecentViews({
       console.log('📚 RecentViews: Loading recent books:', recentIds);
 
       // Load books from API by IDs
-      const bookPromises = recentIds.map(id => fetchBook(id));
+      const bookPromises = recentIds.map(recentView => fetchBook(recentView.id));
       const bookResponses = await Promise.all(bookPromises);
       
       const validBooks = bookResponses
@@ -104,30 +104,29 @@ export function RecentViews({
     <section className="py-12 lg:py-16 bg-white">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8 lg:mb-12">
-          <div className="text-center flex-1">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-medium mb-4">
-              <History className="h-4 w-4" />
-              Історія перегляду
-            </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
-              {title}
-            </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              {subtitle}
-            </p>
+        <div className="text-center mb-8 lg:mb-12 relative">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-medium mb-4">
+            <History className="h-4 w-4" />
+            Історія перегляду
           </div>
+          <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
+            {title}
+          </h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
+            {subtitle}
+          </p>
           
           {showClearButton && recentBooks.length > 0 && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleClearAll}
-              className="ml-4"
-            >
-              <X className="h-4 w-4 mr-2" />
-              Очистити
-            </Button>
+            <div className="flex justify-center">
+              <Button 
+                variant="outline" 
+                size="md" 
+                onClick={handleClearAll}
+              >
+                <X className="h-4 w-4 mr-2" />
+                Очистити
+              </Button>
+            </div>
           )}
         </div>
 

@@ -686,7 +686,7 @@ export function AdvancedSearch({ books, onSearchResults }: AdvancedSearchProps) 
       {(() => {
         const hasResults = query 
           ? (isSupabaseSearch 
-              ? supabaseResults?.results.length > 0
+              ? (supabaseResults?.results?.length || 0) > 0
               : searchResults?.length > 0)
           : displayedBooks.length > 0;
         

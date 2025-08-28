@@ -107,7 +107,7 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
       
       // Then search within filtered books
       const results = searchableBooks.filter(book => {
-        const searchText = `${book.title} ${book.author} ${book.category} ${book.short || ''}`.toLowerCase();
+        const searchText = `${book.title} ${book.author} ${book.category} ${book.short_description || ''}`.toLowerCase();
         return searchText.includes(normalizedQuery);
       });
 

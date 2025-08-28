@@ -8,7 +8,7 @@ interface SearchableItem {
   title: string;
   author: string;
   category: string;
-  description?: string;
+  description?: string | null;
   keywords?: string[];
   [key: string]: any;
 }

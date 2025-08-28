@@ -7,8 +7,8 @@ type PlanKey = 'mini' | 'maxi';
 
 export default function PlansLite() {
   const setPlanAndGo = useCallback((plan: PlanKey) => {
-    // Переходим на страницу подписки с выбранным планом
-    window.location.href = `/subscribe?plan=${plan}`;
+    // Переходим на форму оформления подписки с выбранным планом
+    window.location.href = `/form?plan=${plan}`;
   }, []);
 
   return (
@@ -79,10 +79,10 @@ export default function PlansLite() {
           </div>
         </div>
 
-        {/* Link to subscription */}
+        {/* Link to subscription form */}
         <div className="mt-8">
           <a 
-            href="/subscribe" 
+            href="/form" 
             className="inline-flex items-center text-slate-600 hover:text-slate-900 transition-colors"
           >
             Оформити підписку →

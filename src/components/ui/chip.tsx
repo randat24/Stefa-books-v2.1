@@ -2,11 +2,14 @@
 
 import { cn } from "@/lib/cn";
 
-interface ChipProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ChipProps {
   active?: boolean;
   count?: number;
   variant?: 'default' | 'status' | 'button';
   as?: 'div' | 'button';
+  children?: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
 }
 
 export function Chip({

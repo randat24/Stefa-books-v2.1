@@ -108,7 +108,7 @@ class IntegratedSearchSystem {
 
       return result;
     } catch (error) {
-      logger.error('Search failed', error, { query, filters, options });
+      logger.error(`Search failed for query "${query}"`, error);
       
       // Return empty result on error
       return {

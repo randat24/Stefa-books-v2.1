@@ -12,7 +12,8 @@ export default function Hero() {
 					<div className="relative grid items-start gap-6 md:gap-8 md:grid-cols-1 lg:grid-cols-[1.2fr,1fr]">
 						{/* LEFT */}
 						<div style={{display: 'grid', gap: 'var(--space-6)'}} className="md:px-4 lg:pl-6 lg:pr-0">
-							<Badge icon={BookOpen}>
+							<Badge>
+								<BookOpen className="w-3 h-3 mr-1" />
 								Книжкова оренда у Миколаєві
 							</Badge>
 
@@ -64,7 +65,7 @@ export default function Hero() {
 								</div>
 								<div className="flex items-center" style={{gap: 'var(--space-2)'}}>
 									<div className="size-2 rounded-full bg-yellow-500" />
-									Легктй обмін книг
+									Легкий обмін книг
 								</div>
 							</div>
 						</div>

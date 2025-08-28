@@ -4,7 +4,7 @@
  */
 
 import { logger } from '../logger';
-import type { Book } from '../types';
+import type { Book } from '../supabase';
 import type { SearchFilters } from './searchService';
 
 export interface SearchIndex {
@@ -175,7 +175,7 @@ class SearchIndexingSystem {
       logger.debug('Document index updated', { bookId: book.id });
 
     } catch (error) {
-      logger.error('Failed to update document index', error, { bookId: book.id });
+      logger.error(`Failed to update document index for book ${book.id}`, error);
       throw error;
     }
   }
@@ -198,7 +198,7 @@ class SearchIndexingSystem {
       logger.debug('Document removed from index', { bookId });
 
     } catch (error) {
-      logger.error('Failed to remove document from index', error, { bookId });
+      logger.error(`Failed to remove document from index for book ${bookId}`, error);
       throw error;
     }
   }
@@ -247,7 +247,7 @@ class SearchIndexingSystem {
         .slice(0, maxResults);
 
     } catch (error) {
-      logger.error('Index search failed', error, { query, filters });
+      logger.error(`Index search failed for query "${query}"`, error);
       return [];
     }
   }
@@ -368,7 +368,7 @@ class SearchIndexingSystem {
         author: book.author,
         rating: book.rating || 0,
         available: book.available !== false,
-        tags: book.tags
+        tags: book.tags || undefined
       },
       searchVector,
       lastUpdated: Date.now()

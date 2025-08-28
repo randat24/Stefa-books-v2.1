@@ -6,12 +6,18 @@ import { FuzzySearchEngine } from '@/lib/search/fuzzySearch';
 import { SemanticSearchEngine } from '@/lib/search/semanticSearch';
 import { MLAutocompleteEngine } from '@/lib/search/autocomplete';
 import type { Book } from '@/lib/supabase';
+
+// Type adapter for search engines
+type SearchableBook = Omit<Book, 'description'> & {
+  description?: string;
+  [key: string]: any;
+};
 import { logger } from '@/lib/logger';
 
 interface SearchContextType {
   // Search engines
-  fuzzyEngine: FuzzySearchEngine<Book> | null;
-  semanticEngine: SemanticSearchEngine<Book> | null;
+  fuzzyEngine: FuzzySearchEngine<SearchableBook> | null;
+  semanticEngine: SemanticSearchEngine<SearchableBook> | null;
   autocompleteEngine: MLAutocompleteEngine | null;
   analyticsEngine: SearchAnalyticsEngine;
   performanceMonitor: SearchPerformanceMonitor;
@@ -62,8 +68,8 @@ interface SearchProviderProps {
 }
 
 export function SearchProvider({ children, books = [] }: SearchProviderProps) {
-  const [fuzzyEngine, setFuzzyEngine] = useState<FuzzySearchEngine<Book> | null>(null);
-  const [semanticEngine, setSemanticEngine] = useState<SemanticSearchEngine<Book> | null>(null);
+  const [fuzzyEngine, setFuzzyEngine] = useState<FuzzySearchEngine<SearchableBook> | null>(null);
+  const [semanticEngine, setSemanticEngine] = useState<SemanticSearchEngine<SearchableBook> | null>(null);
   const [autocompleteEngine, setAutocompleteEngine] = useState<MLAutocompleteEngine | null>(null);
   const [analyticsEngine] = useState(new SearchAnalyticsEngine());
   const [performanceMonitor] = useState(new SearchPerformanceMonitor());
@@ -91,8 +97,8 @@ export function SearchProvider({ children, books = [] }: SearchProviderProps) {
       
       // Initialize engines in parallel
       const [fuzzy, semantic, autocomplete] = await Promise.all([
-        Promise.resolve(new FuzzySearchEngine(booksData)),
-        Promise.resolve(new SemanticSearchEngine(booksData)),
+        Promise.resolve(new FuzzySearchEngine(booksData as SearchableBook[])),
+        Promise.resolve(new SemanticSearchEngine(booksData as SearchableBook[])),
         Promise.resolve((() => {
           const engine = new MLAutocompleteEngine();
           booksData.forEach(book => {
@@ -159,8 +165,8 @@ export function SearchProvider({ children, books = [] }: SearchProviderProps) {
         });
         
         // Reinitialize engines with filtered data for this search
-        const filteredFuzzy = new FuzzySearchEngine(searchableBooks);
-        const filteredSemantic = new SemanticSearchEngine(searchableBooks);
+        const filteredFuzzy = new FuzzySearchEngine(searchableBooks as SearchableBook[]);
+        const filteredSemantic = new SemanticSearchEngine(searchableBooks as SearchableBook[]);
         
         switch (mode) {
           case 'fuzzy':
@@ -168,13 +174,13 @@ export function SearchProvider({ children, books = [] }: SearchProviderProps) {
               maxResults,
               enableTypoCorrection: true 
             });
-            results = fuzzyResults.map(r => r.item);
+            results = fuzzyResults.map(r => r.item as Book);
             correctedQuery = fuzzyResults[0]?.correctedQuery;
             break;
             
           case 'semantic':
             const semanticResults = filteredSemantic.semanticSearch(query, { maxResults });
-            results = semanticResults.map(r => r.item);
+            results = semanticResults.map(r => r.item as Book);
             break;
             
           case 'hybrid':
@@ -194,7 +200,7 @@ export function SearchProvider({ children, books = [] }: SearchProviderProps) {
             hybridFuzzy.forEach((result, index) => {
               const boost = 1 - (index * 0.1); // Position boost
               combinedResults.set(result.item.id, {
-                book: result.item,
+                book: result.item as Book,
                 score: result.score * 0.6 * boost
               });
             });
@@ -206,7 +212,7 @@ export function SearchProvider({ children, books = [] }: SearchProviderProps) {
                 existing.score += result.score * 0.8 * boost;
               } else {
                 combinedResults.set(result.item.id, {
-                  book: result.item,
+                  book: result.item as Book,
                   score: result.score * 0.8 * boost
                 });
               }
@@ -228,13 +234,13 @@ export function SearchProvider({ children, books = [] }: SearchProviderProps) {
               maxResults,
               enableTypoCorrection: true 
             });
-            results = fuzzyResults.map(r => r.item);
+            results = fuzzyResults.map(r => r.item as Book);
             correctedQuery = fuzzyResults[0]?.correctedQuery;
             break;
             
           case 'semantic':
             const semanticResults = semanticEngine.semanticSearch(query, { maxResults });
-            results = semanticResults.map(r => r.item);
+            results = semanticResults.map(r => r.item as Book);
             break;
             
           case 'hybrid':
@@ -252,7 +258,7 @@ export function SearchProvider({ children, books = [] }: SearchProviderProps) {
             hybridFuzzy.forEach((result, index) => {
               const boost = 1 - (index * 0.1);
               combinedResults.set(result.item.id, {
-                book: result.item,
+                book: result.item as Book,
                 score: result.score * 0.6 * boost
               });
             });
@@ -264,7 +270,7 @@ export function SearchProvider({ children, books = [] }: SearchProviderProps) {
                 existing.score += result.score * 0.8 * boost;
               } else {
                 combinedResults.set(result.item.id, {
-                  book: result.item,
+                  book: result.item as Book,
                   score: result.score * 0.8 * boost
                 });
               }
@@ -335,8 +341,8 @@ export function SearchProvider({ children, books = [] }: SearchProviderProps) {
     if (!semanticEngine) return [];
     
     try {
-      const recommendations = semanticEngine.getRecommendations(book, 6);
-      return recommendations.map(r => r.item);
+      const recommendations = semanticEngine.getRecommendations(book as SearchableBook, 6);
+      return recommendations.map(r => r.item as Book);
     } catch (error) {
       logger.error('Error getting recommendations', error);
       return [];

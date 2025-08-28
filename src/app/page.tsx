@@ -27,7 +27,7 @@ export default function HomePage() {
 			<RecentViews maxItems={5} />
 
 			{/* Каталог книг */}
-			<Catalog books={BOOKS} />
+			<Catalog />
 
 			{/* Тарифы */}
 			<PlansLite />
