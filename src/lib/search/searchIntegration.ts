@@ -1,7 +1,7 @@
 import { SemanticSearchEngine } from './semanticSearch';
 import { FuzzySearchEngine } from './fuzzySearch';
 import { searchService } from './searchService';
-import type { Book } from '../types';
+import type { Book } from '../supabase';
 import type { SearchFilters, SearchResponse, SearchResult } from './searchService';
 import { logger } from '../logger';
 

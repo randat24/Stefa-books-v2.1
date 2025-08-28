@@ -1,5 +1,62 @@
 {
-  "node": {},
+  "node": {
+    "109fbae7ac368f2793f2e5a249ea5a865d99f130": {
+      "workers": {
+        "app/admin/page": "(action-browser)/../../../node_modules/.pnpm/next@14.2.4_@babel+core@7.28.3_@playwright+test@1.55.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%22getUsers%22%2C%22getBooks%22%2C%22getPayments%22%2C%22getRentals%22%2C%22getDashboardStats%22%2C%22searchBooks%22%2C%22getAdminDashboardData%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      }
+    },
+    "536ad29050999144936248e914cf33a8f7f51c4b": {
+      "workers": {
+        "app/admin/page": "(action-browser)/../../../node_modules/.pnpm/next@14.2.4_@babel+core@7.28.3_@playwright+test@1.55.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%22getUsers%22%2C%22getBooks%22%2C%22getPayments%22%2C%22getRentals%22%2C%22getDashboardStats%22%2C%22searchBooks%22%2C%22getAdminDashboardData%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      }
+    },
+    "580cd5c7c119716e0e4c56908563909cb24b6eaf": {
+      "workers": {
+        "app/admin/page": "(action-browser)/../../../node_modules/.pnpm/next@14.2.4_@babel+core@7.28.3_@playwright+test@1.55.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%22getUsers%22%2C%22getBooks%22%2C%22getPayments%22%2C%22getRentals%22%2C%22getDashboardStats%22%2C%22searchBooks%22%2C%22getAdminDashboardData%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      }
+    },
+    "5fc2f9aa5bcb81153e43b6aa0ce2335d36ee627f": {
+      "workers": {
+        "app/admin/page": "(action-browser)/../../../node_modules/.pnpm/next@14.2.4_@babel+core@7.28.3_@playwright+test@1.55.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%22getUsers%22%2C%22getBooks%22%2C%22getPayments%22%2C%22getRentals%22%2C%22getDashboardStats%22%2C%22searchBooks%22%2C%22getAdminDashboardData%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      }
+    },
+    "9168a479386fdd11e496acea0572fd55ee9a329a": {
+      "workers": {
+        "app/admin/page": "(action-browser)/../../../node_modules/.pnpm/next@14.2.4_@babel+core@7.28.3_@playwright+test@1.55.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%22getUsers%22%2C%22getBooks%22%2C%22getPayments%22%2C%22getRentals%22%2C%22getDashboardStats%22%2C%22searchBooks%22%2C%22getAdminDashboardData%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      }
+    },
+    "cd73a9b39b12911c8fcd827b5447c5f16afd2c0e": {
+      "workers": {
+        "app/admin/page": "(action-browser)/../../../node_modules/.pnpm/next@14.2.4_@babel+core@7.28.3_@playwright+test@1.55.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%22getUsers%22%2C%22getBooks%22%2C%22getPayments%22%2C%22getRentals%22%2C%22getDashboardStats%22%2C%22searchBooks%22%2C%22getAdminDashboardData%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      }
+    },
+    "dfb2448099a4875c42c026b56f5ccad1eb21fbc5": {
+      "workers": {
+        "app/admin/page": "(action-browser)/../../../node_modules/.pnpm/next@14.2.4_@babel+core@7.28.3_@playwright+test@1.55.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%22getUsers%22%2C%22getBooks%22%2C%22getPayments%22%2C%22getRentals%22%2C%22getDashboardStats%22%2C%22searchBooks%22%2C%22getAdminDashboardData%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      }
+    }
+  },
   "edge": {},
-  "encryptionKey": "0MsPnd4lDBsflGBegvQz6shlInxCVGM3hmNzT047owI="
+  "encryptionKey": "gAG4r6cSaB41RINRCjMO8HWYciWsEWPvntHnFoN9ri4="
 }
