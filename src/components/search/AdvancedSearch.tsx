@@ -7,7 +7,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { searchService } from '@/lib/search/searchService';
 import { BookCard } from '@/components/BookCard';
 import { Badge } from '@/components/ui/Badge';
-import type { Book } from '@/lib/types';
+import type { Book } from '@/lib/supabase';
 import type { SearchResponse, SearchSuggestion, SearchFilters as SupabaseSearchFilters } from '@/lib/search/searchService';
 import { logger } from '@/lib/logger';
 

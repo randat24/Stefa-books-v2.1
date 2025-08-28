@@ -33,15 +33,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Architecture Overview
 
 ### Tech Stack
-- **Next.js 14** with App Router (TypeScript)
-- **React 18** with client-side state management
-- **Supabase** PostgreSQL database with Row Level Security (RLS)
-- **Tailwind CSS** with custom design system and CSS variables
-- **Zustand** for lightweight state management
-- **React Hook Form + Zod** for form validation
-- **React Query** for data fetching and caching
-- **Lucide React** for consistent iconography
-- **Framer Motion** installed but not actively used (only CSS transitions)
+- **Next.js 14.2.4** with App Router (TypeScript)
+- **React 18.3.1** with client-side state management
+- **Supabase 2.55.0** PostgreSQL database with Row Level Security (RLS)
+- **Tailwind CSS 3.4.10** with custom design system and CSS variables
+- **Zustand 4.5.4** for lightweight state management
+- **React Hook Form 7.53.0 + Zod 3.23.8** for form validation
+- **React Query 5.59.0** for data fetching and caching
+- **Lucide React 0.441.0** for consistent iconography
+- **Radix UI** components for dialogs, selects, tabs, and other primitives
+- **Cloudinary 2.7.0** for image upload and optimization
+- **Framer Motion 11.3.20** installed but not actively used (only CSS transitions)
 
 ### Testing Infrastructure
 - **Jest + React Testing Library** for unit and integration tests
@@ -329,4 +331,85 @@ cat .next/app-build-manifest.json | grep -q "static/css" && echo "✅ CSS in man
 
 **Image URL Format**: All book cover URLs should use `/images/books/filename.ext` format (not `http://localhost:3001/images/books/`) for proper Next.js Image optimization.
 
-**Admin Middleware**: Development environment bypasses authentication. Production requires valid JWT token in `admin_token` cookie.
+**Admin Middleware (`src/middleware.ts`)**: 
+- Development environment bypasses authentication for `/admin` routes
+- Production requires valid JWT token in `admin_token` cookie matching `ADMIN_JWT_SECRET`
+- Sets aggressive no-cache headers for admin routes to prevent static generation issues
+- Protects both `/admin/:path*` and `/api/admin/:path*` routes
+
+### API Architecture and Data Flow
+
+**Unified API System**: The application uses a dual-layer API approach combining client-side and server-side data fetching:
+
+**Client-Side API (`src/lib/api/books.ts`)**:
+- Handles server-side vs client-side URL resolution with `getBaseUrl()` and `buildApiUrl()`
+- Provides typed response interfaces (`BooksResponse`, `BookResponse`, `CategoriesResponse`)
+- Includes utility functions: `fetchPopularBooks()`, `fetchNewBooks()`, `searchBooks()`, `fetchBooksByCategory()`
+- Implements proper error handling with success/error response patterns
+
+**Server-Side API Routes (`src/app/api/books/route.ts`)**:
+- GET endpoint for fetching books with filtering (category, search, limit, availability)
+- POST endpoint for fetching categories
+- Individual book endpoint at `/api/books/[id]` with proper 404 handling
+- Supabase integration with full-text search using `ilike` pattern matching
+- Console logging for debugging: `📚 API: Fetching books with params:`
+
+**Critical Type Safety**: All components must import `Book` type from `@/lib/supabase` (not `@/lib/types`) to ensure compatibility with database schema. The Supabase types are auto-generated from the database schema.
+
+**Image Handling Pattern**: Book covers use `book.cover_url` field with fallback to placeholder:
+```tsx
+<Image src={book.cover_url || '/images/book-placeholder.svg'} />
+```
+
+**Search Integration**: Advanced search system with multiple engines in `src/lib/search/`:
+- **FuzzySearchEngine**: Typo-tolerant search with correction suggestions
+- **SemanticSearchEngine**: Content-based similarity search
+- **SearchAnalyticsEngine**: User behavior tracking and personalized suggestions
+- **MLAutocompleteEngine**: Intelligent query completion
+- **SearchProvider**: React context for managing search state across components
+
+All search components integrate through URL parameters (`?search=` and `?category=`) for seamless navigation and bookmarking.
+
+### Critical Development Patterns
+
+**Component Type Import Pattern**: Always import the `Book` type from the correct source:
+```tsx
+// ✅ Correct - uses database-generated types
+import type { Book } from '@/lib/supabase';
+
+// ❌ Incorrect - uses outdated local types
+import type { Book } from '@/lib/types';
+```
+
+**BookViewTracker Usage**: Updated to be more flexible with bookId and optional book object:
+```tsx
+// ✅ Correct - provides both bookId and book object when available
+<BookViewTracker bookId={book.id} book={book} />
+
+// ✅ Also acceptable - just bookId for basic tracking
+<BookViewTracker bookId={bookId} />
+```
+
+**HeaderSearch Modal Architecture**: Uses high z-index and proper backdrop for full-screen coverage:
+```tsx
+// Fixed overlay structure with stronger blur and dimming
+<div className="fixed inset-0 z-[9999]">
+  <div className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={handleClose} />
+  // Modal content
+</div>
+```
+
+**API Error Handling Pattern**: Consistent response structure across all API routes:
+```tsx
+// Success response
+return NextResponse.json({ success: true, data: books, count: books.length })
+
+// Error response  
+return NextResponse.json({ success: false, error: 'Error message' }, { status: 500 })
+```
+
+**Database Query Logging**: All API routes include console logging for debugging:
+```tsx
+console.log('📚 API: Fetching books with params:', { category, search, limit })
+console.log('✅ API: Found X books')
+```

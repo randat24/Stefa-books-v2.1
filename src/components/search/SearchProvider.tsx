@@ -5,7 +5,7 @@ import { SearchAnalyticsEngine, SearchPerformanceMonitor } from '@/lib/search/an
 import { FuzzySearchEngine } from '@/lib/search/fuzzySearch';
 import { SemanticSearchEngine } from '@/lib/search/semanticSearch';
 import { MLAutocompleteEngine } from '@/lib/search/autocomplete';
-import type { Book } from '@/lib/types';
+import type { Book } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 
 interface SearchContextType {

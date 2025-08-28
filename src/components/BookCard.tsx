@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { BookOpen, Bookmark, Share2, X, Star, Heart } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import type { Book } from '@/lib/types';
+import type { Book } from '@/lib/supabase';
 
 /** Рейтинг с одной звездочкой */
 function Rating({ value = 0, count = 0 }: { value: number; count?: number }) {
@@ -91,7 +91,7 @@ function BookDialog({
             <div className="relative mx-auto">
               <div className="aspect-[3/4] w-48 overflow-hidden rounded-xl">
                 <Image
-                  src={book.cover}
+                  src={book.cover_url || '/images/book-placeholder.svg'}
                   alt={`Обкладинка: ${book.title}`}
                   fill
                   className="object-cover"
@@ -183,7 +183,7 @@ function BookDialog({
               <div className="relative">
                 <div className="aspect-[3/4] w-full overflow-hidden rounded-xl">
                   <Image
-                    src={book.cover}
+                    src={book.cover_url || '/images/book-placeholder.svg'}
                     alt={`Обкладинка: ${book.title}`}
                     fill
                     className="object-cover"
@@ -293,7 +293,7 @@ export function BookCard({ book }: { book: Book }) {
         >
           <Image
             alt={book.title}
-            src={book.cover}
+            src={book.cover_url || '/images/book-placeholder.svg'}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(min-width: 1280px) 320px, (min-width: 768px) 33vw, 100vw"

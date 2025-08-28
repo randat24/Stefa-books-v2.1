@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, X, ShoppingBag, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { searchBooks, fetchCategories } from '@/lib/api/books';
@@ -17,8 +18,13 @@ export function HeaderSearch() {
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close on Escape key
   useEffect(() => {
@@ -33,9 +39,14 @@ export function HeaderSearch() {
       document.addEventListener('keydown', handleEscape);
       // Focus input when opened
       setTimeout(() => inputRef.current?.focus(), 100);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
     }
 
-    return () => document.removeEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
 
   const performSearch = async (searchQuery: string) => {
@@ -95,11 +106,10 @@ export function HeaderSearch() {
   const handleSearch = () => {
     if (query.trim()) {
       router.push(`/books?search=${encodeURIComponent(query.trim())}`);
-      setIsOpen(false);
-      setQuery('');
+      handleClose();
     } else {
       router.push('/books');
-      setIsOpen(false);
+      handleClose();
     }
   };
 
@@ -130,29 +140,26 @@ export function HeaderSearch() {
     }
   };
 
-  return (
-    <>
-      {/* Search Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="p-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition"
-        aria-label="Пошук книг"
-      >
-        <Search className="h-5 w-5" />
-      </button>
+  const handleClose = () => {
+    setIsOpen(false);
+    setQuery('');
+    setSearchResults(null);
+  };
 
-      {/* Search Modal/Overlay */}
-      {isOpen && (
-        <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm">
-          {/* Click outside to close */}
-          <div 
-            className="absolute inset-0" 
-            onClick={() => setIsOpen(false)}
-          />
-          
-          {/* Search Container */}
-          <div className="relative top-20 mx-auto max-w-2xl px-4">
-            <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-h-[80vh] overflow-hidden flex flex-col">
+  const renderModal = () => {
+    if (!isOpen || !mounted) return null;
+
+    return createPortal(
+      <div className="fixed inset-0 z-[9999]">
+        {/* Backdrop with stronger dimming */}
+        <div 
+          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          onClick={handleClose}
+        />
+        
+        {/* Search Container */}
+        <div className="relative top-20 mx-auto max-w-2xl px-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-h-[80vh] overflow-hidden flex flex-col">
               {/* Search Bar */}
               <div className="flex items-center px-4 py-3">
                 <Search className="h-5 w-5 text-slate-400 mr-3" />
@@ -166,7 +173,7 @@ export function HeaderSearch() {
                   className="flex-1 bg-transparent text-slate-900 placeholder-slate-500 text-lg outline-none"
                 />
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={handleClose}
                   className="ml-3 p-1 hover:bg-slate-100 rounded-md transition"
                 >
                   <X className="h-5 w-5 text-slate-400" />
@@ -196,7 +203,7 @@ export function HeaderSearch() {
                           <button 
                             onClick={() => {
                               router.push(`/books?search=${encodeURIComponent(query)}`);
-                              setIsOpen(false);
+                              handleClose();
                             }}
                             className="text-slate-500 text-sm hover:text-slate-700 transition flex items-center gap-1"
                           >
@@ -209,7 +216,7 @@ export function HeaderSearch() {
                               key={book.id}
                               onClick={() => {
                                 router.push(`/books/${book.id}`);
-                                setIsOpen(false);
+                                handleClose();
                               }}
                               className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-lg transition w-full text-left"
                             >
@@ -247,7 +254,7 @@ export function HeaderSearch() {
                           <button 
                             onClick={() => {
                               router.push('/books');
-                              setIsOpen(false);
+                              handleClose();
                             }}
                             className="text-slate-500 text-sm hover:text-slate-700 transition flex items-center gap-1"
                           >
@@ -260,7 +267,7 @@ export function HeaderSearch() {
                               key={index}
                               onClick={() => {
                                 router.push(`/books?category=${encodeURIComponent(category)}`);
-                                setIsOpen(false);
+                                handleClose();
                               }}
                               className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition w-full text-left"
                             >
@@ -279,7 +286,13 @@ export function HeaderSearch() {
                       <div>
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="text-slate-600 text-sm font-medium">Автори</h3>
-                          <button className="text-slate-500 text-sm hover:text-slate-700 transition flex items-center gap-1">
+                          <button 
+                            onClick={() => {
+                              router.push('/books');
+                              handleClose();
+                            }}
+                            className="text-slate-500 text-sm hover:text-slate-700 transition flex items-center gap-1"
+                          >
                             Усі →
                           </button>
                         </div>
@@ -289,7 +302,7 @@ export function HeaderSearch() {
                               key={index}
                               onClick={() => {
                                 router.push(`/books?search=${encodeURIComponent(author)}`);
-                                setIsOpen(false);
+                                handleClose();
                               }}
                               className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition w-full text-left"
                             >
@@ -359,8 +372,24 @@ export function HeaderSearch() {
               )}
             </div>
           </div>
-        </div>
-      )}
+        </div>,
+      document.body
+    );
+  };
+
+  return (
+    <>
+      {/* Search Button */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="p-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition"
+        aria-label="Пошук книг"
+      >
+        <Search className="h-5 w-5" />
+      </button>
+
+      {/* Render modal using portal */}
+      {renderModal()}
     </>
   );
 }

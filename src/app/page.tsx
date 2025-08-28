@@ -12,6 +12,7 @@ import ContactLocation from "@/components/sections/ContactLocation";
 import { Catalog } from "@/components/sections/Catalog";
 import { BookRecommendations } from "@/components/sections/BookRecommendations";
 import { RecentViews } from "@/components/sections/RecentViews";
+import { BOOKS } from "@/lib/mock";
 
 export default function HomePage() {
 	return (
@@ -26,7 +27,7 @@ export default function HomePage() {
 			<RecentViews maxItems={5} />
 
 			{/* Каталог книг */}
-			<Catalog />
+			<Catalog books={BOOKS} />
 
 			{/* Тарифы */}
 			<PlansLite />
@@ -52,4 +53,3 @@ export default function HomePage() {
 		</>
 	)
 }
-

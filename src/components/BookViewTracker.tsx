@@ -2,19 +2,26 @@
 
 import { useEffect } from "react";
 import { addToRecentViews } from "@/lib/recentViews";
-import type { Book } from "@/lib/types";
+import type { Book } from "@/lib/supabase";
 
 interface BookViewTrackerProps {
-  book: Book;
+  bookId: string;
+  book?: Book;
 }
 
-export function BookViewTracker({ book }: BookViewTrackerProps) {
+export function BookViewTracker({ bookId, book }: BookViewTrackerProps) {
   useEffect(() => {
-    if (!book) return;
+    if (!bookId) return;
     
-    // Track the book view when component mounts
-    addToRecentViews(book);
-  }, [book]);
+    // If we have the full book object, use it for recent views
+    if (book) {
+      addToRecentViews(book);
+    }
+    
+    // Track the book view regardless
+    // In the future, this could also send analytics data
+    console.log(`📖 BookViewTracker: Tracking view for book ${bookId}`);
+  }, [bookId, book]);
 
   // This component doesn't render anything - it's a tracking utility
   return null;

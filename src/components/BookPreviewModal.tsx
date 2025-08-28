@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/Badge";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { BookOpen, Users, Star, Award, ExternalLink } from "lucide-react";
-import type { Book } from "@/lib/types";
+import type { Book } from "@/lib/supabase";
 
 interface BookPreviewModalProps {
   book: Book | null;

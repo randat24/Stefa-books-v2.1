@@ -47,7 +47,7 @@ export default async function BookPage({ params }: { params: Params }) {
 
   return (
     <>
-      <BookViewTracker bookId={book.id} />
+      <BookViewTracker bookId={book.id} book={book} />
       <div className="container mx-auto px-4 py-8 space-y-12">
       {/* Main book info section */}
       <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
@@ -103,13 +103,6 @@ export default async function BookPage({ params }: { params: Params }) {
             </span>
           </div>
           
-          {/* Short description */}
-          {book.short && (
-            <div className="bg-slate-50 rounded-lg p-4 border-l-4 border-yellow-500">
-              <p className="text-[--ink] font-medium">{book.short}</p>
-            </div>
-          )}
-          
           {/* Action buttons */}
           <div className="grid sm:grid-cols-2 gap-3 pt-4">
             <Button variant="dark" asChild disabled={!book.available}>
@@ -137,49 +130,6 @@ export default async function BookPage({ params }: { params: Params }) {
               {paragraph}
             </p>
           ))}
-        </div>
-      </div>
-
-      {/* Book specifications */}
-      <div className="card p-6">
-        <h2 className="text-2xl font-bold text-[--ink] mb-6 flex items-center gap-2">
-          <Calendar className="h-6 w-6" />
-          Характеристики
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <BookOpen className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm text-[--muted]">Категорія</p>
-              <p className="font-semibold text-[--ink]">{book.category}</p>
-            </div>
-          </div>
-          
-          {book.age && (
-            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <Users className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm text-[--muted]">Вікова група</p>
-                <p className="font-semibold text-[--ink]">{book.age}</p>
-              </div>
-            </div>
-          )}
-          
-          <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-              <Star className="h-5 w-5 text-yellow-600" />
-            </div>
-            <div>
-              <p className="text-sm text-[--muted]">Статус</p>
-              <p className="font-semibold text-[--ink]">
-                {book.available ? "Доступна" : "Видана"}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
