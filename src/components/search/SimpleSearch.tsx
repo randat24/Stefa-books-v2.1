@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Search, Filter, X, SlidersHorizontal, BookOpen, Users, Grid3X3 } from 'lucide-react';
+import { Search, Filter, X, SlidersHorizontal, BookOpen, Users, Grid3X3, Loader2 } from 'lucide-react';
 import { BookCard } from '@/components/BookCard';
 import { Badge } from '@/components/ui/Badge';
 import { FilterPopup } from '@/components/filters/FilterPopup';
-import type { Book } from '@/lib/types';
+import { fetchBooks, fetchCategories } from '@/lib/api/books';
+import type { Book } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 
 interface SearchFilters {
@@ -16,16 +17,17 @@ interface SearchFilters {
 }
 
 interface SimpleSearchProps {
-  books: Book[];
   onSearchResults?: (results: Book[]) => void;
 }
 
-export function SimpleSearch({ books, onSearchResults }: SimpleSearchProps) {
+export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const [filters, setFilters] = useState<SearchFilters>({
     categories: [],
@@ -33,12 +35,54 @@ export function SimpleSearch({ books, onSearchResults }: SimpleSearchProps) {
     searchMode: 'simple'
   });
 
-  // State to track displayed books
-  const [displayedBooks, setDisplayedBooks] = useState<Book[]>(books);
+  // State to track all books and displayed books
+  const [books, setBooks] = useState<Book[]>([]);
+  const [displayedBooks, setDisplayedBooks] = useState<Book[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
 
-  // Extract filter options from books
+  // Load data from API
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        console.log('🔍 SimpleSearch: Loading books and categories...');
+
+        // Load books and categories in parallel
+        const [booksResponse, categoriesResponse] = await Promise.all([
+          fetchBooks({ limit: 100 }), // Load more books for catalog page
+          fetchCategories()
+        ]);
+
+        if (booksResponse.success) {
+          setBooks(booksResponse.data);
+          setDisplayedBooks(booksResponse.data);
+          console.log('✅ SimpleSearch: Loaded books:', booksResponse.data.length);
+        } else {
+          throw new Error(booksResponse.error || 'Ошибка загрузки книг');
+        }
+
+        if (categoriesResponse.success) {
+          setCategories(categoriesResponse.data);
+          console.log('✅ SimpleSearch: Loaded categories:', categoriesResponse.data.length);
+        }
+
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
+        setError(errorMessage);
+        console.error('💥 SimpleSearch: Error loading data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  // Extract filter options from loaded books
   const filterOptions = {
-    categories: [...new Set(books.map(book => book.category))].sort(),
+    categories: categories.length > 0 ? categories : [...new Set(books.map(book => book.category))].sort(),
     authors: [...new Set(books.map(book => book.author))].sort()
   };
 
@@ -99,37 +143,43 @@ export function SimpleSearch({ books, onSearchResults }: SimpleSearchProps) {
     return filteredBooks;
   };
 
-  // Initialize displayed books
+  // Update displayed books when books change
   useEffect(() => {
-    setDisplayedBooks(books);
-  }, [books]);
-
-  // Handle URL search parameters
-  useEffect(() => {
-    const urlSearch = searchParams.get('search');
-    if (urlSearch) {
-      setQuery(urlSearch);
-      performSimpleSearch(urlSearch);
-    }
-  }, [searchParams, books]);
-
-  // Apply filters when they change and no search query
-  useEffect(() => {
-    if (!query) {
+    if (!loading && books.length > 0) {
       const filtered = applyFilters(books);
       setDisplayedBooks(filtered);
       onSearchResults?.(filtered);
     }
-  }, [filters, books, onSearchResults, query]);
+  }, [books, loading]);
+
+  // Handle URL search parameters
+  useEffect(() => {
+    const urlSearch = searchParams.get('search');
+    if (urlSearch && !loading) {
+      setQuery(urlSearch);
+      performSimpleSearch(urlSearch);
+    }
+  }, [searchParams, books, loading]);
+
+  // Apply filters when they change and no search query
+  useEffect(() => {
+    if (!query && !loading) {
+      const filtered = applyFilters(books);
+      setDisplayedBooks(filtered);
+      onSearchResults?.(filtered);
+    }
+  }, [filters, books, onSearchResults, query, loading]);
 
   // Perform search when query changes
   useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      performSimpleSearch(query);
-    }, 300);
+    if (!loading) {
+      const debounceTimer = setTimeout(() => {
+        performSimpleSearch(query);
+      }, 300);
 
-    return () => clearTimeout(debounceTimer);
-  }, [query]);
+      return () => clearTimeout(debounceTimer);
+    }
+  }, [query, loading, books]);
 
   const handleSearch = (searchQuery: string) => {
     setQuery(searchQuery);
@@ -156,6 +206,41 @@ export function SimpleSearch({ books, onSearchResults }: SimpleSearchProps) {
   };
 
   const activeFilterCount = filters.categories.length + filters.authors.length;
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="w-full">
+        <div className="flex items-center justify-center py-16">
+          <div className="flex items-center gap-3 text-slate-600">
+            <Loader2 className="w-6 h-6 animate-spin" />
+            <span className="text-lg font-medium">Завантаження каталогу...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="w-full">
+        <div className="text-center py-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 rounded-full mb-4">
+            <X className="w-4 h-4" />
+            <span className="font-medium">Помилка завантаження</span>
+          </div>
+          <p className="text-sm text-slate-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-colors"
+          >
+            Спробувати знову
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

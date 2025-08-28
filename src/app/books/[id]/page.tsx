@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { BOOKS } from "@/lib/mock";
+import { fetchBook, fetchBooksByCategory } from "@/lib/api/books";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/Badge";
@@ -12,27 +12,37 @@ import type { Metadata } from "next";
 type Params = { id: string };
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const book = BOOKS.find(b => b.id === params.id);
-  if (!book) return { title: "Книга не знайдена" };
+  const response = await fetchBook(params.id);
+  if (!response.success || !response.data) return { title: "Книга не знайдена" };
+  
+  const book = response.data;
   return {
     title: `${book.title} — Stefa.books`,
-    description: `${book.author} • ${book.category}${book.age ? ` • ${book.age}` : ""}`,
-    openGraph: { title: book.title, images: [{ url: book.cover }] }
+    description: `${book.author} • ${book.category}${book.age_range ? ` • ${book.age_range}` : ""}`,
+    openGraph: { 
+      title: book.title, 
+      images: book.cover_url ? [{ url: book.cover_url }] : []
+    }
   };
 }
 
-export default function BookPage({ params }: { params: Params }) {
-  const book = BOOKS.find(b => b.id === params.id);
-  if (!book) return notFound();
+export default async function BookPage({ params }: { params: Params }) {
+  const bookResponse = await fetchBook(params.id);
+  if (!bookResponse.success || !bookResponse.data) return notFound();
+
+  const book = bookResponse.data;
 
   // Get related books (same category, excluding current book)
-  const relatedBooks = BOOKS
-    .filter(b => b.id !== book.id && b.category === book.category && b.available)
-    .slice(0, 4);
+  const relatedBooksResponse = await fetchBooksByCategory(book.category, 8);
+  const relatedBooks = relatedBooksResponse.success
+    ? relatedBooksResponse.data
+        .filter(b => b.id !== book.id && b.available)
+        .slice(0, 4)
+    : [];
 
-  // Mock detailed description (in real app, this would come from database)
-  const fullDescription = book.short ? 
-    `${book.short}\n\nЦя захоплююча книга розкриває перед читачами цілий світ пригод та відкриттів. Написана доступною мовою, вона ідеально підходить для дитячого читання і допоможе розвинути любов до літератури. Автор майстерно поєднує розважальний сюжет з навчальними елементами, що робить читання не тільки цікавим, але й корисним.` :
+  // Use description from database, with fallback
+  const fullDescription = book.description || 
+    book.short_description || 
     "Захоплююча дитяча книга, що поєднує в собі пригоди, навчання та розваги. Ідеально підходить для читання разом з батьками або самостійного вивчення. Допоможе розвинути фантазію та мовні навички.";
 
   return (
@@ -43,7 +53,13 @@ export default function BookPage({ params }: { params: Params }) {
       <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
         <div className="card overflow-hidden">
           <div className="relative aspect-[3/4]">
-            <Image src={book.cover} alt={book.title} fill className="object-cover" />
+            {book.cover_url ? (
+              <Image src={book.cover_url} alt={book.title} fill className="object-cover" />
+            ) : (
+              <div className="w-full h-full bg-slate-200 flex items-center justify-center">
+                <BookOpen className="h-24 w-24 text-slate-400" />
+              </div>
+            )}
           </div>
         </div>
         <div className="grid gap-4">
@@ -51,7 +67,7 @@ export default function BookPage({ params }: { params: Params }) {
             <div>
               <h1 className="text-3xl font-bold text-[--ink] mb-2">{book.title}</h1>
               <p className="text-xl text-[--muted] mb-1">{book.author}</p>
-              <p className="text-sm text-[--muted] mb-3">{book.category}{book.age ? ` • ${book.age}` : ""}</p>
+              <p className="text-sm text-[--muted] mb-3">{book.category}{book.age_range ? ` • ${book.age_range}` : ""}</p>
               
               {/* Badges */}
               {book.badges?.length && (
@@ -69,12 +85,12 @@ export default function BookPage({ params }: { params: Params }) {
           </div>
           
           {/* Price section */}
-          <div className="flex items-center gap-3">
-            {book.price?.old && (
-              <div className="text-lg text-[--muted] line-through">{book.price.old} ₴</div>
-            )}
-            <div className="text-2xl font-semibold text-[--ink]">{book.price?.current ?? "Безкоштовно"} ₴</div>
-          </div>
+          {book.price_uah && (
+            <div className="flex items-center gap-3">
+              <div className="text-lg text-[--muted]">Вартість книги:</div>
+              <div className="text-2xl font-semibold text-[--ink]">{book.price_uah} ₴</div>
+            </div>
+          )}
           
           {/* Availability */}
           <div className="flex items-center gap-3 text-sm">

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { BookCard } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
-import { BOOKS } from "@/lib/mock";
-import { Sparkles, TrendingUp, Heart, Award } from "lucide-react";
-import type { Book } from "@/lib/types";
+import { fetchBooks } from "@/lib/api/books";
+import { Sparkles, TrendingUp, Heart, Award, Loader2 } from "lucide-react";
+import type { Book } from "@/lib/supabase";
 
 interface BookRecommendationsProps {
   title?: string;
@@ -27,9 +27,45 @@ export function BookRecommendations({
   showCategories = true
 }: BookRecommendationsProps) {
   const [activeType, setActiveType] = useState<RecommendationType>("trending");
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load books from API
+  useEffect(() => {
+    const loadBooks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        console.log('📖 BookRecommendations: Loading books...');
+
+        const response = await fetchBooks({
+          available_only: true,
+          limit: 20 // Load more books for better recommendations
+        });
+
+        if (response.success) {
+          setBooks(response.data);
+          console.log('✅ BookRecommendations: Loaded books:', response.data.length);
+        } else {
+          throw new Error(response.error || 'Ошибка загрузки рекомендаций');
+        }
+
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
+        setError(errorMessage);
+        console.error('💥 BookRecommendations: Error loading books:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBooks();
+  }, []);
 
   const recommendations = useMemo(() => {
-    let filtered = BOOKS.filter(book => 
+    let filtered = books.filter(book => 
       book.available && 
       !excludeIds.includes(book.id) &&
       (!category || book.category === category)
@@ -37,27 +73,27 @@ export function BookRecommendations({
 
     switch (activeType) {
       case "trending":
-        // Books with "В тренді" status or high ratings
+        // Recently added books (new in database) or books with high ratings
         return filtered
           .filter(book => 
-            book.status === "В тренді" || 
-            (book.rating && book.rating.value >= 4.5)
+            (book.rating && book.rating >= 4.5) ||
+            (book.badges && book.badges.includes('Нове'))
           )
           .slice(0, maxItems);
       
       case "popular": 
-        // Books with "Бестселер" status or high review counts
+        // Books with high ratings or rating counts
         return filtered
           .filter(book => 
-            book.status === "Бестселер" || 
-            (book.rating && book.rating.count >= 50)
+            (book.rating && book.rating >= 4.0) ||
+            (book.rating_count && book.rating_count >= 10)
           )
           .slice(0, maxItems);
       
       case "new":
-        // Books with "Нове" status or recently added (mock logic)
+        // Recently added books (sort by created_at)
         return filtered
-          .filter(book => book.status === "Нове")
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
           .slice(0, maxItems);
       
       case "category":
@@ -78,7 +114,7 @@ export function BookRecommendations({
       default:
         return filtered.slice(0, maxItems);
     }
-  }, [activeType, excludeIds, category, maxItems]);
+  }, [activeType, excludeIds, category, maxItems, books]);
 
   const types = [
     { 
@@ -106,6 +142,26 @@ export function BookRecommendations({
       description: "З усіх категорій" 
     }] : [])
   ];
+
+  // Don't render if loading or no books
+  if (loading) {
+    return (
+      <section className="py-12 lg:py-16 bg-gradient-to-b from-white to-slate-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-3 text-slate-600">
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <span className="text-lg font-medium">Завантаження рекомендацій...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return null; // Quietly fail for recommendations
+  }
 
   if (recommendations.length === 0) {
     return null;

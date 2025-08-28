@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { BookCard } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
 import { getRecentViews, clearRecentViews } from "@/lib/recentViews";
-import { BOOKS } from "@/lib/mock";
-import { History, X } from "lucide-react";
-import type { Book } from "@/lib/types";
+import { fetchBook } from "@/lib/api/books";
+import { History, X, Loader2 } from "lucide-react";
+import type { Book } from "@/lib/supabase";
 
 interface RecentViewsProps {
   title?: string;
@@ -24,14 +24,38 @@ export function RecentViews({
   const [recentBooks, setRecentBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadRecentViews = () => {
-    const recentIds = getRecentViews().slice(0, maxItems);
-    const books = recentIds
-      .map(id => BOOKS.find(book => book.id === id))
-      .filter((book): book is Book => book !== undefined);
-    
-    setRecentBooks(books);
-    setIsLoading(false);
+  const loadRecentViews = async () => {
+    try {
+      setIsLoading(true);
+      const recentIds = getRecentViews().slice(0, maxItems);
+      
+      if (recentIds.length === 0) {
+        setRecentBooks([]);
+        setIsLoading(false);
+        return;
+      }
+
+      console.log('📚 RecentViews: Loading recent books:', recentIds);
+
+      // Load books from API by IDs
+      const bookPromises = recentIds.map(id => fetchBook(id));
+      const bookResponses = await Promise.all(bookPromises);
+      
+      const validBooks = bookResponses
+        .filter(response => response.success && response.data)
+        .map(response => response.data!)
+        .filter((book): book is Book => book !== undefined);
+
+      setRecentBooks(validBooks);
+      
+      console.log('✅ RecentViews: Loaded recent books:', validBooks.length);
+      
+    } catch (error) {
+      console.error('💥 RecentViews: Error loading recent books:', error);
+      setRecentBooks([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -55,8 +79,24 @@ export function RecentViews({
     }
   };
 
-  // Don't render if no recent views or still loading
-  if (isLoading || recentBooks.length === 0) {
+  // Show loading state briefly
+  if (isLoading) {
+    return (
+      <section className="py-12 lg:py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-3 text-slate-600">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span className="text-lg font-medium">Завантаження історії...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Don't render if no recent views
+  if (recentBooks.length === 0) {
     return null;
   }
 

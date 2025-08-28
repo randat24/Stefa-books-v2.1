@@ -1,20 +1,8 @@
 "use client";
-import React, { useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { BOOKS } from "@/lib/mock";
-import { useStore } from "@/lib/store";
+import React, { Suspense } from "react";
 import { SimpleSearch } from "@/components/search/SimpleSearch";
-import type { Filters } from "@/lib/store";
 
 function BooksPageContent() {
-  const params = useSearchParams();
-  const urlCat = params.get("category") as string | null;
-  const { setCategory } = useStore();
-
-  useEffect(() => {
-    if (urlCat) setCategory(urlCat as Filters["category"]);
-  }, [urlCat, setCategory]);
-
   return (
     <>
       {/* Якорь для навігації */}
@@ -28,7 +16,7 @@ function BooksPageContent() {
           </p>
         </div>
 
-        <SimpleSearch books={BOOKS} />
+        <SimpleSearch />
       </div>
     </>
   );
