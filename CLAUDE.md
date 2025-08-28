@@ -10,6 +10,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm build` - Build production bundle
 - `pnpm lint` - Run ESLint for code quality checks
 
+### Testing
+- `pnpm test` - Run all Jest unit and integration tests
+- `pnpm test:watch` - Run Jest in watch mode for development
+- `pnpm test:coverage` - Run tests with coverage report (70% threshold)
+- `pnpm test:e2e` - Run Playwright end-to-end tests
+- `pnpm test:e2e:ui` - Run E2E tests with Playwright UI
+- `pnpm test:e2e:headed` - Run E2E tests in headed mode
+- `pnpm test:all` - Run both unit and E2E tests
+
 ### Installation
 - `pnpm install` - Install dependencies (preferred package manager)
 - `npm install` - Alternative using npm
@@ -25,6 +34,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **React Query** for data fetching and caching
 - **Lucide React** for consistent iconography
 - **Framer Motion** installed but not actively used (only CSS transitions)
+
+### Testing Infrastructure
+- **Jest + React Testing Library** for unit and integration tests
+- **Playwright** for end-to-end testing across Chrome, Firefox, Safari
+- **Error Boundaries** with comprehensive fallback UIs
+- **Coverage thresholds** set at 70% for branches, functions, lines, statements
+- **Test environments**: jsdom for components, node for API endpoints
 
 ### Project Structure
 The application follows Next.js App Router conventions with a component-based architecture:
@@ -50,6 +66,10 @@ src/
 │   │   └── FilterPopup.tsx     # Catalog-style filter popup
 │   ├── catalog/         # Catalog components
 │   │   └── CatalogPopup.tsx    # Category browser popup
+│   ├── error-boundary/  # Error handling components
+│   │   ├── ErrorBoundary.tsx      # Main error boundary with fallback UI
+│   │   ├── SearchErrorBoundary.tsx # Search-specific error handling
+│   │   └── FormErrorBoundary.tsx   # Form-specific error handling
 │   ├── sections/        # Page sections (FAQ, ContactLocation, SocialProof)
 │   ├── hero/            # Hero section with steps card
 │   ├── layouts/         # Header and navigation
@@ -59,7 +79,13 @@ src/
 │   ├── types.ts         # TypeScript definitions
 │   ├── mock.ts          # Book data with real Ukrainian children's books
 │   ├── store.ts         # Zustand state management (filters)
+│   ├── recentViews.ts   # Recent book views utility with localStorage
 │   └── cn.ts            # Tailwind class merging
+├── __tests__/           # Unit and integration tests
+│   ├── components/      # Component tests (Button, Badge, etc.)
+│   └── lib/             # Utility function tests
+└── tests/               # E2E tests
+    └── e2e/             # Playwright test files
 ```
 
 ### Design System and Styling
@@ -138,6 +164,19 @@ src/
 **TypeScript**: Strict typing throughout with custom type definitions in `src/lib/types.ts`.
 
 **Form Handling**: Complex subscription form with Ukrainian phone validation, file uploads, and conditional payment method display.
+
+**Error Handling**: Comprehensive error boundary system:
+- **ErrorBoundary**: Main component with fallback UI and development error details
+- **SearchErrorBoundary**: Specialized for search functionality failures
+- **FormErrorBoundary**: Form-specific error handling with retry options
+- **BookViewTracker**: Utility component for tracking book views with recent views persistence
+- **useErrorBoundary** hook for functional components to trigger error boundaries
+
+**Testing Strategy**:
+- **Unit Tests**: Components (Button, Badge, BookCard) and utilities (logger, recentViews) 
+- **Integration Tests**: Search functionality, form validation, API endpoints
+- **E2E Tests**: Complete user journeys (homepage, search, navigation, accessibility)
+- **Mock Strategy**: Browser APIs (localStorage, IntersectionObserver), Next.js modules
 
 **Search System Implementation**: 
 - **HeaderSearch**: Light theme modal with live search, categorized results (Books/Categories/Authors)
