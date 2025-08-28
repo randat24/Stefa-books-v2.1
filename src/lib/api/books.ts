@@ -56,7 +56,7 @@ export interface CategoriesStatsResponse {
 function getBaseUrl(): string {
   // Server-side: use process.env
   if (typeof window === 'undefined') {
-    return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'
   }
   // Client-side: use window.location
   return window.location.origin

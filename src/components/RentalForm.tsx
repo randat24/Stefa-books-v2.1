@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { Info, CreditCard, Building2 } from "lucide-react";
+import { Info, CreditCard, Building2, Copy, Check } from "lucide-react";
 import { logger } from "@/lib/logger";
 
 type FormData = {
@@ -21,12 +21,23 @@ type FormData = {
 export default function RentalForm({ bookId }: { bookId?: string }) {
   const [sent, setSent] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'online' | null>(null);
+  const [copiedCard, setCopiedCard] = useState(false);
   const { register, handleSubmit, formState: { errors }, reset, watch, setValue, trigger } = useForm<FormData>({
     mode: 'onChange',
     defaultValues: { plan: "Mini", delivery: "Самовивіз", bookId, email: "", phone: "+380", privacyConsent: false, payment: "Онлайн оплата" }
   });
 
   // авто-префікс + маска для UA
+  const copyCardNumber = async () => {
+    try {
+      await navigator.clipboard.writeText('5408810041850776');
+      setCopiedCard(true);
+      setTimeout(() => setCopiedCard(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy card number:', err);
+    }
+  };
+
   const onPhoneInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     let v = e.currentTarget.value.replace(/\s+/g, "");
     if (!v.startsWith("+380")) v = "+380";
@@ -198,8 +209,25 @@ export default function RentalForm({ bookId }: { bookId?: string }) {
               <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-blue-200">
                 <div>
                   <p className="text-base font-semibold text-slate-600 mb-1">Номер карти:</p>
-                  <p className="text-xl font-bold text-blue-600 tracking-wider">4441 1144 4444 4444</p>
+                  <p className="text-xl font-bold text-blue-600 tracking-wider">5408 8100 4185 0776</p>
                 </div>
+                <button
+                  type="button"
+                  onClick={copyCardNumber}
+                  className="flex items-center gap-2 px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors"
+                >
+                  {copiedCard ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      <span className="text-sm font-medium">Скопійовано!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4" />
+                      <span className="text-sm font-medium">Копіювати</span>
+                    </>
+                  )}
+                </button>
               </div>
 
               {/* Получатель */}

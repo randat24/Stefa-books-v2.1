@@ -1,5 +1,10 @@
 {
   "pages": {
+    "/api/books/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/books/route.js"
+    ],
     "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -11,40 +16,35 @@
       "static/chunks/main-app.js",
       "static/chunks/app/error.js"
     ],
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
-    ],
-    "/api/books/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/books/route.js"
-    ],
     "/books/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/books/page.js"
     ],
-    "/catalog/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/catalog/page.js"
+      "static/chunks/app/page.js"
     ],
-    "/api/categories/route": [
+    "/api/sync/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/categories/route.js"
+      "static/chunks/app/api/sync/route.js"
     ],
-    "/subscribe/page": [
+    "/admin/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/subscribe/page.js"
+      "static/chunks/app/admin/layout.js"
     ],
-    "/form/page": [
+    "/admin/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/form/page.js"
+      "static/chunks/app/admin/page.js"
+    ],
+    "/api/admin/clear-books/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/admin/clear-books/route.js"
     ]
   }
 }

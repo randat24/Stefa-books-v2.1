@@ -1,6 +1,8 @@
 {
-  "/books/page": "app/books/page.js",
-  "/form/page": "app/form/page.js",
+  "/api/books/route": "app/api/books/route.js",
+  "/api/admin/clear-books/route": "app/api/admin/clear-books/route.js",
+  "/api/sync/route": "app/api/sync/route.js",
   "/page": "app/page.js",
-  "/subscribe/page": "app/subscribe/page.js"
+  "/books/page": "app/books/page.js",
+  "/admin/page": "app/admin/page.js"
 }

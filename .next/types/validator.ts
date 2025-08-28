@@ -107,6 +107,12 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   handler satisfies AppPageConfig<"/terms">
 }
 
+// Validate ../../src/app/api/admin/clear-books/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/admin/clear-books/route.js")
+  handler satisfies RouteHandlerConfig<"/api/admin/clear-books">
+}
+
 // Validate ../../src/app/api/admin/upload/cover/route.ts
 {
   const handler = {} as typeof import("../../src/app/api/admin/upload/cover/route.js")
@@ -131,6 +137,12 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   handler satisfies RouteHandlerConfig<"/api/categories">
 }
 
+// Validate ../../src/app/api/health/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/health/route.js")
+  handler satisfies RouteHandlerConfig<"/api/health">
+}
+
 // Validate ../../src/app/api/rent/route.ts
 {
   const handler = {} as typeof import("../../src/app/api/rent/route.js")
@@ -141,6 +153,18 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   const handler = {} as typeof import("../../src/app/api/subscribe/route.js")
   handler satisfies RouteHandlerConfig<"/api/subscribe">
+}
+
+// Validate ../../src/app/api/sync/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/sync/route.js")
+  handler satisfies RouteHandlerConfig<"/api/sync">
+}
+
+// Validate ../../src/app/api/test-books/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/test-books/route.js")
+  handler satisfies RouteHandlerConfig<"/api/test-books">
 }
 
 

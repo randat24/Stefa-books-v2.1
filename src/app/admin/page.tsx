@@ -1,12 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Building2, BookOpen, Users, CreditCard, TrendingUp, CheckCircle, FileText, Calendar, BarChart3, RefreshCw } from "lucide-react"
+import { Building2, BookOpen, Users, CreditCard, TrendingUp, CheckCircle, FileText, Calendar, BarChart3, RefreshCw, Cloud } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/Badge"
 import { Button } from "@/components/ui/button"
 import { BooksTable } from "./components/BooksTable"
+import { SyncPanel } from "./components/SyncPanel"
 import { getBooks } from "./data"
 import type { BookRow } from "@/lib/types/admin"
 
@@ -282,10 +283,14 @@ export default function AdminPage() {
 
           {/* Головні таби */}
           <Tabs defaultValue="books" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 rounded-2xl bg-slate-100 p-1">
+            <TabsList className="grid w-full grid-cols-5 rounded-2xl bg-slate-100 p-1">
               <TabsTrigger value="books" className="rounded-xl flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <BookOpen className="size-4" />
                 <span className="hidden sm:inline">Книги</span>
+              </TabsTrigger>
+              <TabsTrigger value="sync" className="rounded-xl flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Cloud className="size-4" />
+                <span className="hidden sm:inline">Синхронізація</span>
               </TabsTrigger>
               <TabsTrigger value="users" className="rounded-xl flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Users className="size-4" />
@@ -308,6 +313,11 @@ export default function AdminPage() {
                 onRefresh={handleRefresh}
                 onBookCreated={handleBookCreated}
               />
+            </TabsContent>
+
+            {/* Таб синхронізації */}
+            <TabsContent value="sync" className="space-y-4">
+              <SyncPanel />
             </TabsContent>
 
             {/* Таб користувачів */}
