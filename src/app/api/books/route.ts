@@ -125,11 +125,14 @@ export async function POST(request: NextRequest) {
     console.log('📋 API: Action requested:', action)
     
     if (action === 'get_categories') {
-      console.log('📂 API: Fetching categories')
+      console.log('📂 API: Fetching categories from categories table with book counts')
       
-      const { data: books, error } = await supabase
-        .from('books')
-        .select('category')
+      // Получаем категории из таблицы categories с подсчетом книг
+      const { data: categories, error } = await supabase
+        .from('categories')
+        .select('id, name, description, parent_id, display_order, icon, color')
+        .order('display_order', { ascending: true })
+        .order('name', { ascending: true })
 
       if (error) {
         console.error('❌ API: Supabase error in get_categories:', error)
@@ -139,17 +142,48 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Уникальные категории
-      const categories = [...new Set(books?.map(book => book.category) || [])]
-        .filter(Boolean)
-        .sort()
+      // Получаем количество книг для каждой категории
+      const { data: books, error: booksError } = await supabase
+        .from('books')
+        .select('category')
 
-      console.log(`✅ API: Found ${categories.length} categories:`, categories)
+      if (booksError) {
+        console.error('❌ API: Error fetching books for category counts:', booksError)
+        return NextResponse.json(
+          { success: false, error: booksError.message },
+          { status: 500 }
+        )
+      }
+
+      // Подсчитываем количество книг по категориям
+      const categoryCounts: Record<string, number> = {}
+      books?.forEach(book => {
+        if (book.category) {
+          categoryCounts[book.category] = (categoryCounts[book.category] || 0) + 1
+        }
+      })
+
+      // Фильтруем только дочерние категории (уровень 2) для отображения
+      const displayCategories = categories
+        ?.filter(cat => cat.parent_id !== null) // Только дочерние категории
+        .map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          name_en: cat.name, // Используем name вместо name_en
+          slug: cat.id, // Используем id вместо slug
+          icon: cat.icon,
+          color: cat.color,
+          sort_order: cat.display_order || 0, // Используем display_order вместо sort_order
+          book_count: categoryCounts[cat.name] || 0
+        }))
+        .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+
+      console.log(`✅ API: Found ${displayCategories?.length || 0} display categories with book counts:`, displayCategories?.map(c => ({ name: c.name, count: c.book_count })))
 
       const response = {
         success: true,
-        data: categories,
-        count: categories.length
+        data: displayCategories || [],
+        count: displayCategories?.length || 0
       }
 
       console.log('📤 API: Sending categories response:', { success: response.success, count: response.count })

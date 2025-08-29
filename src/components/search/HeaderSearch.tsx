@@ -77,11 +77,11 @@ export function HeaderSearch() {
         // Фильтруем категории по запросу
         const normalizedQuery = searchQuery.toLowerCase().trim();
         const matchedCategories = allCategories.filter(cat => 
-          cat.toLowerCase().includes(normalizedQuery)
+          cat.name.toLowerCase().includes(normalizedQuery)
         );
 
         setSearchResults({
-          categories: matchedCategories,
+          categories: matchedCategories.map(cat => cat.name),
           authors: authors,
           books: books
         });

@@ -1,74 +1,9 @@
 {
   "node": {
-    "0015c48cb7075b4a0a6f207e2e868677872ad446dc": {
+    "00068f7c37f25f87e14bf1c627b9b2f45eaa9b15da": {
       "workers": {
         "app/admin/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%220015c48cb7075b4a0a6f207e2e868677872ad446dc%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22001dfb1d797680ed877f4009e7de846fe18116124b%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220032bf7efc254196777ded63051925d26f507ed3f2%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22005dbd425497acc7ab6a6dff325439e50a9aaacbe6%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22006a2995f30dc6524334c7016aaea871dab076dccd%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200940e664b6e30f2b38d1366dbd8dae38d586b4d7b%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200fef0b1d9cfaa3b9a83ae4c6b1d86f6ff0b3f0b46%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22604ff3ed8cf09a560acef5a79892475159b6152011%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/admin/page": "action-browser"
-      },
-      "filename": "app/admin/data.ts",
-      "exportedName": "getRentals"
-    },
-    "001dfb1d797680ed877f4009e7de846fe18116124b": {
-      "workers": {
-        "app/admin/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%220015c48cb7075b4a0a6f207e2e868677872ad446dc%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22001dfb1d797680ed877f4009e7de846fe18116124b%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220032bf7efc254196777ded63051925d26f507ed3f2%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22005dbd425497acc7ab6a6dff325439e50a9aaacbe6%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22006a2995f30dc6524334c7016aaea871dab076dccd%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200940e664b6e30f2b38d1366dbd8dae38d586b4d7b%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200fef0b1d9cfaa3b9a83ae4c6b1d86f6ff0b3f0b46%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22604ff3ed8cf09a560acef5a79892475159b6152011%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/admin/page": "action-browser"
-      },
-      "filename": "app/admin/data.ts",
-      "exportedName": "getAdminDashboardData"
-    },
-    "0032bf7efc254196777ded63051925d26f507ed3f2": {
-      "workers": {
-        "app/admin/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%220015c48cb7075b4a0a6f207e2e868677872ad446dc%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22001dfb1d797680ed877f4009e7de846fe18116124b%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220032bf7efc254196777ded63051925d26f507ed3f2%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22005dbd425497acc7ab6a6dff325439e50a9aaacbe6%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22006a2995f30dc6524334c7016aaea871dab076dccd%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200940e664b6e30f2b38d1366dbd8dae38d586b4d7b%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200fef0b1d9cfaa3b9a83ae4c6b1d86f6ff0b3f0b46%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22604ff3ed8cf09a560acef5a79892475159b6152011%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/admin/page": "action-browser"
-      },
-      "filename": "app/admin/data.ts",
-      "exportedName": "getDashboardStats"
-    },
-    "005dbd425497acc7ab6a6dff325439e50a9aaacbe6": {
-      "workers": {
-        "app/admin/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%220015c48cb7075b4a0a6f207e2e868677872ad446dc%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22001dfb1d797680ed877f4009e7de846fe18116124b%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220032bf7efc254196777ded63051925d26f507ed3f2%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22005dbd425497acc7ab6a6dff325439e50a9aaacbe6%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22006a2995f30dc6524334c7016aaea871dab076dccd%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200940e664b6e30f2b38d1366dbd8dae38d586b4d7b%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200fef0b1d9cfaa3b9a83ae4c6b1d86f6ff0b3f0b46%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22604ff3ed8cf09a560acef5a79892475159b6152011%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/admin/page": "action-browser"
-      },
-      "filename": "app/admin/data.ts",
-      "exportedName": "getBooks"
-    },
-    "006a2995f30dc6524334c7016aaea871dab076dccd": {
-      "workers": {
-        "app/admin/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%220015c48cb7075b4a0a6f207e2e868677872ad446dc%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22001dfb1d797680ed877f4009e7de846fe18116124b%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220032bf7efc254196777ded63051925d26f507ed3f2%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22005dbd425497acc7ab6a6dff325439e50a9aaacbe6%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22006a2995f30dc6524334c7016aaea871dab076dccd%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200940e664b6e30f2b38d1366dbd8dae38d586b4d7b%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200fef0b1d9cfaa3b9a83ae4c6b1d86f6ff0b3f0b46%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22604ff3ed8cf09a560acef5a79892475159b6152011%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/admin/page": "action-browser"
-      },
-      "filename": "app/admin/data.ts",
-      "exportedName": "getUsers"
-    },
-    "00940e664b6e30f2b38d1366dbd8dae38d586b4d7b": {
-      "workers": {
-        "app/admin/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%220015c48cb7075b4a0a6f207e2e868677872ad446dc%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22001dfb1d797680ed877f4009e7de846fe18116124b%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220032bf7efc254196777ded63051925d26f507ed3f2%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22005dbd425497acc7ab6a6dff325439e50a9aaacbe6%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22006a2995f30dc6524334c7016aaea871dab076dccd%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200940e664b6e30f2b38d1366dbd8dae38d586b4d7b%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200fef0b1d9cfaa3b9a83ae4c6b1d86f6ff0b3f0b46%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22604ff3ed8cf09a560acef5a79892475159b6152011%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%2200068f7c37f25f87e14bf1c627b9b2f45eaa9b15da%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200312599c0b001a3c8aa3f3fd5d9d4fb11493a7cfc%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220031c0ef1ce6d3c8eedcfa9db0c54645506d38799c%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22004301402759f30454bff1a339b0714535e8a0fc82%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200983d3396147736884fe110f18523e2bfb3c730c2%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d30674aedac560dcc66eb807e73beb064ea33beb%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d6cd95e1782f3022c161589812da376c9005a051%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%226023ca462ae3caa07f60f33d4a20307896a1638a31%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
           "async": false
         }
       },
@@ -78,10 +13,10 @@
       "filename": "app/admin/data.ts",
       "exportedName": "getPayments"
     },
-    "00fef0b1d9cfaa3b9a83ae4c6b1d86f6ff0b3f0b46": {
+    "00312599c0b001a3c8aa3f3fd5d9d4fb11493a7cfc": {
       "workers": {
         "app/admin/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%220015c48cb7075b4a0a6f207e2e868677872ad446dc%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22001dfb1d797680ed877f4009e7de846fe18116124b%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220032bf7efc254196777ded63051925d26f507ed3f2%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22005dbd425497acc7ab6a6dff325439e50a9aaacbe6%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22006a2995f30dc6524334c7016aaea871dab076dccd%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200940e664b6e30f2b38d1366dbd8dae38d586b4d7b%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200fef0b1d9cfaa3b9a83ae4c6b1d86f6ff0b3f0b46%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22604ff3ed8cf09a560acef5a79892475159b6152011%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%2200068f7c37f25f87e14bf1c627b9b2f45eaa9b15da%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200312599c0b001a3c8aa3f3fd5d9d4fb11493a7cfc%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220031c0ef1ce6d3c8eedcfa9db0c54645506d38799c%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22004301402759f30454bff1a339b0714535e8a0fc82%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200983d3396147736884fe110f18523e2bfb3c730c2%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d30674aedac560dcc66eb807e73beb064ea33beb%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d6cd95e1782f3022c161589812da376c9005a051%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%226023ca462ae3caa07f60f33d4a20307896a1638a31%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
           "async": false
         }
       },
@@ -91,10 +26,75 @@
       "filename": "app/admin/data.ts",
       "exportedName": "getBooksOnlyStats"
     },
-    "604ff3ed8cf09a560acef5a79892475159b6152011": {
+    "0031c0ef1ce6d3c8eedcfa9db0c54645506d38799c": {
       "workers": {
         "app/admin/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%220015c48cb7075b4a0a6f207e2e868677872ad446dc%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22001dfb1d797680ed877f4009e7de846fe18116124b%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220032bf7efc254196777ded63051925d26f507ed3f2%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22005dbd425497acc7ab6a6dff325439e50a9aaacbe6%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22006a2995f30dc6524334c7016aaea871dab076dccd%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200940e664b6e30f2b38d1366dbd8dae38d586b4d7b%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200fef0b1d9cfaa3b9a83ae4c6b1d86f6ff0b3f0b46%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22604ff3ed8cf09a560acef5a79892475159b6152011%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%2200068f7c37f25f87e14bf1c627b9b2f45eaa9b15da%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200312599c0b001a3c8aa3f3fd5d9d4fb11493a7cfc%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220031c0ef1ce6d3c8eedcfa9db0c54645506d38799c%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22004301402759f30454bff1a339b0714535e8a0fc82%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200983d3396147736884fe110f18523e2bfb3c730c2%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d30674aedac560dcc66eb807e73beb064ea33beb%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d6cd95e1782f3022c161589812da376c9005a051%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%226023ca462ae3caa07f60f33d4a20307896a1638a31%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/admin/data.ts",
+      "exportedName": "getDashboardStats"
+    },
+    "004301402759f30454bff1a339b0714535e8a0fc82": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%2200068f7c37f25f87e14bf1c627b9b2f45eaa9b15da%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200312599c0b001a3c8aa3f3fd5d9d4fb11493a7cfc%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220031c0ef1ce6d3c8eedcfa9db0c54645506d38799c%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22004301402759f30454bff1a339b0714535e8a0fc82%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200983d3396147736884fe110f18523e2bfb3c730c2%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d30674aedac560dcc66eb807e73beb064ea33beb%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d6cd95e1782f3022c161589812da376c9005a051%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%226023ca462ae3caa07f60f33d4a20307896a1638a31%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/admin/data.ts",
+      "exportedName": "getRentals"
+    },
+    "00983d3396147736884fe110f18523e2bfb3c730c2": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%2200068f7c37f25f87e14bf1c627b9b2f45eaa9b15da%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200312599c0b001a3c8aa3f3fd5d9d4fb11493a7cfc%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220031c0ef1ce6d3c8eedcfa9db0c54645506d38799c%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22004301402759f30454bff1a339b0714535e8a0fc82%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200983d3396147736884fe110f18523e2bfb3c730c2%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d30674aedac560dcc66eb807e73beb064ea33beb%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d6cd95e1782f3022c161589812da376c9005a051%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%226023ca462ae3caa07f60f33d4a20307896a1638a31%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/admin/data.ts",
+      "exportedName": "getBooks"
+    },
+    "00d30674aedac560dcc66eb807e73beb064ea33beb": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%2200068f7c37f25f87e14bf1c627b9b2f45eaa9b15da%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200312599c0b001a3c8aa3f3fd5d9d4fb11493a7cfc%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220031c0ef1ce6d3c8eedcfa9db0c54645506d38799c%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22004301402759f30454bff1a339b0714535e8a0fc82%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200983d3396147736884fe110f18523e2bfb3c730c2%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d30674aedac560dcc66eb807e73beb064ea33beb%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d6cd95e1782f3022c161589812da376c9005a051%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%226023ca462ae3caa07f60f33d4a20307896a1638a31%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/admin/data.ts",
+      "exportedName": "getUsers"
+    },
+    "00d6cd95e1782f3022c161589812da376c9005a051": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%2200068f7c37f25f87e14bf1c627b9b2f45eaa9b15da%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200312599c0b001a3c8aa3f3fd5d9d4fb11493a7cfc%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220031c0ef1ce6d3c8eedcfa9db0c54645506d38799c%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22004301402759f30454bff1a339b0714535e8a0fc82%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200983d3396147736884fe110f18523e2bfb3c730c2%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d30674aedac560dcc66eb807e73beb064ea33beb%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d6cd95e1782f3022c161589812da376c9005a051%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%226023ca462ae3caa07f60f33d4a20307896a1638a31%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/admin/data.ts",
+      "exportedName": "getAdminDashboardData"
+    },
+    "6023ca462ae3caa07f60f33d4a20307896a1638a31": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Ffantomas%2FDocuments%2FGitHub%2FStefa-books-v2.1%2Fsrc%2Fapp%2Fadmin%2Fdata.ts%22%2C%5B%7B%22id%22%3A%2200068f7c37f25f87e14bf1c627b9b2f45eaa9b15da%22%2C%22exportedName%22%3A%22getPayments%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200312599c0b001a3c8aa3f3fd5d9d4fb11493a7cfc%22%2C%22exportedName%22%3A%22getBooksOnlyStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%220031c0ef1ce6d3c8eedcfa9db0c54645506d38799c%22%2C%22exportedName%22%3A%22getDashboardStats%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%22004301402759f30454bff1a339b0714535e8a0fc82%22%2C%22exportedName%22%3A%22getRentals%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200983d3396147736884fe110f18523e2bfb3c730c2%22%2C%22exportedName%22%3A%22getBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d30674aedac560dcc66eb807e73beb064ea33beb%22%2C%22exportedName%22%3A%22getUsers%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%2200d6cd95e1782f3022c161589812da376c9005a051%22%2C%22exportedName%22%3A%22getAdminDashboardData%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%2C%7B%22id%22%3A%226023ca462ae3caa07f60f33d4a20307896a1638a31%22%2C%22exportedName%22%3A%22searchBooks%22%2C%22filename%22%3A%22app%2Fadmin%2Fdata.ts%22%7D%5D%5D%5D&__client_imported__=true!",
           "async": false
         }
       },
@@ -106,5 +106,5 @@
     }
   },
   "edge": {},
-  "encryptionKey": "qYVh69OcO+W7MlKEro6MWHpHdGLmQf2H13GtMgFSPEo="
+  "encryptionKey": "h8iBi2Gu2OwMdLPM8AaiVg0ygut74IHlDKp9oWbf39U="
 }

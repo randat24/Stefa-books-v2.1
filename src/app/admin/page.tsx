@@ -6,8 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/Badge"
 import { Button } from "@/components/ui/button"
+import { Breadcrumb } from "@/components/ui/Breadcrumb"
 import { BooksTable } from "./components/BooksTable"
 import { SyncPanel } from "./components/SyncPanel"
+import { CacheStatus } from "./components/CacheStatus"
 import { getBooks } from "./data"
 import type { BookRow } from "@/lib/types/admin"
 
@@ -135,6 +137,15 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      {/* Breadcrumbs */}
+      <div className="w-full px-4 py-4 lg:px-6 xl:px-8 2xl:px-10 border-b border-slate-200/30">
+        <Breadcrumb 
+          items={[
+            { label: 'Адміністрування' }
+          ]}
+        />
+      </div>
+
       {/* Заголовок */}
       <div className="sticky top-0 z-10 border-b border-slate-200/60 bg-white/90 backdrop-blur-sm">
         <div className="w-full px-4 py-6 lg:px-6 xl:px-8 2xl:px-10">
@@ -279,6 +290,11 @@ export default function AdminPage() {
                 </p>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Статус кэша книг */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CacheStatus />
           </div>
 
           {/* Головні таби */}

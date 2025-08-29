@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/Badge";
 import { BookCard } from "@/components/BookCard";
 import { BookViewTracker } from "@/components/BookViewTracker";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { BookOpen, Award } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -52,6 +53,14 @@ export default async function BookPage({ params }: { params: Params }) {
     <>
       <BookViewTracker bookId={book.id} book={book} />
       <div className="container mx-auto px-4 py-8 space-y-12">
+        {/* Breadcrumbs */}
+        <Breadcrumb 
+          items={[
+            { label: 'Каталог', href: '/books' },
+            { label: book.category, href: `/books?category=${encodeURIComponent(book.category)}` },
+            { label: book.title }
+          ]}
+        />
       {/* Main book info section */}
       <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
         <div className="card overflow-hidden">
@@ -109,10 +118,10 @@ export default async function BookPage({ params }: { params: Params }) {
           {/* Action buttons */}
           <div className="grid sm:grid-cols-2 gap-3 pt-4">
             <Button variant="dark" asChild disabled={!book.available}>
-              <a href={`/books?rent=${book.id}`}>
+              <Link href={`/rent?bookId=${book.id}`}>
                 <BookOpen className="h-4 w-4 mr-2" />
                 Орендувати книгу
-              </a>
+              </Link>
             </Button>
             <Button variant="outline" asChild>
               <Link href="/books">Назад до каталогу</Link>

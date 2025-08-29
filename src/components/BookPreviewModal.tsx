@@ -36,9 +36,9 @@ export function BookPreviewModal({ book, isOpen, onClose }: BookPreviewModalProp
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
-              <h3 className="text-2xl font-bold text-[--ink] mb-2">{book.title}</h3>
-              <p className="text-lg text-[--muted] mb-1">{book.author}</p>
-              <p className="text-sm text-[--muted]">{book.category}{book.age_range ? ` • ${book.age_range}` : ""}</p>
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">{book.title}</h3>
+              <p className="text-lg text-slate-600 mb-1">{book.author}</p>
+              <p className="text-sm text-slate-600">{book.category}{book.age_range ? ` • ${book.age_range}` : ""}</p>
             </div>
             <FavoriteButton id={book.id} />
           </div>
@@ -57,7 +57,7 @@ export function BookPreviewModal({ book, isOpen, onClose }: BookPreviewModalProp
 
           {/* Price */}
           <div className="flex items-center gap-3">
-            <div className="text-xl font-semibold text-[--ink]">
+            <div className="text-xl font-semibold text-slate-900">
               {book.price_uah ? `${book.price_uah} ₴` : "Безкоштовно"}
             </div>
           </div>
@@ -76,7 +76,7 @@ export function BookPreviewModal({ book, isOpen, onClose }: BookPreviewModalProp
           {/* Short description */}
           {book.short_description && (
             <div className="bg-slate-50 rounded-lg p-4 border-l-4 border-yellow-500">
-              <p className="text-[--ink] text-sm leading-relaxed">{book.short_description}</p>
+              <p className="text-slate-900 text-sm leading-relaxed">{book.short_description}</p>
             </div>
           )}
 
@@ -85,8 +85,8 @@ export function BookPreviewModal({ book, isOpen, onClose }: BookPreviewModalProp
             <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
               <BookOpen className="h-4 w-4 text-blue-600" />
               <div>
-                <p className="text-xs text-[--muted]">Категорія</p>
-                <p className="text-sm font-medium text-[--ink]">{book.category}</p>
+                <p className="text-xs text-slate-600">Категорія</p>
+                <p className="text-sm font-medium text-slate-900">{book.category}</p>
               </div>
             </div>
             
@@ -94,8 +94,8 @@ export function BookPreviewModal({ book, isOpen, onClose }: BookPreviewModalProp
               <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
                 <Users className="h-4 w-4 text-green-600" />
                 <div>
-                  <p className="text-xs text-[--muted]">Вік</p>
-                  <p className="text-sm font-medium text-[--ink]">{book.age_range}</p>
+                  <p className="text-xs text-slate-600">Вік</p>
+                  <p className="text-sm font-medium text-slate-900">{book.age_range}</p>
                 </div>
               </div>
             )}

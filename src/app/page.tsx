@@ -6,6 +6,7 @@ import Steps from "@/components/sections/Steps";
 import { Catalog } from "@/components/sections/Catalog";
 import { BookRecommendations } from "@/components/sections/BookRecommendations";
 import { RecentViews } from "@/components/sections/RecentViews";
+import { CacheTest } from "@/components/sections/CacheTest";
 
 // Dynamic imports for non-critical components
 const PlansLite = lazy(() => import("@/components/widgets/PlansLite"));
@@ -22,6 +23,11 @@ export default function HomePage() {
 			{/* Hero */}
 			<Hero />
 			
+			{/* Categories */}
+			<Suspense fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-lg" />}>
+				<Categories />
+			</Suspense>
+			
 			{/* Steps */}
 			<Steps />
 			
@@ -31,17 +37,17 @@ export default function HomePage() {
 			{/* Каталог книг */}
 			<Catalog />
 
+			{/* Тест кэша книг */}
+			<div className="py-12 bg-gray-50">
+				<CacheTest />
+			</div>
+
 			{/* Рекомендации книг */}
 			<BookRecommendations />
 
 			{/* Тарифы */}
 			<Suspense fallback={<div className="h-80 bg-slate-50 animate-pulse rounded-lg" />}>
 				<PlansLite />
-			</Suspense>
-
-			{/* Categories */}
-			<Suspense fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-lg" />}>
-				<Categories />
 			</Suspense>
 
 			{/* Subscribe Form */}

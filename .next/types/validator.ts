@@ -95,6 +95,12 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   handler satisfies AppPageConfig<"/privacy">
 }
 
+// Validate ../../src/app/rent/page.tsx
+{
+  const handler = {} as typeof import("../../src/app/rent/page.js")
+  handler satisfies AppPageConfig<"/rent">
+}
+
 // Validate ../../src/app/subscribe/page.tsx
 {
   const handler = {} as typeof import("../../src/app/subscribe/page.js")
@@ -123,6 +129,12 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   const handler = {} as typeof import("../../src/app/api/books/[id]/route.js")
   handler satisfies RouteHandlerConfig<"/api/books/[id]">
+}
+
+// Validate ../../src/app/api/books/hash/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/books/hash/route.js")
+  handler satisfies RouteHandlerConfig<"/api/books/hash">
 }
 
 // Validate ../../src/app/api/books/route.ts

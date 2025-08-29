@@ -1,8 +1,8 @@
 'use client';
 import { useState, useMemo, useEffect } from 'react';
-import { Search, X, Sparkles, BookOpen, Castle, Wand2, Loader2 } from 'lucide-react';
+import { Search, X, BookOpen, Wand2, Loader2, Brain, Globe, Heart, Baby, ScrollText, Star, Crown, GraduationCap, Compass, BookText, Palette, BookMarked } from 'lucide-react';
 import { BookCard } from '@/components/BookCard';
-import { fetchBooks, fetchCategories } from '@/lib/api/books';
+import { fetchBooks, fetchCategories, type Category } from '@/lib/api/books';
 import type { Book } from '@/lib/supabase';
 import Link from 'next/link';
 
@@ -10,56 +10,43 @@ export function Catalog() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [books, setBooks] = useState<Book[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-           // Пагинация - показываем 2 ряда по 5 книг = 10
-         const [currentPage, setCurrentPage] = useState(1);
-         const [itemsPerPage] = useState(10);
-  const [showAll, setShowAll] = useState(false);
-
-
+  // Показываем ровно 18 книг (3 ряда по 6) на главной странице
 
   // Загружаем книги и категории при монтировании компонента
   useEffect(() => {
     const loadData = async () => {
       try {
-
         setLoading(true);
         setError(null);
 
-        // Загружаем книги и категории параллельно
-        
-                       // Сначала попробуем загрузить книги
-               const booksResponse = await fetchBooks({ limit: 10 }); // Максимум 2 ряда по 5 книг = 10
+        // Загружаем книги и категории параллельно - ровно 18 книг для 3 рядов по 6
+        const [booksResponse, categoriesResponse] = await Promise.all([
+          fetchBooks({ limit: 18 }), // Ровно 18 книг для 3 рядов по 6
+          fetchCategories()
+        ]);
 
-                       if (booksResponse.success && booksResponse.data) {
-                 setBooks(booksResponse.data);
-               } else {
-                 console.error('❌ Catalog: Books response failed:', booksResponse)
-                 throw new Error(booksResponse.error || 'Ошибка загрузки книг');
-               }
-
-        // Теперь загружаем категории
-        const categoriesResponse = await fetchCategories();
+        if (booksResponse.success && booksResponse.data) {
+          setBooks(booksResponse.data);
+        } else {
+          console.error('❌ Catalog: Books response failed:', booksResponse)
+          throw new Error(booksResponse.error || 'Ошибка загрузки книг');
+        }
 
         if (categoriesResponse.success && categoriesResponse.data) {
-          // Добавляем "Новинки" в начало списка категорий
-          const allCategories = ['Новинки', ...categoriesResponse.data];
-          setCategories(allCategories);
+          setCategories(categoriesResponse.data);
         } else {
-  
+          console.error('❌ Catalog: Categories response failed:', categoriesResponse)
         }
 
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
-
         setError(errorMessage);
-        
       } finally {
         setLoading(false);
-
       }
     };
 
@@ -72,12 +59,7 @@ export function Catalog() {
 
     // Фільтр за категорією
     if (selectedCategory) {
-      if (selectedCategory === 'Новинки') {
-        // Для "Новинки" показываем последние добавленные книги (уже отсортированы по created_at DESC)
-        filtered = books.slice(0, 12);
-      } else {
-        filtered = filtered.filter(book => book.category === selectedCategory);
-      }
+      filtered = filtered.filter(book => book.category === selectedCategory);
     }
 
     // Фільтр за пошуковим запитом
@@ -91,28 +73,19 @@ export function Catalog() {
       );
     }
 
-
-
     return filtered;
   }, [books, searchQuery, selectedCategory]);
 
-           // Пагинация и отображение элементов - показываем itemsPerPage книг (2 ряда) или все
-         const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
-         const startIndex = (currentPage - 1) * itemsPerPage;
-         const endIndex = showAll ? filteredBooks.length : Math.min(startIndex + itemsPerPage, filteredBooks.length);
-         const items = filteredBooks.slice(startIndex, endIndex);
-  
-  // Сброс пагинации при изменении фильтров
-  useEffect(() => {
-    setCurrentPage(1);
-    setShowAll(false);
-  }, [searchQuery, selectedCategory]);
+  // Отображение элементов - показываем все книги или заглушки для 18 карточек (3 ряда по 6)
+  const items = filteredBooks.slice(0, 18);
 
   console.log('📚 Catalog: Final items to display:', { 
     total: books.length, 
     filtered: filteredBooks.length, 
     displayed: items.length,
-    items: items.map(b => ({ id: b.id, title: b.title, author: b.author }))
+    items: items.map(b => ({ id: b.id, title: b.title, author: b.author })),
+    showPlaceholders: items.length === 0,
+    expectedRows: Math.ceil(items.length / 6) // Ожидаемое количество рядов
   });
 
   return (
@@ -153,30 +126,58 @@ export function Catalog() {
           </div>
         </div>
         
-        {/* Категорії */}
+        {/* Категорії - максимум 2 ряди (10 категорій) */}
         {!loading && categories.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-3 mb-8 max-w-4xl mx-auto">
-            {categories.slice(0, 8).map((category, index) => {
-              // Иконки для первых 4 категорий, затем повторяем
-              const IconComponent = [Sparkles, BookOpen, Castle, Wand2][index % 4];
+          <div className="flex flex-wrap justify-center gap-2 mb-12 max-w-6xl mx-auto">
+            {categories.slice(0, 10).map((category) => {
+              // Получаем правильную иконку для каждой категории
+              const getCategoryIcon = (slug: string) => {
+                switch (slug) {
+                  case 'fairy-tales': return Crown
+                  case 'educational': return GraduationCap
+                  case 'mystery': return Search
+                  case 'adventure': return Compass
+                  case 'novel': return BookText
+                  case 'fantasy': return Wand2
+                  case 'realistic': return Globe
+                  case 'romance': return Heart
+                  case 'toddlers': return Baby
+                  case 'preschool': return Palette
+                  case 'elementary': return BookOpen
+                  case 'middle-grade': return ScrollText
+                  case 'teen': return Star
+                  case 'psychology': return Brain
+                  case 'contemporary': return BookMarked
+                  default: return BookOpen
+                }
+              }
+              
+              const IconComponent = getCategoryIcon(category.slug);
               
               return (
                 <button
-                  key={category}
-                  onClick={() => setSelectedCategory(selectedCategory === category ? '' : category)}
-                  className={`inline-flex items-center gap-2 px-4 py-3 rounded-full border transition-all duration-200 ${
-                    selectedCategory === category
+                  key={category.id}
+                  onClick={() => setSelectedCategory(selectedCategory === category.name ? '' : category.name)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full border-2 transition-all duration-200 text-xs relative z-20 ${
+                    selectedCategory === category.name
                       ? 'bg-slate-900 text-white border-slate-900 shadow-lg'
                       : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:shadow-md'
                   }`}
                 >
-                  <IconComponent className={`w-5 h-5 ${
-                    selectedCategory === category ? 'text-white' : 'text-slate-600'
+                  <IconComponent className={`w-4 h-4 ${
+                    selectedCategory === category.name ? 'text-white' : 'text-slate-600'
                   }`} />
-                  <span className={`font-medium text-sm whitespace-nowrap ${
-                    selectedCategory === category ? 'text-white' : 'text-slate-900'
+                  <span className={`font-medium text-xs whitespace-nowrap leading-tight ${
+                    selectedCategory === category.name ? 'text-white' : 'text-slate-900'
                   }`}>
-                    {category}
+                    {category.name}
+                  </span>
+                  <span className={`text-xs px-0.5 py-0.5 rounded-full ${
+                    selectedCategory === category.name 
+                      ? 'bg-white/20 text-white' 
+                      : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    {category.book_count}
                   </span>
                 </button>
               );
@@ -213,62 +214,40 @@ export function Catalog() {
       )}
 
       {/* Результати */}
-      {!loading && !error && items.length > 0 && (
+      {!loading && !error && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {items.map((b) => (
-              <BookCard key={b.id} book={b} />
-            ))}
+          {/* Сетка книг - всегда показываем 18 карточек (3 ряда по 6) с фиксированными размерами */}
+          <div className="flex flex-wrap justify-start gap-6 max-w-7xl">
+            {items.length > 0 ? (
+              // Показываем реальные книги
+              items.map((b) => (
+                <BookCard key={b.id} book={b} />
+              ))
+            ) : (
+              // Показываем заглушки для 18 карточек (3 ряда по 6)
+              Array.from({ length: 18 }).map((_, index) => (
+                <div key={index} className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center min-h-[280px] shadow-sm w-full max-w-[240px]">
+                  <div className="w-full aspect-[3/4] bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                    <BookOpen className="w-8 h-8 text-gray-300" />
+                  </div>
+                  <div className="text-center w-full">
+                    <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                  </div>
+                  <div className="text-xs text-gray-400 mt-2">Карточка {index + 1}</div>
+                </div>
+              ))
+            )}
           </div>
           
-          {/* Пагинация и кнопки - всегда показываем если есть больше книг */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-
-            
-                               {/* Кнопка "Загрузить еще" - показываем если есть больше itemsPerPage книг */}
-                   {!showAll && filteredBooks.length > itemsPerPage && (
-                     <button
-                       onClick={() => setShowAll(true)}
-                       className="px-6 py-3 bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-colors font-medium"
-                     >
-                       Завантажити ще ({filteredBooks.length - itemsPerPage} книг)
-                     </button>
-                   )}
-                   
-                   {/* Пагинация - показываем если есть больше itemsPerPage книг */}
-                   {!showAll && filteredBooks.length > itemsPerPage && totalPages > 1 && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  ←
-                </button>
-                
-                <span className="px-3 py-2 text-sm text-slate-600">
-                  Сторінка {currentPage} з {totalPages}
-                </span>
-                
-                <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  →
-                </button>
-              </div>
-            )}
-            
-                               {/* Кнопка "Показать все" - показываем если есть больше itemsPerPage книг */}
-                   {!showAll && filteredBooks.length > itemsPerPage && (
-                     <button
-                       onClick={() => setShowAll(true)}
-                       className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors text-sm"
-                     >
-                       Показати всі ({filteredBooks.length})
-                     </button>
-                   )}
+          {/* Кнопка "Перейти в каталог" - показываем всегда на главной странице */}
+          <div className="mt-8 flex justify-center">
+            <Link
+              href="/books"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-colors font-medium"
+            >
+              Перейти в повний каталог →
+            </Link>
           </div>
         </>
       )}
@@ -311,15 +290,13 @@ export function Catalog() {
       {(searchQuery || selectedCategory) && (
         <div className="mt-8 text-center text-sm text-slate-500">
           Показано {items.length} з {filteredBooks.length} книг
-                           {filteredBooks.length > itemsPerPage && !showAll && (
-                   <span className="block mt-2">
-                     Використайте пагінацію або кнопку &quot;Завантажити ще&quot; для перегляду всіх результатів
-                   </span>
-                 )}
+          {filteredBooks.length > 18 && (
+            <span className="block mt-2">
+              Перейдіть в повний каталог для перегляду всіх результатів
+            </span>
+          )}
         </div>
       )}
-
-
     </section>
   );
 }

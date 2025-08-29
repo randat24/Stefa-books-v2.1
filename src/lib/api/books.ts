@@ -1,6 +1,7 @@
 import type { Book } from '@/lib/supabase'
 import { booksCache, categoriesCache, searchCache, APICache } from '@/lib/cache'
 import { logger } from '@/lib/logger'
+import { useBooksStore } from '@/store/books'
 
 // ============================================================================
 // КЛИЕНТСКАЯ БИБЛИОТЕКА ДЛЯ РАБОТЫ С КНИГАМИ
@@ -31,9 +32,20 @@ export interface BookResponse {
 
 export interface CategoriesResponse {
   success: boolean
-  data: string[]
+  data: Category[]
   count: number
   error?: string
+}
+
+export interface Category {
+  id: string
+  name: string
+  name_en?: string
+  slug: string
+  icon?: string
+  color?: string
+  sort_order?: number
+  book_count: number
 }
 
 export interface CategoryStats {
@@ -83,13 +95,31 @@ export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksRespon
   try {
     console.log('📚 fetchBooks called with filters:', filters)
     
-    // Generate cache key from filters
-    const cacheKey = booksCache.createKey('books', filters)
+    // Сначала проверяем локальный кэш
+    const { books, getFilteredBooks } = useBooksStore.getState()
     
-    // Check cache first
+    if (books.length > 0) {
+      console.log('✅ Using cached books data')
+      const filteredBooks = getFilteredBooks({
+        categoryId: filters.category,
+        ageCategoryId: filters.age_category,
+        search: filters.search,
+        availableOnly: filters.available_only,
+        limit: filters.limit
+      })
+      
+      return {
+        success: true,
+        data: filteredBooks,
+        count: filteredBooks.length
+      }
+    }
+    
+    // Если локальный кэш пустой, используем серверный кэш
+    const cacheKey = booksCache.createKey('books', filters)
     const cachedData = booksCache.get<BooksResponse>(cacheKey)
     if (cachedData) {
-      console.log('✅ Returning cached books data:', { filters, count: cachedData.count })
+      console.log('✅ Returning server cached books data:', { filters, count: cachedData.count })
       return cachedData
     }
 

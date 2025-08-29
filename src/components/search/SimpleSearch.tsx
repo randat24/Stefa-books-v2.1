@@ -39,8 +39,8 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
   const [displayedBooks, setDisplayedBooks] = useState<Book[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   
-  // Load more state - 15 книг за раз (3 ряда по 5 книг)
-  const [visibleCount, setVisibleCount] = useState(15);
+  // Load more state - 25 книг за раз (5 рядов по 5 книг)
+  const [visibleCount, setVisibleCount] = useState(25);
   const [hasMore, setHasMore] = useState(true);
 
   // Load data from API
@@ -82,7 +82,7 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
         })
 
         if (categoriesResponse.success) {
-          setCategories(categoriesResponse.data);
+          setCategories(categoriesResponse.data.map(cat => cat.name));
           console.log('✅ SimpleSearch: Categories loaded successfully:', categoriesResponse.data.length)
         }
 
@@ -222,7 +222,7 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
     onSearchResults?.(filtered);
     
     // Сброс видимого количества при очистке поиска
-    setVisibleCount(15);
+    setVisibleCount(25);
   };
 
   const updateFilter = (key: keyof SearchFilters, value: any) => {
@@ -240,7 +240,7 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
 
   // Load more books function
   const handleLoadMore = () => {
-    const newVisibleCount = visibleCount + 15; // Загружаем еще 3 ряда (15 книг)
+    const newVisibleCount = visibleCount + 25; // Загружаем еще 5 рядов (25 книг)
     setVisibleCount(newVisibleCount);
     setHasMore(displayedBooks.length > newVisibleCount);
   };
@@ -489,8 +489,8 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
         </div>
       )}
 
-      {/* Search Results - 5 книг в ряд */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      {/* Search Results - 3 ряда по 6 книг как на главной странице */}
+      <div className="flex flex-wrap justify-start gap-6 max-w-7xl">
         {displayedBooks
           .slice(0, visibleCount)
           .map((book) => (
@@ -506,7 +506,7 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
             className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground font-medium rounded-full hover:bg-accent/80 transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
           >
             <ChevronDown className="w-5 h-5" />
-            Завантажити ще 3 ряди книг
+            Завантажити ще 5 рядів книг
           </button>
         </div>
       )}

@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import typography from "@tailwindcss/typography";
+import forms from "@tailwindcss/forms";
 
 export default {
   content: [
@@ -39,6 +41,21 @@ export default {
         error: {
           DEFAULT: "#ef4444",
           light: "#fee2e2",
+        },
+        primary: {
+          DEFAULT: "#0B1220",
+          foreground: "#ffffff",
+        },
+        secondary: {
+          DEFAULT: "#f8fafc",
+          foreground: "#0f172a",
+        },
+        destructive: {
+          DEFAULT: "#ef4444",
+          foreground: "#ffffff",
+        },
+        ring: {
+          DEFAULT: "#0B1220",
         },
       },
       fontFamily: {
@@ -127,8 +144,8 @@ export default {
     },
   },
   plugins: [
-    require("@tailwindcss/typography"),
-    require("@tailwindcss/forms")({
+    typography,
+    forms({
       strategy: 'class',
     }),
   ],
