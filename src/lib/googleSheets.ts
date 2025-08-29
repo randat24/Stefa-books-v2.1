@@ -489,7 +489,7 @@ export async function importBooksFromUkrainianSheets(): Promise<{
             qty_total: parseInt(row.get('Всього') || '1') || 1,
             qty_available: parseInt(row.get('Доступно') || '1') || 1,
             age_range: parsedCategory.age_range,
-            tags: [parsedCategory.category, parsedCategory.subcategory].filter(Boolean)
+            tags: [parsedCategory.category, parsedCategory.subcategory].filter(Boolean) as string[]
           };
 
           stats.successCount++;

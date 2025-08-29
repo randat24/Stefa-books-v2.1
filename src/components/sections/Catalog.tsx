@@ -2,8 +2,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Search, X, Sparkles, BookOpen, Castle, Wand2, Loader2 } from 'lucide-react';
 import { BookCard } from '@/components/BookCard';
-import { fetchNewBooks, fetchCategories } from '@/lib/api/books';
+import { fetchBooks, fetchCategories } from '@/lib/api/books';
 import type { Book } from '@/lib/supabase';
+import Link from 'next/link';
 
 export function Catalog() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -12,40 +13,53 @@ export function Catalog() {
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+           // Пагинация - показываем 2 ряда по 5 книг = 10
+         const [currentPage, setCurrentPage] = useState(1);
+         const [itemsPerPage] = useState(10);
+  const [showAll, setShowAll] = useState(false);
+
+
 
   // Загружаем книги и категории при монтировании компонента
   useEffect(() => {
     const loadData = async () => {
       try {
+
         setLoading(true);
         setError(null);
 
         // Загружаем книги и категории параллельно
-        const [booksResponse, categoriesResponse] = await Promise.all([
-          fetchNewBooks(20), // Больше книг для главной
-          fetchCategories()
-        ]);
+        
+                       // Сначала попробуем загрузить книги
+               const booksResponse = await fetchBooks({ limit: 10 }); // Максимум 2 ряда по 5 книг = 10
 
-        if (booksResponse.success) {
-          setBooks(booksResponse.data);
-          
-        } else {
-          throw new Error(booksResponse.error || 'Ошибка загрузки книг');
-        }
+                       if (booksResponse.success && booksResponse.data) {
+                 setBooks(booksResponse.data);
+               } else {
+                 console.error('❌ Catalog: Books response failed:', booksResponse)
+                 throw new Error(booksResponse.error || 'Ошибка загрузки книг');
+               }
 
-        if (categoriesResponse.success) {
+        // Теперь загружаем категории
+        const categoriesResponse = await fetchCategories();
+
+        if (categoriesResponse.success && categoriesResponse.data) {
           // Добавляем "Новинки" в начало списка категорий
           const allCategories = ['Новинки', ...categoriesResponse.data];
           setCategories(allCategories);
-          
+        } else {
+  
         }
 
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
+
         setError(errorMessage);
         
       } finally {
         setLoading(false);
+
       }
     };
 
@@ -77,11 +91,29 @@ export function Catalog() {
       );
     }
 
+
+
     return filtered;
   }, [books, searchQuery, selectedCategory]);
 
-  // максимум 8 штук = 2 ряда по 4 на десктопе
-  const items = filteredBooks.slice(0, 8);
+           // Пагинация и отображение элементов - показываем itemsPerPage книг (2 ряда) или все
+         const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
+         const startIndex = (currentPage - 1) * itemsPerPage;
+         const endIndex = showAll ? filteredBooks.length : Math.min(startIndex + itemsPerPage, filteredBooks.length);
+         const items = filteredBooks.slice(startIndex, endIndex);
+  
+  // Сброс пагинации при изменении фильтров
+  useEffect(() => {
+    setCurrentPage(1);
+    setShowAll(false);
+  }, [searchQuery, selectedCategory]);
+
+  console.log('📚 Catalog: Final items to display:', { 
+    total: books.length, 
+    filtered: filteredBooks.length, 
+    displayed: items.length,
+    items: items.map(b => ({ id: b.id, title: b.title, author: b.author }))
+  });
 
   return (
     <section className="px-6">
@@ -112,12 +144,12 @@ export function Catalog() {
                 </button>
               )}
             </div>
-            <a
+            <Link
               href="/books"
               className="inline-flex items-center whitespace-nowrap rounded-2xl bg-slate-900 px-6 h-12 text-sm font-medium text-white hover:bg-slate-800 transition-colors"
             >
               Увесь каталог →
-            </a>
+            </Link>
           </div>
         </div>
         
@@ -182,11 +214,63 @@ export function Catalog() {
 
       {/* Результати */}
       {!loading && !error && items.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {items.map((b) => (
-            <BookCard key={b.id} book={b} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {items.map((b) => (
+              <BookCard key={b.id} book={b} />
+            ))}
+          </div>
+          
+          {/* Пагинация и кнопки - всегда показываем если есть больше книг */}
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+
+            
+                               {/* Кнопка "Загрузить еще" - показываем если есть больше itemsPerPage книг */}
+                   {!showAll && filteredBooks.length > itemsPerPage && (
+                     <button
+                       onClick={() => setShowAll(true)}
+                       className="px-6 py-3 bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-colors font-medium"
+                     >
+                       Завантажити ще ({filteredBooks.length - itemsPerPage} книг)
+                     </button>
+                   )}
+                   
+                   {/* Пагинация - показываем если есть больше itemsPerPage книг */}
+                   {!showAll && filteredBooks.length > itemsPerPage && totalPages > 1 && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  ←
+                </button>
+                
+                <span className="px-3 py-2 text-sm text-slate-600">
+                  Сторінка {currentPage} з {totalPages}
+                </span>
+                
+                <button
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  →
+                </button>
+              </div>
+            )}
+            
+                               {/* Кнопка "Показать все" - показываем если есть больше itemsPerPage книг */}
+                   {!showAll && filteredBooks.length > itemsPerPage && (
+                     <button
+                       onClick={() => setShowAll(true)}
+                       className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors text-sm"
+                     >
+                       Показати всі ({filteredBooks.length})
+                     </button>
+                   )}
+          </div>
+        </>
       )}
 
       {/* Пусто */}
@@ -212,8 +296,14 @@ export function Catalog() {
       {!loading && !error && books.length === 0 && (
         <div className="text-center py-12">
           <BookOpen className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <p className="text-lg text-slate-600 mb-4">Каталог порожній</p>
-          <p className="text-sm text-slate-500">Книги скоро з'являться у нашому каталозі</p>
+          <p className="text-lg text-slate-600 mb-4">Каталог порожній або завантажується</p>
+          <p className="text-sm text-slate-500 mb-4">Книги скоро з&apos;являться у нашому каталозі</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-colors"
+          >
+            Оновити сторінку
+          </button>
         </div>
       )}
       
@@ -221,13 +311,15 @@ export function Catalog() {
       {(searchQuery || selectedCategory) && (
         <div className="mt-8 text-center text-sm text-slate-500">
           Показано {items.length} з {filteredBooks.length} книг
-          {filteredBooks.length > 8 && (
-            <span className="block mt-2">
-              Переглядьте весь каталог для перегляду всіх результатів
-            </span>
-          )}
+                           {filteredBooks.length > itemsPerPage && !showAll && (
+                   <span className="block mt-2">
+                     Використайте пагінацію або кнопку &quot;Завантажити ще&quot; для перегляду всіх результатів
+                   </span>
+                 )}
         </div>
       )}
+
+
     </section>
   );
 }

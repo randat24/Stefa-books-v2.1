@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Search, X, SlidersHorizontal, Loader2 } from 'lucide-react';
+import { Search, X, SlidersHorizontal, Loader2, ChevronDown } from 'lucide-react';
 import { BookCard } from '@/components/BookCard';
 import { FilterPopup } from '@/components/filters/FilterPopup';
 import { fetchBooks, fetchCategories } from '@/lib/api/books';
@@ -38,41 +38,62 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
   const [books, setBooks] = useState<Book[]>([]);
   const [displayedBooks, setDisplayedBooks] = useState<Book[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  
+  // Load more state - 15 книг за раз (3 ряда по 5 книг)
+  const [visibleCount, setVisibleCount] = useState(15);
+  const [hasMore, setHasMore] = useState(true);
 
   // Load data from API
   useEffect(() => {
     const loadData = async () => {
       try {
+        console.log('🔄 SimpleSearch: Starting to load data...')
         setLoading(true);
         setError(null);
 
-        
-
         // Load books and categories in parallel
+        console.log('🔄 SimpleSearch: Loading books and categories in parallel...')
         const [booksResponse, categoriesResponse] = await Promise.all([
           fetchBooks({ limit: 100 }), // Load more books for catalog page
           fetchCategories()
         ]);
 
+        console.log('📚 SimpleSearch: Books response:', { 
+          success: booksResponse.success, 
+          count: booksResponse.count, 
+          hasData: !!booksResponse.data,
+          error: booksResponse.error 
+        })
+
         if (booksResponse.success) {
           setBooks(booksResponse.data);
           setDisplayedBooks(booksResponse.data);
-          
+          setHasMore(booksResponse.data.length > visibleCount);
+          console.log('✅ SimpleSearch: Books loaded successfully:', booksResponse.data.length)
         } else {
           throw new Error(booksResponse.error || 'Ошибка загрузки книг');
         }
 
+        console.log('📂 SimpleSearch: Categories response:', { 
+          success: categoriesResponse.success, 
+          count: categoriesResponse.count, 
+          hasData: !!categoriesResponse.data,
+          error: categoriesResponse.error 
+        })
+
         if (categoriesResponse.success) {
           setCategories(categoriesResponse.data);
-          
+          console.log('✅ SimpleSearch: Categories loaded successfully:', categoriesResponse.data.length)
         }
 
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
+        console.error('❌ SimpleSearch: Error loading data:', err)
         setError(errorMessage);
         // Error logging removed for production
       } finally {
         setLoading(false);
+        console.log('🏁 SimpleSearch: Data loading completed')
       }
     };
 
@@ -93,6 +114,7 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
       // No search query - apply only filters
       const filtered = applyFilters(books);
       setDisplayedBooks(filtered);
+      setHasMore(filtered.length > visibleCount);
       onSearchResults?.(filtered);
       return;
     }
@@ -114,7 +136,11 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
       const searchTime = endTime - startTime;
 
       setDisplayedBooks(results);
+      setHasMore(results.length > visibleCount);
       onSearchResults?.(results);
+      
+      // Сброс видимого количества при поиске
+      setVisibleCount(15);
 
       logger.search(`Found ${results.length} results in ${searchTime.toFixed(1)}ms`, { query: searchQuery, resultsCount: results.length, searchTime });
       
@@ -147,9 +173,10 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
     if (!loading && books.length > 0) {
       const filtered = applyFilters(books);
       setDisplayedBooks(filtered);
+      setHasMore(filtered.length > visibleCount);
       onSearchResults?.(filtered);
     }
-  }, [books, loading]);
+  }, [books, loading, visibleCount]);
 
   // Handle URL search parameters
   useEffect(() => {
@@ -165,9 +192,12 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
     if (!query && !loading) {
       const filtered = applyFilters(books);
       setDisplayedBooks(filtered);
+      setHasMore(filtered.length > visibleCount);
       onSearchResults?.(filtered);
+      // Сброс видимого количества при изменении фильтров
+      setVisibleCount(15);
     }
-  }, [filters, books, onSearchResults, query, loading]);
+  }, [filters, books, onSearchResults, query, loading, visibleCount]);
 
   // Perform search when query changes
   useEffect(() => {
@@ -188,7 +218,11 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
     setQuery('');
     const filtered = applyFilters(books);
     setDisplayedBooks(filtered);
+    setHasMore(filtered.length > visibleCount);
     onSearchResults?.(filtered);
+    
+    // Сброс видимого количества при очистке поиска
+    setVisibleCount(15);
   };
 
   const updateFilter = (key: keyof SearchFilters, value: any) => {
@@ -204,7 +238,36 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
     });
   };
 
+  // Load more books function
+  const handleLoadMore = () => {
+    const newVisibleCount = visibleCount + 15; // Загружаем еще 3 ряда (15 книг)
+    setVisibleCount(newVisibleCount);
+    setHasMore(displayedBooks.length > newVisibleCount);
+  };
+
   const activeFilterCount = filters.categories.length + filters.authors.length;
+
+  // Validate books and categories data
+  if (books.length > 0) {
+    console.log('📚 SimpleSearch: Valid books data:', { count: books.length, firstBook: books[0]?.title })
+  }
+  
+  if (categories.length > 0) {
+    console.log('📂 SimpleSearch: Valid categories data:', categories.slice(0, 3))
+  }
+
+  // Don't render if no books
+  if (!loading && books.length === 0) {
+    console.log('📚 SimpleSearch: No books to display')
+    return (
+      <div className="py-12 text-center">
+        <p className="text-lg text-slate-600 mb-4">Каталог завантажується</p>
+        <p className="text-sm text-slate-500">Зачекайте, будь ласка...</p>
+      </div>
+    )
+  }
+
+  console.log('📚 SimpleSearch: Rendering with', books.length, 'books, displayed:', displayedBooks.length, 'visible:', visibleCount, 'hasMore:', hasMore)
 
   // Show loading state
   if (loading) {
@@ -421,17 +484,32 @@ export function SimpleSearch({ onSearchResults }: SimpleSearchProps) {
         <div className="mb-3 text-xs text-muted-foreground">
           {query 
             ? `${displayedBooks.length} результатів пошуку`
-            : `${displayedBooks.length} з ${books.length} книг`
+            : `Показано ${Math.min(visibleCount, displayedBooks.length)} з ${displayedBooks.length} книг`
           }
         </div>
       )}
 
-      {/* Search Results */}
+      {/* Search Results - 5 книг в ряд */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {displayedBooks.map((book) => (
-          <BookCard key={book.id} book={book} />
-        ))}
+        {displayedBooks
+          .slice(0, visibleCount)
+          .map((book) => (
+            <BookCard key={book.id} book={book} />
+          ))}
       </div>
+      
+      {/* Load More Button */}
+      {hasMore && (
+        <div className="mt-8 flex items-center justify-center">
+          <button
+            onClick={handleLoadMore}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground font-medium rounded-full hover:bg-accent/80 transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
+          >
+            <ChevronDown className="w-5 h-5" />
+            Завантажити ще 3 ряди книг
+          </button>
+        </div>
+      )}
 
       {/* No Results */}
       {displayedBooks.length === 0 && !isSearching && (

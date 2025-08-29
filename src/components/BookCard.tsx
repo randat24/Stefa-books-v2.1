@@ -1,10 +1,12 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { BookOpen, Bookmark, Share2, X, Star, Heart } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import type { Book } from '@/lib/supabase';
+import { convertGoogleDriveUrl, getBookPlaceholder } from '@/lib/utils/imageUtils';
 
 /** Рейтинг с одной звездочкой */
 function Rating({ value = 0, count = 0 }: { value: number; count?: number }) {
@@ -29,6 +31,7 @@ function BookDialog({
   book: Book;
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -37,7 +40,22 @@ function BookDialog({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [open, onClose]);
 
+  const handleImageError = () => {
+    console.log('🖼️ Dialog image failed to load for book:', book.title, 'URL:', book.cover_url);
+    setImageError(true);
+  };
+
+  const imageSrc = imageError || !book.cover_url ? getBookPlaceholder() : convertGoogleDriveUrl(book.cover_url);
+
   if (!open) return null;
+
+  // Validate book data
+  if (!book || !book.id || !book.title || !book.author) {
+    console.error('❌ BookDialog: Invalid book data:', book);
+    return null;
+  }
+
+  console.log('📖 BookDialog: Rendering dialog for book:', { id: book.id, title: book.title, author: book.author });
 
   const statusMap = {
     'В наявності': { label: 'В наявності', className: 'bg-green-100 text-green-700 ring-green-200' },
@@ -91,7 +109,7 @@ function BookDialog({
             <div className="relative mx-auto">
               <div className="aspect-[3/4] w-48 overflow-hidden rounded-xl">
                 <Image
-                  src={book.cover_url || '/images/book-placeholder.svg'}
+                  src={imageSrc}
                   alt={`Обкладинка: ${book.title}`}
                   fill
                   className="object-cover"
@@ -99,6 +117,7 @@ function BookDialog({
                   loading="lazy"
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                  onError={handleImageError}
                 />
               </div>
               <span
@@ -186,11 +205,12 @@ function BookDialog({
               <div className="relative">
                 <div className="aspect-[3/4] w-full overflow-hidden rounded-xl">
                   <Image
-                    src={book.cover_url || '/images/book-placeholder.svg'}
+                    src={imageSrc}
                     alt={`Обкладинка: ${book.title}`}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 280px, 320px"
+                    onError={handleImageError}
                   />
                 </div>
                 <span
@@ -247,6 +267,14 @@ function BookDialog({
 
               {/* Действия */}
               <div className="mt-auto flex flex-wrap gap-3 pt-4">
+                <Link
+                  href={`/books/${book.id}`}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+                >
+                  <BookOpen className="h-4 w-4" aria-hidden="true" />
+                  Переглянути детально
+                </Link>
+
                 <button
                   className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium text-slate-900 bg-yellow-500 hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 transition-colors"
                 >
@@ -279,6 +307,22 @@ function BookDialog({
 
 export function BookCard({ book }: { book: Book }) {
   const [open, setOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  // Validate book data
+  if (!book || !book.id || !book.title || !book.author) {
+    console.error('❌ BookCard: Invalid book data:', book);
+    return null;
+  }
+
+  const handleImageError = () => {
+    console.log('🖼️ Image failed to load for book:', book.title, 'URL:', book.cover_url);
+    setImageError(true);
+  };
+
+  const imageSrc = imageError || !book.cover_url ? getBookPlaceholder() : convertGoogleDriveUrl(book.cover_url);
+
+  console.log('📖 BookCard: Rendering book:', { id: book.id, title: book.title, author: book.author });
 
   return (
     <>
@@ -288,21 +332,22 @@ export function BookCard({ book }: { book: Book }) {
           'transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 hover:border hover:border-slate-200'
         )}
       >
-        {/* Обложка */}
-        <button
-          onClick={() => setOpen(true)}
-          className="relative aspect-[3/4] w-full overflow-hidden rounded-t-xl"
-          aria-label={`Переглянути ${book.title}`}
+        {/* Обложка - теперь с ссылкой на страницу книги */}
+        <Link
+          href={`/books/${book.id}`}
+          className="relative aspect-[3/4] w-full overflow-hidden rounded-t-xl block"
+          aria-label={`Перейти на сторінку книги ${book.title}`}
         >
           <Image
             alt={book.title}
-            src={book.cover_url || '/images/book-placeholder.svg'}
+            src={imageSrc}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(min-width: 1280px) 320px, (min-width: 768px) 33vw, 100vw"
             loading="lazy"
             placeholder="blur"
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+            onError={handleImageError}
           />
           
           {/* Overlay при наведении */}
@@ -315,7 +360,7 @@ export function BookCard({ book }: { book: Book }) {
               Переглянути
             </div>
           </div>
-        </button>
+        </Link>
 
         {/* Статус-бейдж - показываем при наведении */}
         {book.status && (
@@ -326,6 +371,13 @@ export function BookCard({ book }: { book: Book }) {
 
         {/* Быстрые действия - показываем при наведении */}
         <div className="absolute right-4 top-4 flex gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <button
+            onClick={() => setOpen(true)}
+            className="rounded-full border border-slate-200 bg-white/90 p-2.5 shadow-sm hover:bg-white"
+            aria-label="Швидкий перегляд"
+          >
+            <BookOpen className="h-4 w-4 text-slate-700" />
+          </button>
           <button
             className="rounded-full border border-slate-200 bg-white/90 p-2.5 shadow-sm hover:bg-white"
             aria-label="Додати в обране"
@@ -340,11 +392,16 @@ export function BookCard({ book }: { book: Book }) {
           </button>
         </div>
 
-        {/* Контент - только название и автор */}
+        {/* Контент - название и автор с ссылкой */}
         <div className="flex flex-1 flex-col gap-3 px-4 pb-5 pt-4">
-          <h3 className="line-clamp-2 text-lg font-semibold tracking-tight text-slate-900 leading-tight">
-            {book.title}
-          </h3>
+          <Link 
+            href={`/books/${book.id}`}
+            className="hover:text-blue-600 transition-colors"
+          >
+            <h3 className="line-clamp-2 text-lg font-semibold tracking-tight text-slate-900 leading-tight">
+              {book.title}
+            </h3>
+          </Link>
 
           <p className="text-sm text-slate-600 font-medium">{book.author}</p>
         </div>

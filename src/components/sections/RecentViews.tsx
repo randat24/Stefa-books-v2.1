@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { BookCard } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
-import { getRecentViews, clearRecentViews } from "@/lib/recentViews";
-import { fetchBook } from "@/lib/api/books";
+import { getRecentViews, clearRecentViews, removeFromRecentViews } from "@/lib/recentViews";
+import { fetchBooks, fetchBook } from "@/lib/api/books";
 import { History, X, Loader2 } from "lucide-react";
+import Link from "next/link";
 import type { Book } from "@/lib/supabase";
 
 interface RecentViewsProps {
@@ -23,47 +24,108 @@ export function RecentViews({
 }: RecentViewsProps) {
   const [recentBooks, setRecentBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasBooksInDatabase, setHasBooksInDatabase] = useState(false);
 
-  const loadRecentViews = async () => {
+  // Check if there are books in the database
+  const checkDatabaseForBooks = useCallback(async () => {
+    try {
+      const result = await fetchBooks({ limit: 1 });
+      setHasBooksInDatabase(result.success && result.data && result.data.length > 0);
+    } catch (error) {
+      console.warn('⚠️ RecentViews: Failed to check database for books:', error);
+      setHasBooksInDatabase(false);
+    }
+  }, []);
+
+  const loadRecentViews = useCallback(async () => {
+    // Don't load recent views if there are no books in database
+    if (!hasBooksInDatabase) {
+      console.log('📋 RecentViews: No books in database, skipping recent views')
+      setRecentBooks([]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const recentIds = getRecentViews().slice(0, maxItems);
+      console.log('🔄 RecentViews: Loading recent views...')
       
-      if (recentIds.length === 0) {
+      const recentViews = getRecentViews();
+      console.log('📋 RecentViews: Found', recentViews.length, 'recent views')
+      
+      if (recentViews.length === 0) {
+        console.log('📋 RecentViews: No recent views found')
         setRecentBooks([]);
-        setIsLoading(false);
         return;
       }
-
       
-
-      // Load books from API by IDs
-      const bookPromises = recentIds.map(recentView => fetchBook(recentView.id));
+      // Filter out invalid IDs and limit to maxItems
+      const validIds = recentViews
+        .filter(recentView => recentView.id && recentView.id.trim() !== '')
+        .slice(0, maxItems);
+      
+      if (validIds.length === 0) {
+        console.log('📋 RecentViews: No valid IDs found')
+        setRecentBooks([]);
+        return;
+      }
+      
+      console.log('📚 RecentViews: Loading', validIds.length, 'books...')
+      
+      const bookPromises = validIds.map(async (recentView) => {
+        try {
+          const result = await fetchBook(recentView.id);
+          
+          // Check if the book was found successfully
+          if (result.success && result.data) {
+            return result.data;
+          } else {
+            console.warn('⚠️ RecentViews: Book not found or failed to load:', recentView.id, result.error);
+            // Remove invalid book from recent views
+            removeFromRecentViews(recentView.id);
+            return null;
+          }
+        } catch (error) {
+          console.warn('⚠️ RecentViews: Failed to load book:', recentView.id, error);
+          // Remove invalid book from recent views
+          removeFromRecentViews(recentView.id);
+          return null;
+        }
+      });
+      
       const bookResponses = await Promise.all(bookPromises);
       
       const validBooks = bookResponses
-        .filter(response => response.success && response.data)
-        .map(response => response.data!)
-        .filter((book): book is Book => book !== undefined);
+        .filter((book): book is Book => book !== null && book !== undefined);
 
+      console.log('✅ RecentViews: Books loaded successfully:', validBooks.length)
       setRecentBooks(validBooks);
       
-      
-      
     } catch (error) {
-      
+      console.error('❌ RecentViews: Error loading recent views:', error)
       setRecentBooks([]);
     } finally {
       setIsLoading(false);
+      console.log('🏁 RecentViews: Data loading completed')
     }
-  };
+  }, [maxItems, hasBooksInDatabase]);
 
   useEffect(() => {
-    loadRecentViews();
+    // First check if there are books in database
+    checkDatabaseForBooks();
+  }, [checkDatabaseForBooks]);
+
+  useEffect(() => {
+    // Then load recent views if books exist
+    if (hasBooksInDatabase) {
+      loadRecentViews();
+    }
     
     // Listen for updates to recent views
     const handleRecentViewsUpdate = () => {
-      loadRecentViews();
+      if (hasBooksInDatabase) {
+        loadRecentViews();
+      }
     };
 
     window.addEventListener("recentViewsUpdated", handleRecentViewsUpdate);
@@ -71,7 +133,7 @@ export function RecentViews({
     return () => {
       window.removeEventListener("recentViewsUpdated", handleRecentViewsUpdate);
     };
-  }, [maxItems]);
+  }, [loadRecentViews, hasBooksInDatabase]);
 
   const handleClearAll = () => {
     if (window.confirm("Очистити історію перегляду книг?")) {
@@ -95,10 +157,18 @@ export function RecentViews({
     );
   }
 
-  // Don't render if no recent views
-  if (recentBooks.length === 0) {
+  // Validate recent books data
+  if (recentBooks.length > 0) {
+    console.log('📚 RecentViews: Valid recent books data:', recentBooks.map(b => ({ id: b.id, title: b.title, author: b.author })))
+  }
+
+  // Don't render if no books in database or no recent views
+  if (!hasBooksInDatabase || recentBooks.length === 0) {
+    console.log('📋 RecentViews: No books in database or no recent views, hiding section')
     return null;
   }
+
+  console.log('📚 RecentViews: Rendering with', recentBooks.length, 'books')
 
   return (
     <section className="py-12 lg:py-16 bg-white">
@@ -147,9 +217,9 @@ export function RecentViews({
         {recentBooks.length >= maxItems && (
           <div className="text-center mt-8">
             <Button variant="outline" asChild>
-              <a href="/books">
+              <Link href="/books">
                 Переглянути всі книги
-              </a>
+              </Link>
             </Button>
           </div>
         )}

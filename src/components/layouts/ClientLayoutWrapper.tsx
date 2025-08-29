@@ -15,6 +15,8 @@ interface ClientLayoutWrapperProps {
 export function ClientLayoutWrapper({ children }: ClientLayoutWrapperProps) {
   const pathname = usePathname();
   const isAdminPage = pathname?.startsWith('/admin');
+  const isSubscribePage = pathname === '/subscribe';
+  const isBooksPage = pathname === '/books';
 
   // Register service worker on mount
   useEffect(() => {
@@ -31,6 +33,42 @@ export function ClientLayoutWrapper({ children }: ClientLayoutWrapperProps) {
   // Для админ-панели возвращаем только children без Header/Footer
   if (isAdminPage) {
     return <>{children}</>;
+  }
+
+  // Для страниц подписок и книг возвращаем без container ограничений
+  if (isSubscribePage || isBooksPage) {
+    return (
+      <>
+        <ErrorBoundary fallback={
+          <header className="bg-white shadow-sm">
+            <div className="container py-4">
+              <h1 className="text-xl font-bold">Stefa.books</h1>
+            </div>
+          </header>
+        }>
+          <Header />
+        </ErrorBoundary>
+
+        {/* Основной контент: БЕЗ ограничений контейнера */}
+        <main className="flex-1">
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
+        </main>
+
+        <ErrorBoundary fallback={
+          <footer className="bg-gray-50 py-8">
+            <div className="container text-center text-gray-500">
+              <p>© 2025 Stefa.books</p>
+            </div>
+          </footer>
+        }>
+          <Footer />
+        </ErrorBoundary>
+        
+        <BackToTop />
+      </>
+    );
   }
 
   // Для обычных страниц возвращаем полный layout с Header/Footer

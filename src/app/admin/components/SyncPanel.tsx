@@ -179,7 +179,7 @@ export function SyncPanel() {
             onClick={handleBackup}
             disabled={syncing || !status?.sheets_available}
             className="flex-1"
-            variant="default"
+            variant="primary"
           >
             {syncing ? (
               <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -207,7 +207,7 @@ export function SyncPanel() {
             onClick={loadSyncStatus}
             disabled={syncing}
             variant="ghost"
-            size="icon"
+            size="md"
           >
             <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
           </Button>

@@ -2,7 +2,7 @@
 
 import { BookOpen, Brain, Baby, ScrollText, Coins, Sparkles, Star, Zap, Heart } from "lucide-react"
 import { useEffect, useState } from "react"
-import { fetchCategoriesStats, type CategoryStats } from "@/lib/api/books"
+import { fetchCategories } from "@/lib/api/books"
 
 type Cat = {
 	key: string               // значення для ?category=
@@ -45,25 +45,41 @@ const getCategoryDescription = (category: string) => {
 }
 
 export default function Categories() {
-	const [categories, setCategories] = useState<CategoryStats[]>([])
+	const [categories, setCategories] = useState<string[]>([])
 	const [loading, setLoading] = useState(true)
 
 	useEffect(() => {
 		const loadCategories = async () => {
 			try {
-				const response = await fetchCategoriesStats()
+				console.log('🔄 Categories: Starting to load categories...')
+				const response = await fetchCategories()
+				console.log('📊 Categories: Response:', { 
+					success: response.success, 
+					count: response.count, 
+					hasData: !!response.data,
+					error: response.error 
+				})
 				if (response.success) {
 					setCategories(response.data)
+					console.log('✅ Categories: Categories loaded successfully:', response.data.length)
+				} else {
+					console.error('❌ Categories: Failed to load categories:', response.error)
 				}
 			} catch (error) {
-				console.error('Error loading categories:', error)
+				console.error('❌ Categories: Error loading categories:', error)
 			} finally {
 				setLoading(false)
+				console.log('🏁 Categories: Data loading completed')
 			}
 		}
 
 		loadCategories()
 	}, [])
+
+	// Validate categories data
+	if (categories.length > 0) {
+		console.log('📊 Categories: Valid categories data:', categories)
+	}
 
 	const navigateToBooks = (category?: string) => {
 		if (category) {
@@ -101,8 +117,29 @@ export default function Categories() {
 					))}
 				</div>
 			</section>
-		)
+		);
 	}
+
+	// Don't render if no categories
+	if (categories.length === 0) {
+		console.log('📂 Categories: No categories to display')
+		return (
+			<section id="catalog" className="py-10 lg:py-16">
+				<div className="flex items-end justify-between mb-5">
+					<div>
+						<h2 className="h2">Категорії</h2>
+						<p className="text-slate-600">Вибирай настрій читання — і вперед!</p>
+					</div>
+				</div>
+				<div className="text-center py-12">
+					<p className="text-lg text-slate-600 mb-4">Категорії завантажуються</p>
+					<p className="text-sm text-slate-500">Зачекайте, будь ласка...</p>
+				</div>
+			</section>
+		);
+	}
+
+	console.log('📊 Categories: Rendering with', categories.length, 'categories')
 
 	return (
 		<section id="catalog" className="py-10 lg:py-16">
@@ -122,15 +159,15 @@ export default function Categories() {
 			{/* великі плитки */}
 			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 				{categories.slice(0, 6).map((category) => {
-					const Icon = getCategoryIcon(category.name)
-					const desc = getCategoryDescription(category.name)
-					const isDitya = category.name.toLowerCase().includes('дитяч') || category.name.toLowerCase().includes('казк')
-					const isFantasy = category.name.toLowerCase().includes('фантастик') || category.name.toLowerCase().includes('містик')
+					const Icon = getCategoryIcon(category)
+					const desc = getCategoryDescription(category)
+					const isDitya = category.toLowerCase().includes('дитяч') || category.toLowerCase().includes('казк')
+					const isFantasy = category.toLowerCase().includes('фантастик') || category.toLowerCase().includes('містик')
 					
 					return (
 						<button
-							key={category.name}
-							onClick={() => navigateToBooks(category.name)}
+							key={category}
+							onClick={() => navigateToBooks(category)}
 							className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 hover:shadow-soft transition text-left hover:scale-[1.02]"
 						>
 							<div className="flex items-start gap-4">
@@ -144,7 +181,7 @@ export default function Categories() {
 									}`} />
 								</div>
 								<div className="grid gap-1">
-									<h3 className="text-lg font-semibold">{category.name}</h3>
+									<h3 className="text-lg font-semibold">{category}</h3>
 									<p className="text-sm text-slate-600">{desc}</p>
 								</div>
 							</div>
@@ -152,11 +189,6 @@ export default function Categories() {
 							<div className="mt-6 inline-flex items-center gap-2 rounded-full bg-black/[.03] px-4 py-2 text-sm border border-black/10">
 								Дивитись у каталозі
 								<svg className="size-4 -mr-0.5 transition -rotate-45 group-hover:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-							</div>
-
-							{/* кількість книг */}
-							<div className="absolute top-4 right-4 text-xs rounded-full bg-black/[.06] px-2 py-1 text-slate-900">
-								{category.available} книг
 							</div>
 						</button>
 					)

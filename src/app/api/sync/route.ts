@@ -163,9 +163,19 @@ export async function POST(request: NextRequest) {
         const batch = books.slice(i, i + batchSize);
         
         try {
+          // Фильтруем только книги с обязательными полями
+          const validBatch = batch.filter(book => 
+            book.code && book.title && book.author && book.category
+          );
+          
+          if (validBatch.length === 0) {
+            insertErrors.push(`Batch ${Math.floor(i/batchSize) + 1}: Нет валидных книг`);
+            continue;
+          }
+          
           const { data, error: insertError } = await supabase
             .from('books')
-            .insert(batch)
+            .insert(validBatch as any)
             .select();
 
           if (insertError) {

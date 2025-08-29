@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { 
   Eye, Edit, Trash2, ImageIcon, ExternalLink, CheckCircle, BookOpenCheck, Clock, XCircle,
   BookOpen, FileText, User, Tag, Hash, CreditCard, MapPin, Settings, Search, Filter,
@@ -23,6 +24,7 @@ import { Input } from "@/components/ui/input"
 import { AddBookDialog } from "./AddBookDialog"
 import { EditBookDialog } from "./EditBookDialog"
 import type { BookRow } from "@/lib/types/admin"
+import { convertGoogleDriveUrl, getBookPlaceholder } from "@/lib/utils/imageUtils"
 
 // ============================================================================
 // ТАБЛИЦЯ КНИГ З ОБКЛАДИНКАМИ
@@ -322,7 +324,7 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
                               onClick={() => handleViewCover(book)}
                             >
                               <Image
-                                src={book.cover_url}
+                                src={convertGoogleDriveUrl(book.cover_url)}
                                 alt={`Обкладинка: ${book.title}`}
                                 width={48}
                                 height={64}
@@ -556,7 +558,7 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
                 <div className="flex justify-center">
                   <div className="relative">
                     <Image
-                      src={selectedBook.cover_url}
+                      src={convertGoogleDriveUrl(selectedBook.cover_url)}
                       alt={`Обкладинка: ${selectedBook.title}`}
                       width={250}
                       height={375}
@@ -647,6 +649,16 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
                     </p>
                   </div>
                 </div>
+
+                {/* Кнопка для перехода на страницу книги */}
+                <div className="pt-4 border-t">
+                  <Button asChild className="w-full">
+                    <Link href={`/books/${selectedBook.id}`}>
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Переглянути на сайті
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -671,7 +683,7 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
           {imageViewBook?.cover_url && (
             <div className="flex flex-col items-center gap-4">
               <Image
-                src={imageViewBook.cover_url}
+                src={convertGoogleDriveUrl(imageViewBook.cover_url)}
                 alt={`Обкладинка: ${imageViewBook.title}`}
                 width={300}
                 height={450}
@@ -681,14 +693,22 @@ export function BooksTable({ books, onRefresh, onBookCreated }: BooksTableProps)
                 <p className="font-medium text-slate-900">{imageViewBook.title}</p>
                 <p className="text-sm text-slate-600">{imageViewBook.author}</p>
               </div>
-              <Button
-                variant="outline"
-                onClick={() => imageViewBook.cover_url && window.open(imageViewBook.cover_url, '_blank')}
-                className="w-full"
-              >
-                <ExternalLink className="size-4 mr-2" />
-                Відкрити в повному розмірі
-              </Button>
+              <div className="flex gap-3 w-full">
+                <Button
+                  variant="outline"
+                  onClick={() => imageViewBook.cover_url && window.open(imageViewBook.cover_url, '_blank')}
+                  className="flex-1"
+                >
+                  <ExternalLink className="size-4 mr-2" />
+                  Відкрити в повному розмірі
+                </Button>
+                <Button asChild className="flex-1">
+                  <Link href={`/books/${imageViewBook.id}`}>
+                    <BookOpen className="size-4 mr-2" />
+                    Переглянути на сайті
+                  </Link>
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>

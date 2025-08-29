@@ -12,9 +12,9 @@ export default function PlansLite() {
   }, []);
 
   return (
-    <section id="plans" className="py-16 px-6">
-      <div className="max-w-4xl mx-auto text-center">
-        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
+    <section id="plans" className="py-4">
+      <div className="text-center">
+        <div className="grid gap-6 sm:grid-cols-2 max-w-4xl mx-auto px-6">
           {/* Mini */}
           <div className="relative rounded-3xl border-2 border-slate-200 bg-white p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             {/* Illustration area */}
@@ -30,6 +30,7 @@ export default function PlansLite() {
             
             <h4 className="text-3xl font-bold text-slate-900 mb-2">Mini</h4>
             <p className="text-2xl font-bold text-slate-900 mb-2">300 грн/міс.</p>
+            <p className="text-sm text-slate-600 mb-4">1 книга за раз на місяць</p>
 
             <button
               onClick={() => setPlanAndGo('mini')}
@@ -54,6 +55,7 @@ export default function PlansLite() {
             
             <h4 className="text-3xl font-bold text-slate-900 mb-2">Maxi</h4>
             <p className="text-2xl font-bold text-yellow-600 mb-2">500 грн/міс.</p>
+            <p className="text-sm text-slate-600 mb-4">До 2 книг за раз на місяць</p>
 
             <button
               onClick={() => setPlanAndGo('maxi')}
@@ -62,16 +64,6 @@ export default function PlansLite() {
               Обрати Maxi
             </button>
           </div>
-        </div>
-
-        {/* Link to subscription form */}
-        <div className="mt-8">
-          <a 
-            href="/form" 
-            className="inline-flex items-center text-slate-600 hover:text-slate-900 transition-colors"
-          >
-            Оформити підписку →
-          </a>
         </div>
       </div>
     </section>

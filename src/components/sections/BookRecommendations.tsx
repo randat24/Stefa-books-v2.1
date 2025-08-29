@@ -36,6 +36,7 @@ export function BookRecommendations({
   useEffect(() => {
     const loadBooks = async () => {
       try {
+        console.log('🔄 BookRecommendations: Starting to load books...')
         setLoading(true);
         setError(null);
 
@@ -46,19 +47,28 @@ export function BookRecommendations({
           limit: 20 // Load more books for better recommendations
         });
 
+        console.log('📚 BookRecommendations: Books response:', { 
+          success: response.success, 
+          count: response.count, 
+          hasData: !!response.data,
+          error: response.error 
+        })
+
         if (response.success) {
           setBooks(response.data);
-          
+          console.log('✅ BookRecommendations: Books loaded successfully:', response.data.length)
         } else {
           throw new Error(response.error || 'Ошибка загрузки рекомендаций');
         }
 
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
+        console.error('❌ BookRecommendations: Error loading books:', err)
         setError(errorMessage);
         
       } finally {
         setLoading(false);
+        console.log('🏁 BookRecommendations: Data loading completed')
       }
     };
 
@@ -71,6 +81,13 @@ export function BookRecommendations({
       !excludeIds.includes(book.id) &&
       (!category || book.category === category)
     );
+
+    console.log('🔍 BookRecommendations: Filtered books:', { 
+      total: books.length, 
+      filtered: filtered.length, 
+      category, 
+      excludeIds: excludeIds.length 
+    });
 
     switch (activeType) {
       case "trending":
@@ -164,9 +181,31 @@ export function BookRecommendations({
     return null; // Quietly fail for recommendations
   }
 
-  if (recommendations.length === 0) {
-    return null;
+  console.log('📚 BookRecommendations: Final recommendations:', { 
+    total: books.length, 
+    recommendations: recommendations.length,
+    type: activeType,
+    items: recommendations.map(b => ({ id: b.id, title: b.title, author: b.author }))
+  });
+
+  // Don't render if no books
+  if (!loading && books.length === 0) {
+    console.log('📚 BookRecommendations: No books to display')
+    // Show a message instead of returning null
+    return (
+      <section className="py-12 lg:py-16 bg-gradient-to-b from-white to-slate-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-4">{title}</h2>
+            <p className="text-lg text-slate-600 mb-8">{subtitle}</p>
+            <p className="text-slate-500">Рекомендації завантажуються або каталог порожній</p>
+          </div>
+        </div>
+      </section>
+    )
   }
+
+  console.log('📚 BookRecommendations: Rendering with', books.length, 'books, activeType:', activeType)
 
   return (
     <section className="py-12 lg:py-16 bg-gradient-to-b from-white to-slate-50">

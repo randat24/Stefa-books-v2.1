@@ -56,15 +56,23 @@ export interface CategoriesStatsResponse {
 function getBaseUrl(): string {
   // Server-side: use process.env
   if (typeof window === 'undefined') {
-    return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'
+    return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   }
-  // Client-side: use window.location
-  return window.location.origin
+  // Client-side: use window.location.origin, but handle edge cases
+  try {
+    // Remove any query parameters or path from the origin
+    return window.location.origin
+  } catch (error) {
+    // Fallback to localhost if there's an issue with window.location
+    return 'http://localhost:3000'
+  }
 }
 
 function buildApiUrl(endpoint: string): string {
   const baseUrl = getBaseUrl()
-  return `${baseUrl}${endpoint}`
+  const url = `${baseUrl}${endpoint}`
+  console.log('🔗 Building API URL:', { baseUrl, endpoint, fullUrl: url })
+  return url
 }
 
 // ============================================================================
@@ -73,13 +81,15 @@ function buildApiUrl(endpoint: string): string {
 
 export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksResponse> {
   try {
+    console.log('📚 fetchBooks called with filters:', filters)
+    
     // Generate cache key from filters
-    const cacheKey = APICache.createKey('books', filters)
+    const cacheKey = booksCache.createKey('books', filters)
     
     // Check cache first
     const cachedData = booksCache.get<BooksResponse>(cacheKey)
     if (cachedData) {
-      logger.debug('Returning cached books data', { filters }, 'API')
+      console.log('✅ Returning cached books data:', { filters, count: cachedData.count })
       return cachedData
     }
 
@@ -116,6 +126,8 @@ export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksRespon
     const endpoint = `/api/books?${params.toString()}`
     const url = buildApiUrl(endpoint)
 
+    console.log('🌐 Making fetch request to:', url)
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -123,11 +135,14 @@ export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksRespon
       }
     })
 
+    console.log('📡 Response status:', response.status, response.statusText)
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
     const result = await response.json()
+    console.log('📦 Response data:', { success: result.success, count: result.count, hasData: !!result.data })
     
     if (!result.success) {
       throw new Error(result.error || 'Ошибка при получении книг')
@@ -135,11 +150,12 @@ export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksRespon
 
     // Cache successful response
     booksCache.set(cacheKey, result)
-    logger.debug('Cached books data', { filters, count: result.count }, 'API')
+    console.log('💾 Cached books data:', { filters, count: result.count })
     
     return result
 
   } catch (error) {
+    console.error('❌ Error in fetchBooks:', error)
     return {
       success: false,
       data: [],
@@ -155,12 +171,16 @@ export async function fetchBooks(filters: BooksFilter = {}): Promise<BooksRespon
 
 export async function fetchBook(id: string): Promise<BookResponse> {
   try {
+    console.log('📖 fetchBook called with ID:', id)
+    
     if (!id) {
       throw new Error('ID книги не указан')
     }
 
     const endpoint = `/api/books/${id}`
     const url = buildApiUrl(endpoint)
+
+    console.log('🌐 Making GET request to:', url)
 
     const response = await fetch(url, {
       method: 'GET',
@@ -169,14 +189,23 @@ export async function fetchBook(id: string): Promise<BookResponse> {
       }
     })
 
+    console.log('📡 Book response status:', response.status, response.statusText)
+
     if (!response.ok) {
       if (response.status === 404) {
-        throw new Error('Книга не найдена')
+        return {
+          success: false,
+          error: 'Книга не найдена'
+        }
       }
-      throw new Error(`HTTP error! status: ${response.status}`)
+      return {
+        success: false,
+        error: `HTTP error! status: ${response.status}`
+      }
     }
 
     const result = await response.json()
+    console.log('📦 Book response data:', { success: result.success, hasData: !!result.data })
     
     if (!result.success) {
       throw new Error(result.error || 'Ошибка при получении книги')
@@ -185,6 +214,7 @@ export async function fetchBook(id: string): Promise<BookResponse> {
     return result
 
   } catch (error) {
+    console.error('❌ Error in fetchBook:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Неизвестная ошибка'
@@ -198,17 +228,21 @@ export async function fetchBook(id: string): Promise<BookResponse> {
 
 export async function fetchCategories(): Promise<CategoriesResponse> {
   try {
+    console.log('📂 fetchCategories called')
+    
     const cacheKey = 'categories'
     
     // Check cache first
     const cachedData = categoriesCache.get<CategoriesResponse>(cacheKey)
     if (cachedData) {
-      logger.debug('Returning cached categories data', undefined, 'API')
+      console.log('✅ Returning cached categories data:', { count: cachedData.count })
       return cachedData
     }
 
     const endpoint = '/api/books'
     const url = buildApiUrl(endpoint)
+
+    console.log('🌐 Making POST request to:', url, 'with action: get_categories')
 
     const response = await fetch(url, {
       method: 'POST',
@@ -218,11 +252,14 @@ export async function fetchCategories(): Promise<CategoriesResponse> {
       body: JSON.stringify({ action: 'get_categories' })
     })
 
+    console.log('📡 Categories response status:', response.status, response.statusText)
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
     const result = await response.json()
+    console.log('📦 Categories response data:', { success: result.success, count: result.count, hasData: !!result.data })
     
     if (!result.success) {
       throw new Error(result.error || 'Ошибка при получении категорий')
@@ -230,11 +267,12 @@ export async function fetchCategories(): Promise<CategoriesResponse> {
     
     // Cache successful response
     categoriesCache.set(cacheKey, result)
-    logger.debug('Cached categories data', { count: result.count }, 'API')
+    console.log('💾 Cached categories data:', { count: result.count })
     
     return result
 
   } catch (error) {
+    console.error('❌ Error in fetchCategories:', error)
     return {
       success: false,
       data: [],
@@ -250,8 +288,12 @@ export async function fetchCategories(): Promise<CategoriesResponse> {
 
 export async function fetchCategoriesStats(): Promise<CategoriesStatsResponse> {
   try {
+    console.log('📊 fetchCategoriesStats called')
+    
     const endpoint = '/api/books'
     const url = buildApiUrl(endpoint)
+
+    console.log('🌐 Making POST request to:', url, 'with action: get_categories_stats')
 
     const response = await fetch(url, {
       method: 'POST',
@@ -261,11 +303,14 @@ export async function fetchCategoriesStats(): Promise<CategoriesStatsResponse> {
       body: JSON.stringify({ action: 'get_categories_stats' })
     })
 
+    console.log('📡 Categories stats response status:', response.status, response.statusText)
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
     const result = await response.json()
+    console.log('📦 Categories stats response data:', { success: result.success, count: result.count, hasData: !!result.data })
     
     if (!result.success) {
       throw new Error(result.error || 'Ошибка при получении статистики категорий')
@@ -274,6 +319,7 @@ export async function fetchCategoriesStats(): Promise<CategoriesStatsResponse> {
     return result
 
   } catch (error) {
+    console.error('❌ Error in fetchCategoriesStats:', error)
     return {
       success: false,
       data: [],

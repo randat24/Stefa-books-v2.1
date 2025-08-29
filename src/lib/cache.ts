@@ -24,17 +24,17 @@ class APICache {
     const entry = this.cache.get(key);
     
     if (!entry) {
-      logger.debug(`Cache miss for key: ${key}`, undefined, 'Cache');
+      console.log(`❌ Cache miss for key: ${key}`)
       return null;
     }
 
     if (Date.now() > entry.expiresAt) {
-      logger.debug(`Cache expired for key: ${key}`, undefined, 'Cache');
+      console.log(`⏰ Cache expired for key: ${key}`)
       this.cache.delete(key);
       return null;
     }
 
-    logger.debug(`Cache hit for key: ${key}`, undefined, 'Cache');
+    console.log(`✅ Cache hit for key: ${key}`)
     return entry.data;
   }
 
@@ -50,7 +50,7 @@ class APICache {
     };
 
     this.cache.set(key, entry);
-    logger.debug(`Cache set for key: ${key}, TTL: ${actualTTL}ms`, undefined, 'Cache');
+    console.log(`💾 Cache set for key: ${key}, TTL: ${actualTTL}ms`)
   }
 
   /**
@@ -59,7 +59,7 @@ class APICache {
   delete(key: string): boolean {
     const deleted = this.cache.delete(key);
     if (deleted) {
-      logger.debug(`Cache deleted for key: ${key}`, undefined, 'Cache');
+      console.log(`🗑️ Cache deleted key: ${key}`);
     }
     return deleted;
   }
@@ -68,8 +68,9 @@ class APICache {
    * Clear all cache entries
    */
   clear(): void {
+    const size = this.cache.size;
     this.cache.clear();
-    logger.debug('Cache cleared', undefined, 'Cache');
+    console.log(`🗑️ Cache cleared: removed ${size} entries`);
   }
 
   /**
@@ -87,7 +88,7 @@ class APICache {
     }
 
     if (deletedCount > 0) {
-      logger.debug(`Cache cleanup: removed ${deletedCount} expired entries`, undefined, 'Cache');
+      console.log(`🧹 Cache cleanup: removed ${deletedCount} expired entries`);
     }
   }
 
@@ -95,26 +96,23 @@ class APICache {
    * Get cache statistics
    */
   getStats() {
-    return {
+    const stats = {
       size: this.cache.size,
       entries: Array.from(this.cache.keys())
     };
+    console.log('📊 Cache stats:', stats);
+    return stats;
   }
 
   /**
-   * Generate cache key from filters
+   * Create a cache key from filters
    */
-  static createKey(prefix: string, params: Record<string, any>): string {
-    const sortedParams = Object.keys(params)
-      .sort()
-      .reduce((acc, key) => {
-        if (params[key] !== undefined && params[key] !== null) {
-          acc[key] = params[key];
-        }
-        return acc;
-      }, {} as Record<string, any>);
-
-    return `${prefix}:${JSON.stringify(sortedParams)}`;
+  createKey(prefix: string, filters: Record<string, any> = {}): string {
+    const sortedKeys = Object.keys(filters).sort();
+    const keyParts = [prefix, ...sortedKeys.map(key => `${key}:${filters[key]}`)];
+    const cacheKey = keyParts.join('|');
+    console.log(`🔑 Created cache key: ${cacheKey} from filters:`, filters)
+    return cacheKey;
   }
 }
 
