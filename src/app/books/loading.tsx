@@ -11,9 +11,10 @@ export default function Loading() {
         </div>
 
         {/* Books grid skeleton */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="max-w-[1000px] mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="space-y-3">
+            <div key={i} className="space-y-3 w-full max-w-[240px]">
               <div className="aspect-[3/4] bg-slate-200 rounded-lg animate-pulse"></div>
               <div className="space-y-2">
                 <div className="h-4 bg-slate-200 rounded animate-pulse"></div>
@@ -21,6 +22,7 @@ export default function Loading() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       </div>
     </div>

@@ -1,10 +1,5 @@
 {
-  "/api/books/[id]/route": "app/api/books/[id]/route.js",
-  "/api/books/hash/route": "app/api/books/hash/route.js",
-  "/api/books/route": "app/api/books/route.js",
-  "/page": "app/page.js",
+  "/catalog/page": "app/catalog/page.js",
   "/books/page": "app/books/page.js",
-  "/books/[id]/page": "app/books/[id]/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/admin/page": "app/admin/page.js"
+  "/page": "app/page.js"
 }

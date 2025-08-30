@@ -215,7 +215,7 @@ export function BookRecommendations({
           <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
             {title}
           </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-600 max-w-[1000px] mx-auto">
             {subtitle}
           </p>
         </div>
@@ -250,11 +250,13 @@ export function BookRecommendations({
           </p>
         </div>
 
-        {/* Books grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {/* Books grid - исправленная структура 4x4 как на главной странице */}
+        <div className="max-w-[1000px] mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
           {recommendations.map((book) => (
             <BookCard key={book.id} book={book} />
           ))}
+          </div>
         </div>
 
         {/* Show more button if there are more books available */}

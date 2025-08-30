@@ -182,7 +182,7 @@ export function RecentViews({
           <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
             {title}
           </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
+          <p className="text-lg text-slate-600 max-w-[1000px] mx-auto mb-6">
             {subtitle}
           </p>
           
@@ -200,8 +200,9 @@ export function RecentViews({
           )}
         </div>
 
-        {/* Books grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {/* Books grid - исправленная структура как на главной странице */}
+        <div className="max-w-[1000px] mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
           {recentBooks.map((book, index) => (
             <div key={book.id} className="relative">
               {/* Recently viewed indicator */}
@@ -211,6 +212,7 @@ export function RecentViews({
               <BookCard book={book} />
             </div>
           ))}
+          </div>
         </div>
 
         {/* Show more books button */}

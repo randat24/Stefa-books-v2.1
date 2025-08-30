@@ -20,7 +20,7 @@ export default function BooksPage() {
       <div className="py-8">
         <div className="px-6">
           {/* Breadcrumbs */}
-          <div className="max-w-7xl mx-auto mb-6">
+          <div className="max-w-[1000px] mx-auto mb-6">
             <Breadcrumb 
               items={[
                 { label: 'Каталог книг' }
@@ -32,7 +32,7 @@ export default function BooksPage() {
             <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
               Каталог книг
             </h1>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-[1000px] mx-auto">
               Оберіть потрібну книгу з нашого каталогу дитячих книг. 
               Використовуйте пошук та фільтри для швидкого знаходження.
             </p>

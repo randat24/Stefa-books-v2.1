@@ -2,7 +2,6 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { BookCard } from '@/components/BookCard';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { fetchBooks } from '@/lib/api/books';
 
 export default async function CatalogPage() {
 	// Загружаем категории и книги напрямую из Supabase на сервере
@@ -11,17 +10,22 @@ export default async function CatalogPage() {
 			.from('categories')
 			.select('*')
 			.order('name'),
-		fetchBooks({ limit: 100 })
+		supabase
+			.from('books')
+			.select('*')
+			.order('title')
+			.limit(100)
 	]);
 	
 	const categories = categoriesResponse.data || [];
-	const books = booksResponse.success ? booksResponse.data : [];
+	const books = booksResponse.data || [];
 	
 	return (
 		<div className="container-default py-8">
 			{/* Breadcrumbs */}
 			<Breadcrumb 
 				items={[
+					{ label: 'Головна', href: '/' },
 					{ label: 'Каталог книг' }
 				]}
 				className="mb-6"
@@ -29,7 +33,7 @@ export default async function CatalogPage() {
 			
 			<h1 className="h1">Каталог книг</h1>
 			<p className="text-muted mt-2">
-				Оберіть потрібну книгу. Зверніть увагу, що ми постійно оновлюємо каталог. Якщо ви не знайшли бажаної книги, напишіть нам у будь-який зручний спосіб.
+				Оберіть потрібну книгу з нашого каталогу дитячих книг. Використовуйте пошук та фільтри для швидкого знаходження.
 			</p>
 			
 			{/* Server-side Categories */}
@@ -64,14 +68,16 @@ export default async function CatalogPage() {
 				)}
 			</div>
 
-			{/* Сетка книг - такая же как на главной странице */}
+			{/* Сетка книг - исправленная структура 5x4 как на главной странице */}
 			{books.length > 0 && (
 				<div className="mt-12">
 					<h2 className="text-2xl font-bold text-slate-900 mb-8 text-center">📖 Всі книги</h2>
-					<div className="flex flex-wrap justify-start gap-6 max-w-7xl">
-						{books.map((book) => (
-							<BookCard key={book.id} book={book} />
-						))}
+					<div className="max-w-[1000px] mx-auto">
+						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-items-center">
+							{books.map((book) => (
+								<BookCard key={book.id} book={book} />
+							))}
+						</div>
 					</div>
 				</div>
 			)}

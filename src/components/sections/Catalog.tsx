@@ -1,57 +1,66 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search, X, BookOpen, Wand2, Loader2, Brain, Globe, Heart, Baby, ScrollText, Star, Crown, GraduationCap, Compass, BookText, Palette, BookMarked } from 'lucide-react';
 import { BookCard } from '@/components/BookCard';
 import { fetchBooks, fetchCategories, type Category } from '@/lib/api/books';
 import type { Book } from '@/lib/supabase';
 import Link from 'next/link';
 
-export function Catalog() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+const CatalogComponent: React.FC = () => {
+  console.log('🎯 NEW Catalog component rendered!');
+  
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [books, setBooks] = useState<Book[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // Показываем ровно 18 книг (3 ряда по 6) на главной странице
 
-  // Загружаем книги и категории при монтировании компонента
-  useEffect(() => {
-    const loadData = async () => {
+  // Force immediate data loading using useState callback pattern
+  const [, setDataLoaded] = useState(() => {
+    console.log('🚀 FORCE: Initial state callback running');
+    
+    // Start loading immediately
+    setTimeout(async () => {
       try {
-        setLoading(true);
-        setError(null);
-
-        // Загружаем книги и категории параллельно - ровно 18 книг для 3 рядов по 6
+        console.log('🚀 FORCE: Starting data load...');
+        
+        // Load books and categories in parallel
         const [booksResponse, categoriesResponse] = await Promise.all([
-          fetchBooks({ limit: 18 }), // Ровно 18 книг для 3 рядов по 6
+          fetchBooks({ limit: 18 }),
           fetchCategories()
         ]);
 
+        console.log('📚 FORCE: Books response:', booksResponse);
         if (booksResponse.success && booksResponse.data) {
+          console.log('✅ FORCE: Setting books:', booksResponse.data.length, 'books');
           setBooks(booksResponse.data);
         } else {
-          console.error('❌ Catalog: Books response failed:', booksResponse)
-          throw new Error(booksResponse.error || 'Ошибка загрузки книг');
+          console.error('❌ FORCE: Books response failed:', booksResponse);
+          setError(booksResponse.error || 'Error loading books');
         }
 
         if (categoriesResponse.success && categoriesResponse.data) {
+          console.log('✅ FORCE: Setting categories:', categoriesResponse.data.length, 'categories');
           setCategories(categoriesResponse.data);
         } else {
-          console.error('❌ Catalog: Categories response failed:', categoriesResponse)
+          console.error('❌ FORCE: Categories response failed:', categoriesResponse);
         }
 
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
-        setError(errorMessage);
-      } finally {
         setLoading(false);
+        setDataLoaded(true);
+        console.log('🏁 FORCE: Loading completed');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        console.error('❌ FORCE: Error in loadData:', errorMessage);
+        setError(errorMessage);
+        setLoading(false);
+        setDataLoaded(true);
       }
-    };
-
-    loadData();
-  }, []);
+    }, 0);
+    
+    return false; // Initial state
+  });
 
   // Фільтрація книг за пошуком та категоріями
   const filteredBooks = useMemo(() => {
@@ -76,8 +85,8 @@ export function Catalog() {
     return filtered;
   }, [books, searchQuery, selectedCategory]);
 
-  // Отображение элементов - показываем все книги или заглушки для 18 карточек (3 ряда по 6)
-  const items = filteredBooks.slice(0, 18);
+  // Отображение элементов - показываем все книги или заглушки для 20 карточек (4 ряда по 5)
+  const items = filteredBooks.slice(0, 20);
 
   console.log('📚 Catalog: Final items to display:', { 
     total: books.length, 
@@ -85,18 +94,18 @@ export function Catalog() {
     displayed: items.length,
     items: items.map(b => ({ id: b.id, title: b.title, author: b.author })),
     showPlaceholders: items.length === 0,
-    expectedRows: Math.ceil(items.length / 6) // Ожидаемое количество рядов
+    expectedRows: Math.ceil(items.length / 5) // Ожидаемое количество рядов (5 колонок)
   });
 
   return (
     <section className="px-6">
       <header className="mb-12 text-center">
-        <div className="max-w-3xl mx-auto mb-8">
+        <div className="max-w-[1000px] mx-auto mb-8">
           <h2 className="h2 text-slate-900 mb-4">Каталог книг</h2>
           <p className="text-lg text-slate-600 leading-relaxed mb-8">Оберіть потрібну книгу. Зверніть увагу, що ми постійно оновлюємо каталог. Якщо ви не знайшли бажаної книги, напишіть нам у будь-який зручний спосіб.</p>
           
           {/* Пошук та кнопка каталогу */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 max-w-[1000px] mx-auto">
             <div className="relative flex-1 max-w-md">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-slate-400" />
@@ -128,7 +137,7 @@ export function Catalog() {
         
         {/* Категорії - максимум 2 ряди (10 категорій) */}
         {!loading && categories.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-2 mb-12 max-w-6xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-2 mb-12 max-w-[1000px] mx-auto">
             {categories.slice(0, 10).map((category) => {
               // Получаем правильную иконку для каждой категории
               const getCategoryIcon = (slug: string) => {
@@ -216,28 +225,30 @@ export function Catalog() {
       {/* Результати */}
       {!loading && !error && (
         <>
-          {/* Сетка книг - всегда показываем 18 карточек (3 ряда по 6) с фиксированными размерами */}
-          <div className="flex flex-wrap justify-start gap-6 max-w-7xl">
+          {/* Сетка книг - всегда показываем 18 карточек (4 ряда по 4-5) с фиксированными размерами */}
+          <div className="max-w-[1000px] mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-items-center">
             {items.length > 0 ? (
               // Показываем реальные книги
               items.map((b) => (
                 <BookCard key={b.id} book={b} />
               ))
             ) : (
-              // Показываем заглушки для 18 карточек (3 ряда по 6)
-              Array.from({ length: 18 }).map((_, index) => (
-                <div key={index} className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center min-h-[280px] shadow-sm w-full max-w-[240px]">
-                  <div className="w-full aspect-[3/4] bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
-                    <BookOpen className="w-8 h-8 text-gray-300" />
+              // Показываем заглушки для 20 карточек (4 ряда по 5)
+              Array.from({ length: 20 }).map((_, index) => (
+                <div key={index} className="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center min-h-[240px] shadow-sm w-full max-w-[200px]">
+                  <div className="w-full aspect-[3/4] bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                    <BookOpen className="w-6 h-6 text-gray-300" />
                   </div>
                   <div className="text-center w-full">
-                    <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                    <div className="h-3 bg-gray-200 rounded w-full mb-1"></div>
+                    <div className="h-2 bg-gray-200 rounded w-3/4 mx-auto"></div>
                   </div>
-                  <div className="text-xs text-gray-400 mt-2">Карточка {index + 1}</div>
+                  <div className="text-xs text-gray-400 mt-1">Карточка {index + 1}</div>
                 </div>
               ))
             )}
+            </div>
           </div>
           
           {/* Кнопка "Перейти в каталог" - показываем всегда на главной странице */}
@@ -299,4 +310,8 @@ export function Catalog() {
       )}
     </section>
   );
+};
+
+export function Catalog() {
+  return <CatalogComponent />;
 }

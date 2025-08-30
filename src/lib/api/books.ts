@@ -70,12 +70,12 @@ function getBaseUrl(): string {
   if (typeof window === 'undefined') {
     return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   }
-  // Client-side: use window.location.origin, but handle edge cases
+  // Client-side: use window.location.origin for Next.js API routes
   try {
-    // Remove any query parameters or path from the origin
+    // For client-side, always use current origin (where Next.js is running)
     return window.location.origin
   } catch (error) {
-    // Fallback to localhost if there's an issue with window.location
+    // Fallback to current server port
     return 'http://localhost:3000'
   }
 }
